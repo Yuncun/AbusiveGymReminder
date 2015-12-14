@@ -1,20 +1,12 @@
 package com.pipit.agc.agc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import android.support.v4.view.PagerAdapter;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,19 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 
 public class AllinOneActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     SectionsPagerAdapter mSectionsPagerAdapter;
-
+    private AlarmManagerBroadcastReceiver _alarm;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -44,17 +32,22 @@ public class AllinOneActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_layout);
+                setContentView(R.layout.activity_main_layout);
 
+        /*Launch Intro Activity*/
+        Intent intent = new Intent(this, IntroductionActivity.class);
+        startActivity(intent);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         initialisePaging();
-        // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);
 
+        /*Initialize Alarm*/
+        _alarm = new AlarmManagerBroadcastReceiver();
+        _alarm.SetAlarm(this);
     }
 
 
@@ -122,7 +115,7 @@ public class AllinOneActivity extends AppCompatActivity {
         _fragments = new ArrayList<Fragment>();
         _fragments.add(LandingFragment.newInstance(1));
         _fragments.add(PlaceholderFragment.newInstance(2));
-        _fragments.add(PlaceholderFragment.newInstance(3));
+        _fragments.add(PlacePickerFragment.newInstance());
     }
 
     /**
