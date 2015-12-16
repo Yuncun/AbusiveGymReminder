@@ -1,7 +1,9 @@
 package com.pipit.agc.agc;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,7 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class PlacePickerFragment extends Fragment {
     private String TAG = "PlacePickerFragment";
     private TextView _address;
-
+    private String _addressDefault="No address";
     private Button _launchPlacePicker;
     public static PlacePickerFragment newInstance() {
         PlacePickerFragment fragment = new PlacePickerFragment();
@@ -53,7 +55,7 @@ public class PlacePickerFragment extends Fragment {
             }
         });
         _address=(TextView) rootView.findViewById(R.id.addressText);
-
+        _address.setText(_addressDefault);
         return rootView;
     }
 
@@ -98,12 +100,14 @@ public class PlacePickerFragment extends Fragment {
                     attribution = "";
                 }
 
-                Toast.makeText(getActivity(), "name:" + name + " \nAddress:" + address + "\nAttribution:" + attribution,
-                        Toast.LENGTH_LONG)
-                        .show();
-
                 Log.d(TAG, "Place selected: " + placeId + " (" + name.toString() + ")");
-                _address.setText("Your gym is " + name.toString() + " \nat " + address.toString() + "\nCoordinates at " + location.toString());
+                _addressDefault = "Your gym is " + name.toString() + " \nat " + address.toString() + "\nCoordinates at " + location.toString();
+                _address.setText(_addressDefault);
+
+                SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = prefs.edit();
+                Util.putDouble(editor, "lat",  location.latitude).commit();
+                Util.putDouble(editor, "lng",  location.longitude).commit();
 
             } else {
                 Log.d(TAG, "resultCode is wrong " + "resultCode");

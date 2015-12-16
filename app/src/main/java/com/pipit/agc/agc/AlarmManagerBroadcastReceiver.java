@@ -10,11 +10,14 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
 /**
  * Created by Eric on 12/12/2015.
  */
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 {
+    GoogleApiClient mGoogleApiClient;
     @Override
     public void onReceive(Context context, Intent intent)
     {
@@ -46,13 +49,26 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
     }
 
     private void doLocationCheck(Context context){
+        /*Check lat/lng*/
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        double lat = Util.getDouble(prefs, "lat", -91);
+        double lng = Util.getDouble(prefs, "lng", -181);
+
+        if (Math.abs(lat)>90 || Math.abs(lng)>180){
+            return;
+        }
+
+        /*Record number of times we have done a check*/
         int trackcount = prefs.getInt("trackcount", 0);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("trackcount", trackcount+1);
         editor.commit();
+
         Log.d("Alarm", "trackcount committed " + trackcount+1);
     }
 
+    public void setGoogleApiThing(GoogleApiClient api){
+        mGoogleApiClient=api;
+    }
 
 }

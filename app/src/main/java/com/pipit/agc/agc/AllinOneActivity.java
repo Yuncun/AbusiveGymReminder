@@ -1,12 +1,14 @@
 package com.pipit.agc.agc;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,15 +16,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 
-public class AllinOneActivity extends AppCompatActivity {
+public class AllinOneActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
+    GoogleApiClient mGoogleApiClient;
     SectionsPagerAdapter mSectionsPagerAdapter;
     private AlarmManagerBroadcastReceiver _alarm;
+    Location mLastLocation;
+    TextView lastLocation;
+    LocationRequest mLocationRequest;
+    private static String TAG = "AllinOneActivity";
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -45,9 +62,25 @@ public class AllinOneActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
 
+        /*Handle Google stuff*/
+        initGoogleApiClient();
+
         /*Initialize Alarm*/
         _alarm = new AlarmManagerBroadcastReceiver();
+        _alarm.setGoogleApiThing(mGoogleApiClient);
         _alarm.SetAlarm(this);
+    }
+
+    private void initGoogleApiClient(){
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            createLocationRequest();
+        }
     }
 
 
@@ -116,6 +149,7 @@ public class AllinOneActivity extends AppCompatActivity {
         _fragments.add(LandingFragment.newInstance(1));
         _fragments.add(PlaceholderFragment.newInstance(2));
         _fragments.add(PlacePickerFragment.newInstance());
+        ((LandingFragment) _fragments.get(0))._context = this;
     }
 
     /**
@@ -150,8 +184,62 @@ public class AllinOneActivity extends AppCompatActivity {
             ((TextView) rootView.findViewById(R.id.section_label)).setText(ARG_SECTION_NUMBER);
             return rootView;
         }
+    }
+
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        startLocationUpdates();
+    }
+
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        //Not sure what to do here
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult c) {
+        //Not sure what to do here
+    }
 
 
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
+        Log.d(TAG, "startLocationUpdates");
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged" + location);
+        mLastLocation = location;
+        String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        ((LandingFragment)_fragments.get(0)).updateLastLocation(
+                (((LandingFragment)_fragments.get(0)).getLastLocationText())+ "\n" + mLastUpdateTime
+        + " " + mLastLocation);
+
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
     }
 
 }
