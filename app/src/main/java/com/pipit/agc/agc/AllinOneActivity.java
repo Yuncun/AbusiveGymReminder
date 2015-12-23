@@ -1,6 +1,8 @@
 package com.pipit.agc.agc;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,12 +11,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -37,7 +35,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     SectionsPagerAdapter mSectionsPagerAdapter;
     private AlarmManagerBroadcastReceiver _alarm;
     Location mLastLocation;
-    TextView lastLocation;
     LocationRequest mLocationRequest;
     private static String TAG = "AllinOneActivity";
     /**
@@ -68,7 +65,8 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         /*Initialize Alarm*/
         _alarm = new AlarmManagerBroadcastReceiver();
         _alarm.setGoogleApiThing(mGoogleApiClient);
-        _alarm.SetAlarm(this);
+        _alarm.setMainActivity(this);
+        _alarm.SetAlarm(getApplicationContext());
     }
 
     private void initGoogleApiClient(){
@@ -149,42 +147,8 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         _fragments.add(LandingFragment.newInstance(1));
         _fragments.add(PlaceholderFragment.newInstance(2));
         _fragments.add(PlacePickerFragment.newInstance());
-        ((LandingFragment) _fragments.get(0))._context = this;
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_allin_one, container, false);
-            ((TextView) rootView.findViewById(R.id.section_label)).setText(ARG_SECTION_NUMBER);
-            return rootView;
-        }
-    }
 
     protected void onStart() {
         mGoogleApiClient.connect();
@@ -228,11 +192,28 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged" + location);
+        Log.d("Alarm", "onLocationChanged ");
+
         mLastLocation = location;
+        double currlat = location.getLatitude();
+        double currlng = location.getLongitude();
+
+        /*Check lat/lng*/
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        double lat = Util.getDouble(prefs, "lat", currlat);
+        double lng = Util.getDouble(prefs, "lng", currlng);
+
+        Location gymLocation = new Location("");
+        gymLocation.setLatitude(lat);
+        gymLocation.setLongitude(lng);
+
+
+        float distance = gymLocation.distanceTo(location);
+
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         ((LandingFragment)_fragments.get(0)).updateLastLocation(
-                (((LandingFragment)_fragments.get(0)).getLastLocationText())+ "\n" + mLastUpdateTime
-        + " " + mLastLocation);
+                (getLandingFragment().getLastLocationText())+ "\n" + mLastUpdateTime
+        + " Lat:" + currlat + " Lng:" + currlng + " Dist:" + distance);
 
         stopLocationUpdates();
     }
@@ -242,4 +223,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
                 mGoogleApiClient, this);
     }
 
+    public LandingFragment getLandingFragment(){
+        return (LandingFragment) _fragments.get(0);
+    }
 }

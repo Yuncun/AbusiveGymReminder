@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pipit.agc.agc" >
-    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,9 +15,9 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".IntroductionActivity"
@@ -25,15 +27,28 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".AllinOneActivity" />
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/GOOGLE_API_KEY"/>
-        <receiver android:process=":remote" android:name="com.pipit.agc.agc.AlarmManagerBroadcastReceiver"></receiver>
+            android:value="@string/GOOGLE_API_KEY" />
 
+        <receiver
+            android:name=".AlarmManagerBroadcastReceiver"
+            android:process=":remote" />
+
+        <activity
+            android:name=".LocationActivity"
+            android:label="@string/title_activity_location" >
+        </activity>
+
+        <service
+            android:name=".LocationService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
-

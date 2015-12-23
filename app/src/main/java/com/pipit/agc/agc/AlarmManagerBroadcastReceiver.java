@@ -18,6 +18,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 {
     GoogleApiClient mGoogleApiClient;
+    static AllinOneActivity _main;
+    Context _context;
+
     @Override
     public void onReceive(Context context, Intent intent)
     {
@@ -25,7 +28,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
 
-        // Put here YOUR code.
+        _context=context;
         Toast.makeText(context, "Alarm !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
         doLocationCheck(context);
 
@@ -37,7 +40,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), Constants.timeBetweenLocationChecks, pi); //20 min
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), Constants.timeBetweenLocationChecks, pi);
     }
 
     public void CancelAlarm(Context context)
@@ -49,26 +52,27 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
     }
 
     private void doLocationCheck(Context context){
-        /*Check lat/lng*/
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        double lat = Util.getDouble(prefs, "lat", -91);
-        double lng = Util.getDouble(prefs, "lng", -181);
-
-        if (Math.abs(lat)>90 || Math.abs(lng)>180){
-            return;
+        /*Request Location*/
+        if(_main!=null){
+            _main.startLocationUpdates();
         }
 
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         /*Record number of times we have done a check*/
         int trackcount = prefs.getInt("trackcount", 0);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("trackcount", trackcount+1);
         editor.commit();
 
-        Log.d("Alarm", "trackcount committed " + trackcount+1);
+        Log.d("Alarm", "trackcount committed " + trackcount);
     }
 
     public void setGoogleApiThing(GoogleApiClient api){
         mGoogleApiClient=api;
+    }
+
+    public void setMainActivity(AllinOneActivity main){
+        _main=main;
     }
 
 }

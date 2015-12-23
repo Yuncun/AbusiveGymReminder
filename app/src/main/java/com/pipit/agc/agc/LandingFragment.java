@@ -24,7 +24,6 @@ public class LandingFragment extends Fragment {
     private static String _lastLocation = "None";
     private Button _resetCountButton;
     private Button _updateLocationButton;
-    public Context _context;
     public static GoogleApiClient mGoogleApiClient;
 
 
@@ -48,10 +47,12 @@ public class LandingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.landing_fragment, container, false);
+
+        final SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        _lastLocation=prefs.getString("locationlist", "");
         _locationCounter = (TextView) rootView.findViewById(R.id.landing_text);
         _lastLocationTxt = (TextView) rootView.findViewById(R.id.lastLocation);
         _lastLocationTxt.setText(_lastLocation);
-        final SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         _resetCountButton = (Button) rootView.findViewById(R.id.button);
         _updateLocationButton = (Button) rootView.findViewById(R.id.updatelocationbutton);
 
@@ -60,15 +61,17 @@ public class LandingFragment extends Fragment {
             public void onClick(View view) {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putInt("trackcount", 0);
+                editor.putString("locationlist", "");
                 editor.commit();
                 refresh();
+                updateLastLocation("");
             }
         });
 
         _updateLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AllinOneActivity) _context).startLocationUpdates();
+                ((AllinOneActivity) getActivity()).startLocationUpdates();
             }
         });
 
@@ -82,7 +85,7 @@ public class LandingFragment extends Fragment {
     }
 
     private void refresh(){
-        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, getActivity().MODE_MULTI_PROCESS);
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, getActivity().MODE_MULTI_PROCESS);
         int trackcount = prefs.getInt("trackcount", 0);
         String lastLocation = prefs.getString("lastLocation", "none");
         _locationCounter.setText("Alarm has gone off " + trackcount + " times \n and last location was " + lastLocation);
@@ -94,9 +97,16 @@ public class LandingFragment extends Fragment {
     public void updateLastLocation(String txt){
         _lastLocation = txt;
         _lastLocationTxt.setText(txt);
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, getActivity().MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("locationlist", txt);
+        editor.commit();
+
     }
     public String getLastLocationText(){
         return _lastLocation;
     }
 
 }
+
+
