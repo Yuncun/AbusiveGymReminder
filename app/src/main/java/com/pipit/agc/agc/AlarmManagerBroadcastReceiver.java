@@ -29,7 +29,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         wl.acquire();
 
         _context=context;
-        Toast.makeText(context, "Alarm !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
+        Toast.makeText(context, "alarmmanagerbroadcast", Toast.LENGTH_LONG).show(); // For example
         doLocationCheck(context);
 
         wl.release();

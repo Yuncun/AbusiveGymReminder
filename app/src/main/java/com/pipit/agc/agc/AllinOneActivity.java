@@ -1,9 +1,12 @@
 package com.pipit.agc.agc;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,7 +33,9 @@ import java.util.Locale;
 public class AllinOneActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-
+    private static final String PROXIMITY_INTENT_ACTION = new String("com.pipit.agc.agc.action.PROXIMITY_ALERT");
+    private IntentFilter mIntentFilter;
+    LocationManager lm;
     GoogleApiClient mGoogleApiClient;
     SectionsPagerAdapter mSectionsPagerAdapter;
     private AlarmManagerBroadcastReceiver _alarm;
@@ -62,11 +67,15 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         /*Handle Google stuff*/
         initGoogleApiClient();
 
-        /*Initialize Alarm*/
+        /*Initialize Alarm*//*
         _alarm = new AlarmManagerBroadcastReceiver();
         _alarm.setGoogleApiThing(mGoogleApiClient);
         _alarm.setMainActivity(this);
         _alarm.SetAlarm(getApplicationContext());
+*/
+        /*Set Proximity Alert*/
+        mIntentFilter = new IntentFilter(PROXIMITY_INTENT_ACTION);
+        setProximityLocationManager();
     }
 
     private void initGoogleApiClient(){
@@ -212,7 +221,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
 
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         ((LandingFragment)_fragments.get(0)).updateLastLocation(
-                (getLandingFragment().getLastLocationText())+ "\n" + mLastUpdateTime
+                prefs.getString("locationlist", "none") + "\n" + mLastUpdateTime
         + " Lat:" + currlat + " Lng:" + currlng + " Dist:" + distance);
 
         stopLocationUpdates();
@@ -226,4 +235,21 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     public LandingFragment getLandingFragment(){
         return (LandingFragment) _fragments.get(0);
     }
+
+    public void setProximityLocationManager(){
+
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        double lat = Util.getDouble(prefs, "lat", 0);
+        double lng = Util.getDouble(prefs, "lng", 0);
+
+        lm=(LocationManager) getSystemService(LOCATION_SERVICE);
+        //Intent i= new Intent(this, ProximityReceiver.class);
+        //PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), -1, i, 0);
+
+        Intent intent = new Intent(PROXIMITY_INTENT_ACTION);
+        intent.putExtra(ProximityReceiver.EVENT_ID_INTENT_EXTRA, 0);
+        PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), -1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        lm.addProximityAlert(lat, lng, 100f, 10000L, pi);
+    }
+
 }

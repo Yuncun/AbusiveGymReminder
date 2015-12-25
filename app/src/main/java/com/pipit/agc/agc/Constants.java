@@ -9,6 +9,6 @@ public class Constants {
     public static final int REQUEST_PLACE_PICKER = 1;
 
     /*Settings*/
-    public static int timeBetweenLocationChecks = 1000 * 60 * 20; //Milliseconds
+    public static int timeBetweenLocationChecks = 1000 * 60 * 10; //Milliseconds
 
 }

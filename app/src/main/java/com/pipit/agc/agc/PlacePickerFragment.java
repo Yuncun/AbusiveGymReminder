@@ -45,6 +45,11 @@ public class PlacePickerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        _addressDefault = prefs.getString("address", "no address") + "lat" +
+                Util.getDouble(prefs, "lat", 0) + " lng" + Util.getDouble(prefs, "lng", 0) ;
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_place_picker, container, false);
         _launchPlacePicker=(Button) rootView.findViewById(R.id.launch_placepicker);
@@ -108,6 +113,8 @@ public class PlacePickerFragment extends Fragment {
                 SharedPreferences.Editor editor = prefs.edit();
                 Util.putDouble(editor, "lat",  location.latitude).commit();
                 Util.putDouble(editor, "lng",  location.longitude).commit();
+                editor.putString("address", address.toString()).commit();
+                ((AllinOneActivity) getActivity()).setProximityLocationManager();
 
             } else {
                 Log.d(TAG, "resultCode is wrong " + "resultCode");
