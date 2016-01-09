@@ -33,7 +33,6 @@ import java.util.Locale;
 public class AllinOneActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-    private static final String PROXIMITY_INTENT_ACTION = new String("com.pipit.agc.agc.action.PROXIMITY_ALERT");
     private IntentFilter mIntentFilter;
     LocationManager lm;
     GoogleApiClient mGoogleApiClient;
@@ -74,7 +73,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         _alarm.SetAlarm(getApplicationContext());
 */
         /*Set Proximity Alert*/
-        mIntentFilter = new IntentFilter(PROXIMITY_INTENT_ACTION);
+        mIntentFilter = new IntentFilter(Constants.PROXIMITY_INTENT_ACTION);
         setProximityLocationManager();
     }
 
@@ -100,9 +99,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -132,7 +128,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 3;
         }
 
@@ -154,7 +149,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     private void initialisePaging() {
         _fragments = new ArrayList<Fragment>();
         _fragments.add(LandingFragment.newInstance(1));
-        _fragments.add(PlaceholderFragment.newInstance(2));
+        _fragments.add(CalendarFragment.newInstance(2));
         _fragments.add(PlacePickerFragment.newInstance());
     }
 
@@ -171,7 +166,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        startLocationUpdates();
+        //startLocationUpdates();
     }
 
     @Override
@@ -241,15 +236,35 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         double lat = Util.getDouble(prefs, "lat", 0);
         double lng = Util.getDouble(prefs, "lng", 0);
+        float range = (float) prefs.getInt("range", 50);
 
         lm=(LocationManager) getSystemService(LOCATION_SERVICE);
-        //Intent i= new Intent(this, ProximityReceiver.class);
-        //PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), -1, i, 0);
 
-        Intent intent = new Intent(PROXIMITY_INTENT_ACTION);
+        int maxAlertId = prefs.getInt("maxAlertId", 0); //Todo: Remember individual IDs
+        Intent intent = new Intent(Constants.PROXIMITY_INTENT_ACTION);
         intent.putExtra(ProximityReceiver.EVENT_ID_INTENT_EXTRA, 0);
-        PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), -1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        lm.addProximityAlert(lat, lng, 100f, 10000L, pi);
+        PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), maxAlertId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        SharedPreferences.Editor editor = prefs.edit();
+        maxAlertId++;
+        editor.putInt("maxAlertId", maxAlertId);
+        lm.addProximityAlert(lat, lng, range, 60000, pi);
     }
 
+    /**
+     */
+    public void removeAllProximityAlerts() {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        int maxAlertId = prefs.getInt("maxAlertId", 0);
+        Intent intent = new Intent(Constants.PROXIMITY_INTENT_ACTION);
+
+        for(int i=-1;i<maxAlertId;i++){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            lm.removeProximityAlert(pendingIntent);
+        }
+        SharedPreferences.Editor editor = prefs.edit();
+        Util.putDouble(editor, "lat",  0).commit();
+        Util.putDouble(editor, "lng",  0).commit();
+        editor.putString("address", "none").commit();
+    }
 }
+

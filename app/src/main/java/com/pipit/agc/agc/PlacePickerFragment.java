@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,11 @@ public class PlacePickerFragment extends Fragment {
     private TextView _address;
     private String _addressDefault="No address";
     private Button _launchPlacePicker;
+    private TextView _rangeDescription;
+    private EditText _rangeEditText;
+    private Button _submitButton;
+    private Button _removeProxAlertsButton;
+
     public static PlacePickerFragment newInstance() {
         PlacePickerFragment fragment = new PlacePickerFragment();
         Bundle args = new Bundle();
@@ -47,10 +53,10 @@ public class PlacePickerFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        final SharedPreferences.Editor editor = prefs.edit();
         _addressDefault = prefs.getString("address", "no address") + "lat" +
                 Util.getDouble(prefs, "lat", 0) + " lng" + Util.getDouble(prefs, "lng", 0) ;
 
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_place_picker, container, false);
         _launchPlacePicker=(Button) rootView.findViewById(R.id.launch_placepicker);
         _launchPlacePicker.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +67,37 @@ public class PlacePickerFragment extends Fragment {
         });
         _address=(TextView) rootView.findViewById(R.id.addressText);
         _address.setText(_addressDefault);
+        _rangeDescription = (TextView) rootView.findViewById(R.id.range_description);
+        _rangeDescription.setText(getResources().getText(R.string.range_picker_description));
+        _rangeEditText=(EditText) rootView.findViewById(R.id.rangesetting);
+       // _rangeEditText.setHint(prefs.getInt("range", -1));
+        _submitButton = (Button) rootView.findViewById(R.id.submit_button);
+        _submitButton.setText(getResources().getText(R.string.submit));
+        _submitButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String str = _rangeEditText.getText().toString();
+                try {
+                    int range = Integer.parseInt(str);
+                    Toast.makeText(getActivity(), "range set to " + str, Toast.LENGTH_SHORT).show();
+                    editor.putInt("range", range);
+                }
+                catch(Exception e) {
+                    Log.e("logtag", "Exception: " + e.toString());
+                    Toast.makeText(getActivity(), "Invalid range " + str, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        _removeProxAlertsButton = (Button) rootView.findViewById(R.id.remove_prox_button);
+        _removeProxAlertsButton.setText("Remove All Locations");
+        _removeProxAlertsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Removing all saved locations", Toast.LENGTH_SHORT).show();
+                ((AllinOneActivity) getActivity()).removeAllProximityAlerts();
+            }
+        });
+
+
         return rootView;
     }
 
