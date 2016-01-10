@@ -100,8 +100,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -123,12 +121,12 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         @Override
         public Fragment getItem(int position) {
             return _fragments.get(position);
-            //return PlaceholderFragment.newInstance(position+1);
+            //Todo: Used a civilized data structure
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -141,15 +139,19 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
                     return getString(R.string.title_section2).toUpperCase(l);
                 case 2:
                     return getString(R.string.title_section3).toUpperCase(l);
+                case 3:
+                    return "Page four";
             }
             return null;
         }
     }
 
     private void initialisePaging() {
+        //Do not willy nilly change order of this list; List position may be used to find fragments
         _fragments = new ArrayList<Fragment>();
         _fragments.add(LandingFragment.newInstance(1));
-        _fragments.add(CalendarFragment.newInstance(2));
+        _fragments.add(DayPickerFragment.newInstance(2));
+        _fragments.add(CalendarFragment.newInstance(3));
         _fragments.add(PlacePickerFragment.newInstance());
     }
 
