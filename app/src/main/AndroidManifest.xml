@@ -9,6 +9,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:name="GlobalState"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".AllinOneActivity"
@@ -34,11 +35,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/GOOGLE_API_KEY" />
-<!--
+
         <receiver
             android:name=".AlarmManagerBroadcastReceiver"
             android:process=":remote" />
--->
+
         <activity
             android:name=".LocationActivity"
             android:label="@string/title_activity_location" >

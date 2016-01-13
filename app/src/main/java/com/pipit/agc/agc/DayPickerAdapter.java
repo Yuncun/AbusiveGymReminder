@@ -8,23 +8,27 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pipit.agc.agc.data.DayRecord;
+
+import java.util.List;
+
 /**
  * Created by Eric on 1/9/2016.
  */
 public class DayPickerAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final String[] values;
-    private final int daysActive;
+    private final List<DayRecord> allPreviousDays;
     private final String[] DAYSOFWEEK = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday"};
     public int count;
 
-    public DayPickerAdapter(Context context, String[] values, int daysActive) {
+    public DayPickerAdapter(Context context, String[] values, List<DayRecord> allPreviousDays) {
         super(context, R.layout.dayrowlayout, values);
         this.context = context;
         this.values = values;
-        this.daysActive = daysActive;
         this.count = Math.max(values.length, 14);
-        this.count+=daysActive;
+        this.count+=allPreviousDays.size();
+        this.allPreviousDays = allPreviousDays;
     }
 
     @Override
@@ -34,11 +38,21 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
         View rowView = inflater.inflate(R.layout.dayrowlayout, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.day_of_week);
 
-        String dayOfWeek = DAYSOFWEEK[position%7];
-        if (position==daysActive){
-            dayOfWeek+=" (TODAY)";
+        if (position<allPreviousDays.size()){
+            //The Past
+            String primaryText = allPreviousDays.get(position).getComment();
+            String idText = Long.toString(allPreviousDays.get(position).getId());
+            textView.setText(idText + " " + primaryText);
         }
-        textView.setText(dayOfWeek);
+        else{
+            //The Future
+            String dayOfWeek = DAYSOFWEEK[position%7];
+            if (position==allPreviousDays.size()){
+                //The Present
+                dayOfWeek+=" (TODAY)";
+            }
+            textView.setText(dayOfWeek);
+        }
 
         return rowView;
     }

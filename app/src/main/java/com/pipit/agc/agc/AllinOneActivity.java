@@ -25,6 +25,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -66,12 +67,16 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         /*Handle Google stuff*/
         initGoogleApiClient();
 
-        /*Initialize Alarm*//*
+        /*Initialize Alarm*/
         _alarm = new AlarmManagerBroadcastReceiver();
         _alarm.setGoogleApiThing(mGoogleApiClient);
         _alarm.setMainActivity(this);
-        _alarm.SetAlarm(getApplicationContext());
-*/
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
+        calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
+        _alarm.SetAlarm(getApplicationContext(), calendar);
+
         /*Set Proximity Alert*/
         mIntentFilter = new IntentFilter(Constants.PROXIMITY_INTENT_ACTION);
         setProximityLocationManager();
@@ -126,7 +131,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
 
         @Override
         public int getCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -141,6 +146,8 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
                     return getString(R.string.title_section3).toUpperCase(l);
                 case 3:
                     return "Page four";
+                case 4:
+                    return "Page Five";
             }
             return null;
         }
@@ -152,6 +159,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         _fragments.add(LandingFragment.newInstance(1));
         _fragments.add(DayPickerFragment.newInstance(2));
         _fragments.add(CalendarFragment.newInstance(3));
+        _fragments.add(TestDBFragment.newInstance(4));
         _fragments.add(PlacePickerFragment.newInstance());
     }
 

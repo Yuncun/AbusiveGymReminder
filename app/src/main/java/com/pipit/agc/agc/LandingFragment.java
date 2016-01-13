@@ -97,7 +97,7 @@ public class LandingFragment extends Fragment {
     public void updateLastLocation(String txt){
         _lastLocation = txt;
         _lastLocationTxt.setText(txt);
-        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, getActivity().MODE_MULTI_PROCESS);
+        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, getActivity().MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("locationlist", txt);
         editor.commit();

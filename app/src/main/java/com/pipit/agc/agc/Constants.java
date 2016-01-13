@@ -11,5 +11,7 @@ public class Constants {
 
     /*Settings*/
     public static int timeBetweenLocationChecks = 1000 * 60 * 10; //Milliseconds
+    public static int DAY_RESET_HOUR = 0;
+    public static int DAY_RESET_MINUTE = 0;
 
 }

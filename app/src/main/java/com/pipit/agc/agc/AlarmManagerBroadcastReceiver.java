@@ -11,6 +11,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.pipit.agc.agc.data.DayRecord;
+import com.pipit.agc.agc.data.DayRecordsSource;
+import com.pipit.agc.agc.data.MySQLiteHelper;
+
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Eric on 12/12/2015.
@@ -20,6 +27,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
     GoogleApiClient mGoogleApiClient;
     static AllinOneActivity _main;
     Context _context;
+    String TAG = "AlarmManagerBroadcastReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -27,20 +35,19 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
-
+        Log.d(TAG, "Received broadcast");
         _context=context;
-        Toast.makeText(context, "alarmmanagerbroadcast", Toast.LENGTH_LONG).show(); // For example
-        doLocationCheck(context);
-
+        //doLocationCheck(context);
+        doDayLogging(context);
         wl.release();
     }
 
-    public void SetAlarm(Context context)
+    public void SetAlarm(Context context, Calendar calendar)
     {
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), Constants.timeBetweenLocationChecks, pi);
+        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
     }
 
     public void CancelAlarm(Context context)
@@ -65,6 +72,34 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         editor.commit();
 
         Log.d("Alarm", "trackcount committed " + trackcount);
+    }
+
+    /**
+     * Executed by Alarm Manager at midnight to add a new day into database
+     */
+    private void doDayLogging(Context context){
+        //Logging
+        Log.d(TAG, "Starting dayLogging");
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        String logUpdate = prefs.getString("locationlist", "none") + "\n" + "Alarm Manager Update at " + mLastUpdateTime;
+        editor.putString("locationlist", logUpdate);
+        editor.commit();
+        editor.commit();
+
+        //Progress the day
+        DayRecordsSource datasource;
+        datasource = DayRecordsSource.getInstance();
+        if (datasource==null){
+            DayRecordsSource.initializeInstance(new MySQLiteHelper(context));
+            datasource = DayRecordsSource.getInstance();
+        }
+        datasource.openDatabase();
+        DayRecord dayRecord = datasource.createDayRecord("NEW DAY" + mLastUpdateTime);
+        datasource.closeDatabase();
+        Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
+
     }
 
     public void setGoogleApiThing(GoogleApiClient api){
