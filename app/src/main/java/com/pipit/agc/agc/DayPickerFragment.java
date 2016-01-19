@@ -1,5 +1,7 @@
 package com.pipit.agc.agc;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import com.pipit.agc.agc.data.DayRecord;
 import com.pipit.agc.agc.data.DayRecordsSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -46,13 +49,23 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.day_picker_fragment, container, false);
-        String[] values = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday"};
         datasource = DayRecordsSource.getInstance();
         datasource.openDatabase();
         _allPreviousDays = datasource.getAllDayRecords();
-        _adapter = new DayPickerAdapter(getActivity(), values, _allPreviousDays);
+        _adapter = new DayPickerAdapter(getActivity(), _allPreviousDays);
         setListAdapter(_adapter);
 
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        List<String> list = new ArrayList<String>();
+        list.add("Hello");
+        list.add("World");
+        list.add("!");
+        SharedPreferences.Editor edit = prefs.edit();
+        //Util.putListToSharedPref(edit, Constants.SHAR_PREF_PLANNED_DAYS, list);
+        List<String> retlist = new ArrayList<>();
+        retlist.add("incorrect");
+        //retlist = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        Log.d("Util", "RETURNING retlist " + retlist.toString());
         return rootView;
     }
 
@@ -60,7 +73,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
     public void onViewCreated (View view, Bundle savedInstanceState) {
         getListView().setOnScrollListener(this);
         getListView().setVerticalScrollBarEnabled(false);
-        getListView().setSelectionFromTop(_allPreviousDays.size(), 0);
+        getListView().setSelectionFromTop(_allPreviousDays.size()-1, 0);
     }
     @Override
     public void onScroll(AbsListView view,

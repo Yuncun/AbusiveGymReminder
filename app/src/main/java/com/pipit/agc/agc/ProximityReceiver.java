@@ -7,7 +7,11 @@ import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.PowerManager;
 import android.util.Log;
+
+import com.pipit.agc.agc.data.DayRecord;
+import com.pipit.agc.agc.data.DayRecordsSource;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -17,10 +21,10 @@ public class ProximityReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent arg1) {
-        /*
+
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
-        wl.acquire();*/
+        wl.acquire();
 
         Log.d("Alarm", "onReceive of PROXIMITY RECEIVER + intent action" + arg1.getAction());
 
@@ -31,6 +35,7 @@ public class ProximityReceiver extends BroadcastReceiver {
         if (state) {
             //Todo: Enter state
             enterOrLeave="entered";
+            updateLastDayRecord("Went to gym");
         } else {
             //Todo: Exit state
             enterOrLeave="exited";
@@ -47,12 +52,13 @@ public class ProximityReceiver extends BroadcastReceiver {
         double distance = gymLocation.distanceTo(currLocation);
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         String lastLocation = prefs.getString("locationlist", "none");
-        editor.putString("locationlist", lastLocation+"\nProximity Alert " + enterOrLeave + " at " +
-                mLastUpdateTime + " Last location is " + currLocation.getLatitude() +
-                currLocation.getLongitude() + " distance" + distance);
+        String body = lastLocation+"\nProximity Alert " + enterOrLeave + " at " +
+                mLastUpdateTime + " distance " + distance;
+        editor.putString("locationlist", body);
         Log.d("Alarm", "Proximity Alert just entered last location into sharedprefs");
+        Util.sendNotification(context, "Location Update", body);
         editor.commit();
-        //wl.release();
+        wl.release();
     }
 
     private Location getCurrentLocation(Context context){
@@ -89,5 +95,16 @@ public class ProximityReceiver extends BroadcastReceiver {
             gpsMsg="Provider is not available!";
         }
         return lc;
+    }
+
+    private void updateLastDayRecord(String comment){
+        DayRecordsSource datasource = DayRecordsSource.getInstance();
+        datasource.openDatabase();
+        datasource.updateLatestDayRecord(comment);
+        DayRecordsSource.getInstance().closeDatabase();
+
+
+
+
     }
 }

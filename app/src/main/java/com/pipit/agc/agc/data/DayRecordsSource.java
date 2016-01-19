@@ -5,9 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.pipit.agc.agc.Util;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,7 +32,7 @@ public class DayRecordsSource {
     private static MySQLiteHelper _databaseHelper;
     private static DayRecordsSource instance;
     private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_DAYRECORDS};
+            MySQLiteHelper.COLUMN_DAYRECORDS, MySQLiteHelper.COLUMN_DATE};
 
 
     public static synchronized void initializeInstance(MySQLiteHelper helper) {
@@ -62,9 +67,10 @@ public class DayRecordsSource {
         }
     }
 
-    public DayRecord createDayRecord(String comment) {
+    public DayRecord createDayRecord(String comment, Date date) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_DAYRECORDS, comment);
+        values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
         long insertId = mDatabase.insert(MySQLiteHelper.TABLE_DAYRECORDS, null,
                 values);
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS,
@@ -83,27 +89,38 @@ public class DayRecordsSource {
                 + " = " + id, null);
     }
 
+    public void updateLatestDayRecord(String comment){
+        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_DAYRECORDS + " = \""
+                + comment + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+                + ")";
+        mDatabase.execSQL(query);
+
+    }
     public List<DayRecord> getAllDayRecords() {
-        List<DayRecord> comments = new ArrayList<DayRecord>();
+        List<DayRecord> dayrecords = new ArrayList<DayRecord>();
 
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS,
                 allColumns, null, null, null, null, null);
 
+        Cursor dbCursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS, null, null, null, null, null, null);
+        String[] columnNames = dbCursor.getColumnNames();
+
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             DayRecord dayRecord = cursorToDayRecord(cursor);
-            comments.add(dayRecord);
+            dayrecords.add(dayRecord);
             cursor.moveToNext();
         }
         // make sure to close the cursor
         cursor.close();
-        return comments;
+        return dayrecords;
     }
 
     private DayRecord cursorToDayRecord(Cursor cursor) {
         DayRecord dayRecord = new DayRecord();
         dayRecord.setId(cursor.getLong(0));
         dayRecord.setComment(cursor.getString(1));
+        dayRecord.setDate(Util.stringToDate(cursor.getString(2)));
         return dayRecord;
     }
 }

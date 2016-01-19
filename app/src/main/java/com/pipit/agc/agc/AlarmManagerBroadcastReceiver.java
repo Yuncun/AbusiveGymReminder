@@ -25,7 +25,6 @@ import java.util.Date;
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 {
     GoogleApiClient mGoogleApiClient;
-    static AllinOneActivity _main;
     Context _context;
     String TAG = "AlarmManagerBroadcastReceiver";
 
@@ -47,7 +46,8 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pi);
     }
 
     public void CancelAlarm(Context context)
@@ -59,11 +59,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
     }
 
     private void doLocationCheck(Context context){
-        /*Request Location*/
-        if(_main!=null){
-            _main.startLocationUpdates();
-        }
-
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         /*Record number of times we have done a check*/
         int trackcount = prefs.getInt("trackcount", 0);
@@ -96,7 +91,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
             datasource = DayRecordsSource.getInstance();
         }
         datasource.openDatabase();
-        DayRecord dayRecord = datasource.createDayRecord("NEW DAY" + mLastUpdateTime);
+        DayRecord dayRecord = datasource.createDayRecord("Did not go to gym " + mLastUpdateTime, new Date());
         datasource.closeDatabase();
         Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
 
@@ -104,10 +99,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
     public void setGoogleApiThing(GoogleApiClient api){
         mGoogleApiClient=api;
-    }
-
-    public void setMainActivity(AllinOneActivity main){
-        _main=main;
     }
 
 }

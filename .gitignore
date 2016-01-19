@@ -35,3 +35,6 @@ build/
 #NDK
 obj/
 
+app/src/main/res/values/keys.xml
+
+

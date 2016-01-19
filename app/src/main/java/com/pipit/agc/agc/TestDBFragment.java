@@ -28,6 +28,7 @@ public class TestDBFragment extends ListFragment {
     private TextView resetTime;
     private Button _addButton;
     private Button _deleteButton;
+    private Button _upgradeDbButton;
 
     public static TestDBFragment newInstance(int sectionNumber) {
         TestDBFragment fragment = new TestDBFragment();
@@ -76,7 +77,7 @@ public class TestDBFragment extends ListFragment {
                 String[] comments = new String[]{"Red", "Green", "Blue"};
                 String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 int nextInt = new Random().nextInt(3);
-                DayRecord dayRecord = datasource.createDayRecord(comments[nextInt] + mLastUpdateTime);
+                DayRecord dayRecord = datasource.createDayRecord(comments[nextInt] + mLastUpdateTime, new Date());
                 adapter.add(dayRecord);
                 adapter.notifyDataSetChanged();
             }

@@ -34,7 +34,6 @@ import java.util.Locale;
 public class AllinOneActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-    private IntentFilter mIntentFilter;
     LocationManager lm;
     GoogleApiClient mGoogleApiClient;
     SectionsPagerAdapter mSectionsPagerAdapter;
@@ -42,9 +41,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     Location mLastLocation;
     LocationRequest mLocationRequest;
     private static String TAG = "AllinOneActivity";
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager mViewPager;
     private List<Fragment> _fragments;
 
@@ -54,8 +50,8 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
                 setContentView(R.layout.activity_main_layout);
 
         /*Launch Intro Activity*/
-        Intent intent = new Intent(this, IntroductionActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, IntroductionActivity.class);
+        //startActivity(intent);
 
         /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -67,18 +63,18 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         /*Handle Google stuff*/
         initGoogleApiClient();
 
-        /*Initialize Alarm*/
+        Log.d(TAG, "remaking _alarmmanager " + _alarm);
         _alarm = new AlarmManagerBroadcastReceiver();
         _alarm.setGoogleApiThing(mGoogleApiClient);
-        _alarm.setMainActivity(this);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
+        calendar.add(Calendar.DATE, 1);
+        _alarm.CancelAlarm(getApplicationContext());
         _alarm.SetAlarm(getApplicationContext(), calendar);
 
         /*Set Proximity Alert*/
-        mIntentFilter = new IntentFilter(Constants.PROXIMITY_INTENT_ACTION);
         setProximityLocationManager();
     }
 
@@ -108,10 +104,8 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -221,7 +215,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         gymLocation.setLatitude(lat);
         gymLocation.setLongitude(lng);
 
-
         float distance = gymLocation.distanceTo(location);
 
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
@@ -235,10 +228,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
-    }
-
-    public LandingFragment getLandingFragment(){
-        return (LandingFragment) _fragments.get(0);
     }
 
     public void setProximityLocationManager(){
@@ -257,11 +246,11 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         SharedPreferences.Editor editor = prefs.edit();
         maxAlertId++;
         editor.putInt("maxAlertId", maxAlertId);
-        lm.addProximityAlert(lat, lng, range, 60000, pi);
+        lm.addProximityAlert(lat, lng, range, -1, pi);
+        Log.d(TAG, "settingProximityAlert - There are now " + maxAlertId + " registered prox alerts");
+
     }
 
-    /**
-     */
     public void removeAllProximityAlerts() {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         int maxAlertId = prefs.getInt("maxAlertId", 0);
