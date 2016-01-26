@@ -40,7 +40,7 @@ public class CalendarFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
         ((TextView) rootView.findViewById(R.id.section_label)).setText(ARG_SECTION_NUMBER);
         _calendar = (CalendarView) rootView.findViewById(R.id.calendar);
-        _dayCard = (CardView) rootView.findViewById(R.id.cv);
+        _dayCard = (CardView) rootView.findViewById(R.id.cv_calendar);
         _dayCardTextView = (TextView) rootView.findViewById(R.id.info_text);
         initializeCalendar();
         return rootView;

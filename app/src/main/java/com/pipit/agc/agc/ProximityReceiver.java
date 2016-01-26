@@ -10,8 +10,7 @@ import android.location.LocationManager;
 import android.os.PowerManager;
 import android.util.Log;
 
-import com.pipit.agc.agc.data.DayRecord;
-import com.pipit.agc.agc.data.DayRecordsSource;
+import com.pipit.agc.agc.data.DBRecordsSource;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -56,7 +55,7 @@ public class ProximityReceiver extends BroadcastReceiver {
                 mLastUpdateTime + " distance " + distance;
         editor.putString("locationlist", body);
         Log.d("Alarm", "Proximity Alert just entered last location into sharedprefs");
-        Util.sendNotification(context, "Location Update", body);
+        Util.sendNotification(context, "Location Update", "Entered proximity at " + mLastUpdateTime);
         editor.commit();
         wl.release();
     }
@@ -98,10 +97,10 @@ public class ProximityReceiver extends BroadcastReceiver {
     }
 
     private void updateLastDayRecord(String comment){
-        DayRecordsSource datasource = DayRecordsSource.getInstance();
+        DBRecordsSource datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
         datasource.updateLatestDayRecord(comment);
-        DayRecordsSource.getInstance().closeDatabase();
+        DBRecordsSource.getInstance().closeDatabase();
 
 
 

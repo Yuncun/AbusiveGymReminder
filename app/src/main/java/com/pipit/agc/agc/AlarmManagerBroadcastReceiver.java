@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.pipit.agc.agc.data.DayRecord;
-import com.pipit.agc.agc.data.DayRecordsSource;
+import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.MySQLiteHelper;
 
 import java.text.DateFormat;
@@ -81,17 +81,16 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         String logUpdate = prefs.getString("locationlist", "none") + "\n" + "Alarm Manager Update at " + mLastUpdateTime;
         editor.putString("locationlist", logUpdate);
         editor.commit();
-        editor.commit();
 
         //Progress the day
-        DayRecordsSource datasource;
-        datasource = DayRecordsSource.getInstance();
+        DBRecordsSource datasource;
+        datasource = DBRecordsSource.getInstance();
         if (datasource==null){
-            DayRecordsSource.initializeInstance(new MySQLiteHelper(context));
-            datasource = DayRecordsSource.getInstance();
+            DBRecordsSource.initializeInstance(new MySQLiteHelper(context));
+            datasource = DBRecordsSource.getInstance();
         }
         datasource.openDatabase();
-        DayRecord dayRecord = datasource.createDayRecord("Did not go to gym " + mLastUpdateTime, new Date());
+        DayRecord dayRecord = datasource.createDayRecord("Did not go to gym ", new Date());
         datasource.closeDatabase();
         Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
 

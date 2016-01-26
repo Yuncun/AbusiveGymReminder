@@ -1,5 +1,6 @@
 package com.pipit.agc.agc;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,9 +23,7 @@ public class LandingFragment extends Fragment {
     private static TextView _lastLocationTxt;
     private Button _resetCountButton;
     private Button _updateLocationButton;
-    public static GoogleApiClient mGoogleApiClient;
-
-
+    private Context _context;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -39,6 +38,12 @@ public class LandingFragment extends Fragment {
     }
 
     public LandingFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        _context = activity;
     }
 
     @Override
@@ -59,6 +64,7 @@ public class LandingFragment extends Fragment {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putInt("trackcount", 0);
                 editor.putString("locationlist", "");
+                editor.commit();
                 updateLastLocation("");
             }
         });
@@ -79,14 +85,14 @@ public class LandingFragment extends Fragment {
 
     public void updateLastLocation(String txt){
         _lastLocationTxt.setText(txt);
-        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, getActivity().MODE_MULTI_PROCESS);
+        SharedPreferences prefs = _context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("locationlist", txt);
         editor.commit();
     }
 
     public void addLineToLog(String txt){
-        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences prefs = _context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         String prev = prefs.getString("locationlist", " ");
         updateLastLocation(prev+"\n"+txt);
     }

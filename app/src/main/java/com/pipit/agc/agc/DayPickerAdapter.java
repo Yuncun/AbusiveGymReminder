@@ -14,8 +14,10 @@ import android.widget.TextView;
 
 import com.pipit.agc.agc.data.DayRecord;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -23,18 +25,23 @@ import java.util.List;
  */
 public class DayPickerAdapter extends ArrayAdapter<String> {
     private final Context context;
-    private final List<DayRecord> allPreviousDays;
+    private List<DayRecord> allPreviousDays;
     public int count;
     private static int _screenheight;
     public static String TAG = "DayPickerAdapter";
+    private HashSet<String> exceptionDays; //Days in this set are inverted on  top of the weekly schedule
+    private HashSet<Integer> weeklySchedule; //Contains 0-7 days that are gym days
 
-    public DayPickerAdapter(Context context, List<DayRecord> allPreviousDays) {
+    public DayPickerAdapter(Context context, List<DayRecord> allPreviousDays, HashSet<String> exceptionDays,
+                            HashSet<Integer> weeklySchedule) {
         super(context, R.layout.dayrowlayout);
         this.context = context;
         this.count = 14;
         this.count+=allPreviousDays.size();
         this.allPreviousDays = allPreviousDays;
         this._screenheight=-1;
+        this.weeklySchedule = weeklySchedule;
+        this.exceptionDays = exceptionDays;
     }
 
     @Override
@@ -85,8 +92,9 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
             dayOfWeekTV.setText(getDayOfWeekText(dayOfWeek));
             dayOfMonthTV.setText(Integer.toString(day));
 
-            String primaryText = "GYM DAY";
+            String primaryText = getDayMessage(dayOfWeek, cal.getTime(), rowView);
             commentTV.setText(primaryText);
+
         }
 
         /*Set listview height to show 7 days*/
@@ -117,8 +125,6 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
     {
         if (targetheight <= 0)
             return;
-
-        //int targetWidth = targetWidth - this.getPaddingLeft() - this.getPaddingRight();
         Paint mTestPaint = new Paint();
         mTestPaint.set(txtv.getPaint());
         float hi = 100;
@@ -155,5 +161,48 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
                 return "Sat";
         }
         return null;
+    }
+
+    /*
+        Also styles the rowview
+     */
+    private String getDayMessage(int dayOfWeek, Date date, View rowview){
+        String primaryText;
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        String datestr = sdf.format(date);
+        String gymDay = getContext().getResources().getString(R.string.gym_day);
+        String restDay = getContext().getResources().getString(R.string.rest_day);
+        if (weeklySchedule.contains(dayOfWeek)){
+            primaryText = gymDay;
+        } else{
+            primaryText = restDay;
+        }
+
+        if (exceptionDays.contains(datestr)){
+            //Flip the day
+            if (primaryText.equals(restDay)) primaryText = gymDay;
+            else if (primaryText.equals(gymDay)) primaryText = restDay;
+        }
+
+        if (primaryText.equals(gymDay)){
+            rowview.setBackgroundColor(context.getResources().getColor(R.color.lightgreen));
+        }else{
+            rowview.setBackgroundColor(context.getResources().getColor(R.color.basewhite));
+        }
+        return primaryText;
+    }
+
+    public void updateData(List<DayRecord> allPreviousDays, HashSet<String> exceptionDays,
+                           HashSet<Integer> weeklySchedule){
+        if (allPreviousDays!=null){
+            this.allPreviousDays=allPreviousDays;
+        }
+        if (exceptionDays!=null){
+            this.exceptionDays=exceptionDays;
+        }
+        if (weeklySchedule!=null){
+            this.weeklySchedule=weeklySchedule;
+        }
+        this.notifyDataSetChanged();
     }
 }

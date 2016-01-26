@@ -22,6 +22,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.DayRecord;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -75,8 +77,10 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         _alarm.SetAlarm(getApplicationContext(), calendar);
 
         /*Set Proximity Alert*/
-        setProximityLocationManager();
+        //setProximityLocationManager();
     }
+
+
 
     private void initGoogleApiClient(){
         // Create an instance of GoogleAPIClient.
@@ -89,7 +93,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
             createLocationRequest();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -125,7 +128,7 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
 
         @Override
         public int getCount() {
-            return 5;
+            return 6;
         }
 
         @Override
@@ -142,6 +145,8 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
                     return "Page four";
                 case 4:
                     return "Page Five";
+                case 5:
+                    return "Page Six";
             }
             return null;
         }
@@ -152,14 +157,52 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         _fragments = new ArrayList<Fragment>();
         _fragments.add(LandingFragment.newInstance(1));
         _fragments.add(DayPickerFragment.newInstance(2));
-        _fragments.add(CalendarFragment.newInstance(3));
-        _fragments.add(TestDBFragment.newInstance(4));
+        _fragments.add(NewsfeedFragment.newInstance());
+        _fragments.add(TestDBFragmentDays.newInstance(4));
+        _fragments.add(TestDBFragmentMessages.newInstance(5));
         _fragments.add(PlacePickerFragment.newInstance());
     }
 
 
     protected void onStart() {
         mGoogleApiClient.connect();
+        /*Make sure that we are up to date*/
+        DBRecordsSource datasource = DBRecordsSource.getInstance();
+        datasource.openDatabase();
+        DayRecord lastDate = datasource.getLastDayRecord();
+        DayRecord todaysDate = new DayRecord();
+        todaysDate.setDate(new Date());
+
+        if (lastDate==null){
+            //No days on record - Create today
+            DayRecord dayRecord = datasource.createDayRecord("Did not go to gym ", new Date());
+        }else
+        if (!lastDate.compareToDate(todaysDate.getDate())){
+            if(lastDate.getDate().before(todaysDate.getDate())){
+                //We skipped a day somehow
+                while(!lastDate.compareToDate(todaysDate.getDate())){
+                    //Add days until we match up
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(lastDate.getDate());
+                    cal.add(Calendar.DATE, 1); //minus number would decrement the days
+                    lastDate.setDate(cal.getTime());
+                    datasource.createDayRecord("No Record", lastDate.getDate());
+                    Log.d(TAG, "Incremented a day, lastDate is now" + lastDate.getDateString()
+                        + "and today's date is " + todaysDate.getDateString());
+                }
+            }
+            else if (lastDate.getDate().after(todaysDate.getDate())){
+                //A more nefarious case when we have dates ahead of system time
+                //Maybe this happened because of travelling between time zones
+                //Or because the user's phone is messed up. We will go back to original date
+                //Todo: Send a message to user informing of this change
+                //Todo: Save information - If correct day reappears, reapply old day records
+                Log.d(TAG, "Current system date is " + todaysDate.getDateString() + " but last day on record "
+                        + " is " + lastDate.getDateString());
+            }
+        }
+        DBRecordsSource.getInstance().closeDatabase();
+
         super.onStart();
     }
 
@@ -167,6 +210,8 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         mGoogleApiClient.disconnect();
         super.onStop();
     }
+
+    /*          LOCATION STUFF          */
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -230,40 +275,45 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
                 mGoogleApiClient, this);
     }
 
-    public void setProximityLocationManager(){
-
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        double lat = Util.getDouble(prefs, "lat", 0);
-        double lng = Util.getDouble(prefs, "lng", 0);
-        float range = (float) prefs.getInt("range", 50);
-
+    public void addProximityAlert(double lat, double lng){
         lm=(LocationManager) getSystemService(LOCATION_SERVICE);
-
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         int maxAlertId = prefs.getInt("maxAlertId", 0); //Todo: Remember individual IDs
+        Log.d(TAG, "Adding prox alert, previous id was " + 0);
+        removeAllProximityAlerts(this);
+        float range = (float) prefs.getInt("range", -1);
+        if (range < 0){
+            prefs.edit().putFloat("range", (float) 50);
+            range = 50;
+        }
         Intent intent = new Intent(Constants.PROXIMITY_INTENT_ACTION);
-        intent.putExtra(ProximityReceiver.EVENT_ID_INTENT_EXTRA, 0);
-        PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), maxAlertId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        SharedPreferences.Editor editor = prefs.edit();
         maxAlertId++;
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("maxAlertId", maxAlertId);
-        lm.addProximityAlert(lat, lng, range, -1, pi);
-        Log.d(TAG, "settingProximityAlert - There are now " + maxAlertId + " registered prox alerts");
+        Util.putDouble(editor, "lat", lat);
+        Util.putDouble(editor, "lng", lng);
+        editor.commit();
 
+        //Log.d(TAG, "Finished adding prox alert, maxAlertId is now " + prefs.getInt("maxAlertId", 0));
+        lm.addProximityAlert(lat, lng, range, -1, pi);
     }
 
-    public void removeAllProximityAlerts() {
+    public void removeAllProximityAlerts(Context context) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        int maxAlertId = prefs.getInt("maxAlertId", 0);
-        Intent intent = new Intent(Constants.PROXIMITY_INTENT_ACTION);
+        int maxAlertId = prefs.getInt("maxAlertId", 0); //Todo: Remember individual IDs
 
-        for(int i=-1;i<maxAlertId;i++){
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            lm.removeProximityAlert(pendingIntent);
+        if (lm==null){
+            lm=(LocationManager) getSystemService(LOCATION_SERVICE);
         }
-        SharedPreferences.Editor editor = prefs.edit();
-        Util.putDouble(editor, "lat",  0).commit();
-        Util.putDouble(editor, "lng",  0).commit();
-        editor.putString("address", "none").commit();
+        for (int i=0; i<=maxAlertId; i++){
+            Intent intent = new Intent(Constants.PROXIMITY_INTENT_ACTION);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context ,i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            lm.removeProximityAlert(pendingIntent);
+            pendingIntent.cancel();
+        }
+        //For good measure
+
     }
 }
 

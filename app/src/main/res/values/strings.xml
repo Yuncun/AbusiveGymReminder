@@ -3,6 +3,7 @@
 
     <string name="app_name">AgC</string>
     <string name="intro_label">Intro</string>
+    <string name="message_label">Message</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -12,6 +13,8 @@
     <string name="title_activity_location">LocationActivity</string>
     <string name="range_picker_description">Adjust match proximity in meters</string>
     <string name="submit">submit</string>
+    <string name="gym_day">GYM DAY</string>
+    <string name="rest_day">REST DAY</string>
 
 
 </resources>

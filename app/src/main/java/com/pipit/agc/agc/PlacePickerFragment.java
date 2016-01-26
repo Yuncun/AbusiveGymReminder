@@ -68,9 +68,10 @@ public class PlacePickerFragment extends Fragment {
         _address=(TextView) rootView.findViewById(R.id.addressText);
         _address.setText(_addressDefault);
         _rangeDescription = (TextView) rootView.findViewById(R.id.range_description);
-        _rangeDescription.setText(getResources().getText(R.string.range_picker_description));
+        _rangeDescription.setText(getResources().getText(R.string.range_picker_description) + " Currently "
+                + prefs.getInt("range", -1));
         _rangeEditText=(EditText) rootView.findViewById(R.id.rangesetting);
-       // _rangeEditText.setHint(prefs.getInt("range", -1));
+        //_rangeEditText.setText(prefs.getInt("range", -1));
         _submitButton = (Button) rootView.findViewById(R.id.submit_button);
         _submitButton.setText(getResources().getText(R.string.submit));
         _submitButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +81,7 @@ public class PlacePickerFragment extends Fragment {
                     int range = Integer.parseInt(str);
                     Toast.makeText(getActivity(), "range set to " + str, Toast.LENGTH_SHORT).show();
                     editor.putInt("range", range);
+                    editor.commit();
                 }
                 catch(Exception e) {
                     Log.e("logtag", "Exception: " + e.toString());
@@ -93,10 +95,14 @@ public class PlacePickerFragment extends Fragment {
         _removeProxAlertsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Removing all saved locations", Toast.LENGTH_SHORT).show();
-                ((AllinOneActivity) getActivity()).removeAllProximityAlerts();
+                ((AllinOneActivity) getActivity()).removeAllProximityAlerts(getActivity());
+                SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = prefs.edit();
+                Util.putDouble(editor, "lat",  0).commit();
+                Util.putDouble(editor, "lng", 0).commit();
+                editor.putString("address", "none").commit();
             }
         });
-
 
         return rootView;
     }
@@ -148,10 +154,8 @@ public class PlacePickerFragment extends Fragment {
 
                 SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
                 SharedPreferences.Editor editor = prefs.edit();
-                Util.putDouble(editor, "lat",  location.latitude).commit();
-                Util.putDouble(editor, "lng",  location.longitude).commit();
                 editor.putString("address", address.toString()).commit();
-                ((AllinOneActivity) getActivity()).setProximityLocationManager();
+                ((AllinOneActivity) getActivity()).addProximityAlert(location.latitude, location.longitude);
 
             } else {
                 Log.d(TAG, "resultCode is wrong " + "resultCode");

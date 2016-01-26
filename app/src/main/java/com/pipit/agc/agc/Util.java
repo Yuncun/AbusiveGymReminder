@@ -54,7 +54,9 @@ public class Util {
         ArrayList<String> list = new ArrayList<String>();
         try{
             String k = prefs.getString(key, "");
-            Log.d("Util", "getArrayFromSharedPref retrieved String " + k);
+            if (k.isEmpty()){
+                return list;
+            }
             JSONArray jsonArray = new JSONArray(k);
             if (jsonArray != null) {
                 int len = jsonArray.length();
@@ -64,9 +66,31 @@ public class Util {
             }
             return list;
         } catch (Exception e){
-            Log.d("Util", "getArrayFromSharedPref Failed to convert into jsonArray " + e.toString());
+            Log.d("Util", "getListFromSharedPref Failed to convert into jsonArray " + e.toString());
             return list;
         }
+    }
+
+    public static List<String> dateListToStringList(List<Date> dates){
+        List<String> ret = new ArrayList<String>();
+        for(Date d : dates){
+            String s = dateToString(d);
+            if (s!=null){
+                ret.add(s);
+            }
+        }
+        return ret;
+    }
+
+    public static List<Date> stringListToDateList(List<String> strs){
+        List<Date> dates = new ArrayList<Date>();
+        for (String s : strs){
+            Date d = stringToDate(s);
+            if (s!=null){
+                dates.add(d);
+            }
+        }
+        return dates;
     }
 
     public static String dateToString(Date date){
@@ -81,6 +105,7 @@ public class Util {
             date = sdf.parse(stringdate);
         } catch (Exception e){
             Log.d("Util", "Failed to parse " + stringdate + " into date format");
+            return null;
         }
         return date;
     }

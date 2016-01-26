@@ -2,18 +2,15 @@ package com.pipit.agc.agc.data;
 
 import com.pipit.agc.agc.Util;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Eric on 1/10/2016.
+ * Created by Eric on 1/23/2016.
  */
-public class DayRecord {
+public class Message {
     private long id;
     private String comment;
     private Date date;
-
-
     public long getId() {
         return id;
     }
@@ -47,10 +44,4 @@ public class DayRecord {
     public String toString() {
         return comment;
     }
-
-    public boolean compareToDate(Date otherdate){
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-        return fmt.format(this.date).equals(fmt.format(otherdate));
-    }
-
 }

@@ -2,7 +2,7 @@ package com.pipit.agc.agc;
 
 import android.app.Application;
 
-import com.pipit.agc.agc.data.DayRecordsSource;
+import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.MySQLiteHelper;
 
 /**
@@ -13,7 +13,7 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DayRecordsSource.initializeInstance(new MySQLiteHelper(this));
+        DBRecordsSource.initializeInstance(new MySQLiteHelper(this));
     }
 
     @Override

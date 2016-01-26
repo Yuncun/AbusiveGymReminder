@@ -9,8 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.DayRecord;
-import com.pipit.agc.agc.data.DayRecordsSource;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -18,20 +18,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class TestDBFragment extends ListFragment {
+public class TestDBFragmentDays extends ListFragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String TAG = "TestDBFragment";
+    private static final String TAG = "TestDBFragmentDays";
 
-    private DayRecordsSource datasource;
+    private DBRecordsSource datasource;
     private TextView currentTime;
     private TextView resetTime;
     private Button _addButton;
     private Button _deleteButton;
     private Button _upgradeDbButton;
 
-    public static TestDBFragment newInstance(int sectionNumber) {
-        TestDBFragment fragment = new TestDBFragment();
+    public static TestDBFragmentDays newInstance(int sectionNumber) {
+        TestDBFragmentDays fragment = new TestDBFragmentDays();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -46,7 +46,7 @@ public class TestDBFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.test_db_fragment, container, false);
-        datasource = DayRecordsSource.getInstance();
+        datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
         List<DayRecord> values = datasource.getAllDayRecords();
         ArrayAdapter<DayRecord> adapter = new ArrayAdapter<DayRecord>(getActivity(),
@@ -107,7 +107,7 @@ public class TestDBFragment extends ListFragment {
 
     @Override
     public void onPause() {
-        DayRecordsSource.getInstance().closeDatabase();
+        DBRecordsSource.getInstance().closeDatabase();
         super.onPause();
     }
 
