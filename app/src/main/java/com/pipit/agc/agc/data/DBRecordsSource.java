@@ -182,12 +182,20 @@ public class DBRecordsSource {
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Message dayRecord = cursorToMessage(cursor);
-            messages.add(dayRecord);
+            Message msg = cursorToMessage(cursor);
+            messages.add(msg);
             cursor.moveToNext();
         }
         cursor.close();
         return messages;
+    }
+
+    public Message getMessageById(String id){
+        Cursor cursorc = mDatabase.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_MESSAGES
+                + " WHERE " + MySQLiteHelper.COLUMN_ID + " = " + id, null);
+        cursorc.moveToFirst();
+        Message msg = cursorToMessage(cursorc);
+        return msg;
     }
 
     private Message cursorToMessage(Cursor cursor) {

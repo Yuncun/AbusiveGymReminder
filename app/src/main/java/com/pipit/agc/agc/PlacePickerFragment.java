@@ -125,7 +125,6 @@ public class PlacePickerFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // BEGIN_INCLUDE(activity_result)
         if (requestCode == Constants.REQUEST_PLACE_PICKER) {
 
             if (resultCode == Activity.RESULT_OK) {

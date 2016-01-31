@@ -80,8 +80,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         //setProximityLocationManager();
     }
 
-
-
     private void initGoogleApiClient(){
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
@@ -202,7 +200,6 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
             }
         }
         DBRecordsSource.getInstance().closeDatabase();
-
         super.onStart();
     }
 
@@ -251,20 +248,11 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
         double currlat = location.getLatitude();
         double currlng = location.getLongitude();
 
-        /*Check lat/lng*/
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        double lat = Util.getDouble(prefs, "lat", currlat);
-        double lng = Util.getDouble(prefs, "lng", currlng);
-
-        Location gymLocation = new Location("");
-        gymLocation.setLatitude(lat);
-        gymLocation.setLongitude(lng);
-
+        Location gymLocation = getGymLocation(this);
         float distance = gymLocation.distanceTo(location);
 
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        ((LandingFragment)_fragments.get(0)).updateLastLocation(
-                prefs.getString("locationlist", "none") + "\n" + mLastUpdateTime
+        ((LandingFragment)_fragments.get(0)).addLineToLog(mLastUpdateTime
         + " Lat:" + currlat + " Lng:" + currlng + " Dist:" + distance);
 
         stopLocationUpdates();
@@ -275,26 +263,31 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
                 mGoogleApiClient, this);
     }
 
+    /**
+     * Adds proximity alert to given coordinates; removes old proximity alerts.
+     * Also saves coordinates into sharedpref
+     * @param lat
+     * @param lng
+     */
     public void addProximityAlert(double lat, double lng){
         lm=(LocationManager) getSystemService(LOCATION_SERVICE);
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        int maxAlertId = prefs.getInt("maxAlertId", 0); //Todo: Remember individual IDs
-        Log.d(TAG, "Adding prox alert, previous id was " + 0);
         removeAllProximityAlerts(this);
         float range = (float) prefs.getInt("range", -1);
         if (range < 0){
             prefs.edit().putFloat("range", (float) 50);
             range = 50;
         }
-        Intent intent = new Intent(Constants.PROXIMITY_INTENT_ACTION);
-        maxAlertId++;
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
+        int alertId= (int) System.currentTimeMillis();
+        PendingIntent pi = PendingIntent.getBroadcast(this, alertId , intent, 0);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("maxAlertId", maxAlertId);
-        Util.putDouble(editor, "lat", lat);
-        Util.putDouble(editor, "lng", lng);
-        editor.commit();
+        editor.putInt("maxAlertId", alertId).commit();
+        Util.putDouble(editor, Constants.DEST_LAT, lat);
+        Util.putDouble(editor, Constants.DEST_LNG, lng);
+        Log.d(TAG, "Adding prox alert, ID is " + alertId + " range is " + range);
 
+        editor.commit();
         //Log.d(TAG, "Finished adding prox alert, maxAlertId is now " + prefs.getInt("maxAlertId", 0));
         lm.addProximityAlert(lat, lng, range, -1, pi);
     }
@@ -302,18 +295,53 @@ public class AllinOneActivity extends AppCompatActivity implements GoogleApiClie
     public void removeAllProximityAlerts(Context context) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         int maxAlertId = prefs.getInt("maxAlertId", 0); //Todo: Remember individual IDs
-
+        Log.d(TAG, "Attempting to remove prox alert, id is " + maxAlertId);
         if (lm==null){
             lm=(LocationManager) getSystemService(LOCATION_SERVICE);
         }
-        for (int i=0; i<=maxAlertId; i++){
-            Intent intent = new Intent(Constants.PROXIMITY_INTENT_ACTION);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context ,i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            lm.removeProximityAlert(pendingIntent);
-            pendingIntent.cancel();
-        }
-        //For good measure
+        Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this , maxAlertId, intent, 0);
+        lm.removeProximityAlert(pendingIntent);
+    }
 
+    public void addProximityAlertTest (double latitude, double longitude) {
+        lm=(LocationManager) getSystemService(LOCATION_SERVICE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        removeAllProximityAlerts(this);
+        float range = (float) prefs.getInt("range", -1);
+        if (range < 0){
+            prefs.edit().putFloat("range", (float) 50);
+            range = 50;
+        }
+        Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
+        PendingIntent proximityIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        lm.addProximityAlert(
+                latitude, // the latitude of the central point of the alert region
+                longitude, // the longitude of the central point of the alert region
+                range, // the radius of the central point of the alert region, in meters
+                -1, // time for this proximity alert, in milliseconds, or -1 to indicate no expiration
+                proximityIntent // will be used to generate an Intent to fire when entry to or exit from the alert region is detected
+        );
+
+        IntentFilter filter = new IntentFilter(Constants.PROX_INTENT_FILTER);
+        registerReceiver(new ProximityReceiver(), filter);
+    }
+
+    /**
+     * Utility function for getting the location of the gym
+     * @return Location object, with the gym coordinates
+     */
+    public static Location getGymLocation(Context context){
+        /*Check lat/lng*/
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        double lat = Util.getDouble(prefs, "lat", 0);
+        double lng = Util.getDouble(prefs, "lng", 0);
+
+        Location gymLocation = new Location("");
+        gymLocation.setLatitude(lat);
+        gymLocation.setLongitude(lng);
+        return gymLocation;
     }
 }
 

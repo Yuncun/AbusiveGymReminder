@@ -72,10 +72,10 @@ public class TestDBFragmentMessages extends ListFragment {
             @Override
             public void onClick(View view) {
                 ArrayAdapter<Message> adapter = (ArrayAdapter<Message>) getListAdapter();
-                String[] comments = new String[]{"TEST MESSAGE ONE", "TEST MESSAGE TWO", "TEST MESSAGE THREE"};
+                String[] comments = new String[]{"You suck", "This is why you're fat", "Obesity kills`"};
                 String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 int nextInt = new Random().nextInt(3);
-                Message message = datasource.createMessage(comments[nextInt] + mLastUpdateTime, new Date());
+                Message message = datasource.createMessage(comments[nextInt], new Date());
                 adapter.add(message);
                 adapter.notifyDataSetChanged();
             }

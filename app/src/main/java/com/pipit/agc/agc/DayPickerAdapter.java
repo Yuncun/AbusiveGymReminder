@@ -100,7 +100,6 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
         /*Set listview height to show 7 days*/
         if (_screenheight<1){
             _screenheight = Math.round(Util.getScreenHeightMinusStatusBar(getContext()));
-            Log.d(TAG, "Screen height minus action bar is " + _screenheight );
         }
 
         //The weight of the day number is 3/4 of the total height

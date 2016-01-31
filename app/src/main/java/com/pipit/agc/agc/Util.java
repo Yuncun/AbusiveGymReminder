@@ -115,7 +115,8 @@ public class Util {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setContentTitle(title)
-                        .setContentText(body);
+                        .setContentText(body)
+                        .setAutoCancel(true);
         Intent resultIntent = new Intent(context, AllinOneActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);

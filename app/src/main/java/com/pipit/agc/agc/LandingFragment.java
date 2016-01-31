@@ -81,6 +81,9 @@ public class LandingFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        if(_context==null){
+            _context=getActivity();
+        }
     }
 
     public void updateLastLocation(String txt){

@@ -81,9 +81,8 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 public void onClick(View v) {
                     Intent intent = new Intent(_context, MessageBodyActivity.class);
                     intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos - _offset).getId());
+                    _context.startActivity(intent);
                     //Todo: Mark comment as "read"
-
-
                 }
             });
         }

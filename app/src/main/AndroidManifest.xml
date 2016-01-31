@@ -59,9 +59,10 @@
         <receiver
             android:name=".ProximityReceiver"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true"
+            >
             <intent-filter>
-                <action android:name="com.pipit.agc.agc.action.PROXIMITY_ALERT" />
+                <action android:name="com.pipit.agc.agc.ProximityReceiver" />
             </intent-filter>
         </receiver>
     </application>

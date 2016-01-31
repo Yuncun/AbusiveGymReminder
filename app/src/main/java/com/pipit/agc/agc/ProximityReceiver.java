@@ -17,6 +17,7 @@ import java.util.Date;
 
 public class ProximityReceiver extends BroadcastReceiver {
     public static final String EVENT_ID_INTENT_EXTRA = "EventIDIntentExtraKey";
+    private static final String TAG = "ProximityReceiver";
 
     @Override
     public void onReceive(Context context, Intent arg1) {
@@ -25,7 +26,7 @@ public class ProximityReceiver extends BroadcastReceiver {
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
 
-        Log.d("Alarm", "onReceive of PROXIMITY RECEIVER + intent action" + arg1.getAction());
+        Log.d(TAG, "onReceive of PROXIMITY RECEIVER + intent action" + arg1.getAction());
 
         String k = LocationManager.KEY_PROXIMITY_ENTERING;
         boolean state = arg1.getBooleanExtra(k, false);
@@ -42,19 +43,17 @@ public class ProximityReceiver extends BroadcastReceiver {
 
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
-        double lat = Util.getDouble(prefs, "lat", 0);
-        double lng = Util.getDouble(prefs, "lng", 0);
-        Location gymLocation = new Location("");
-        gymLocation.setLatitude(lat);
-        gymLocation.setLongitude(lng);
-        Location currLocation =  getCurrentLocation(context);
+        int radius = prefs.getInt("range", 50);
+        Location gymLocation = AllinOneActivity.getGymLocation(context);
+        Location currLocation = getCurrentLocation(context);
         double distance = gymLocation.distanceTo(currLocation);
+        String verdict = sanitycheck((int)distance, radius);
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         String lastLocation = prefs.getString("locationlist", "none");
         String body = lastLocation+"\nProximity Alert " + enterOrLeave + " at " +
-                mLastUpdateTime + " distance " + distance;
+                mLastUpdateTime + " distance " + (int) distance + " " + verdict;
         editor.putString("locationlist", body);
-        Log.d("Alarm", "Proximity Alert just entered last location into sharedprefs");
+        Log.d(TAG, "Proximity Alert just entered last location into sharedprefs");
         Util.sendNotification(context, "Location Update", "Entered proximity at " + mLastUpdateTime);
         editor.commit();
         wl.release();
@@ -87,23 +86,26 @@ public class ProximityReceiver extends BroadcastReceiver {
             {
                 gpsMsg="Current Location can not be resolved!";
             }
-
         }
         else
         {
             gpsMsg="Provider is not available!";
         }
+        Log.d(TAG, "getCurrentLocation: " + gpsMsg);
         return lc;
     }
+
 
     private void updateLastDayRecord(String comment){
         DBRecordsSource datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
         datasource.updateLatestDayRecord(comment);
         DBRecordsSource.getInstance().closeDatabase();
+    }
 
-
-
-
+    private String sanitycheck(int i, int range){
+        if (i>(range*2)){
+            return "(REJECTED)";
+        }else return "(ACCEPTED)";
     }
 }
