@@ -24,7 +24,6 @@ import java.util.Date;
  */
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 {
-    GoogleApiClient mGoogleApiClient;
     Context _context;
     String TAG = "AlarmManagerBroadcastReceiver";
 
@@ -96,8 +95,5 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
     }
 
-    public void setGoogleApiThing(GoogleApiClient api){
-        mGoogleApiClient=api;
-    }
 
 }

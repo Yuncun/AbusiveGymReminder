@@ -72,7 +72,6 @@ public class LandingFragment extends Fragment {
         _updateLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AllinOneActivity) getActivity()).startLocationUpdates();
             }
         });
         return rootView;
