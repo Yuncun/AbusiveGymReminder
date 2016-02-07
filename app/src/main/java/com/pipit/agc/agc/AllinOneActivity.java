@@ -3,7 +3,6 @@ package com.pipit.agc.agc;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
@@ -17,15 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.DayRecord;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,7 +58,8 @@ public class AllinOneActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
         calendar.add(Calendar.DATE, 1);
         _alarm.CancelAlarm(getApplicationContext());
-        _alarm.SetAlarm(getApplicationContext(), calendar);
+        _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
+        //Test
     }
 
     @Override
@@ -102,7 +96,7 @@ public class AllinOneActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 6;
+            return 7;
         }
 
         @Override
@@ -121,6 +115,8 @@ public class AllinOneActivity extends AppCompatActivity {
                     return "Page Five";
                 case 5:
                     return "Page Six";
+                case 6:
+                    return "Page Seven";
             }
             return null;
         }
@@ -132,8 +128,9 @@ public class AllinOneActivity extends AppCompatActivity {
         _fragments.add(LandingFragment.newInstance(1));
         _fragments.add(DayPickerFragment.newInstance(2));
         _fragments.add(NewsfeedFragment.newInstance());
-        _fragments.add(TestDBFragmentDays.newInstance(4));
-        _fragments.add(TestDBFragmentMessages.newInstance(5));
+        _fragments.add(DayOfWeekPickerFragment.newInstance(4));
+        _fragments.add(TestDBFragmentDays.newInstance(5));
+        _fragments.add(TestDBFragmentMessages.newInstance(6));
         _fragments.add(PlacePickerFragment.newInstance());
     }
 
@@ -148,7 +145,10 @@ public class AllinOneActivity extends AppCompatActivity {
 
         if (lastDate==null){
             //No days on record - Create today
-            DayRecord dayRecord = datasource.createDayRecord("Did not go to gym ", new Date());
+            DayRecord day = new DayRecord();
+            day.setComment(getResources().getString(R.string.has_not_been));
+            day.checkAndSetIfGymDay(getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS));
+            datasource.createDayRecord(day);
         }else
         if (!lastDate.compareToDate(todaysDate.getDate())){
             if(lastDate.getDate().before(todaysDate.getDate())){
@@ -159,7 +159,10 @@ public class AllinOneActivity extends AppCompatActivity {
                     cal.setTime(lastDate.getDate());
                     cal.add(Calendar.DATE, 1); //minus number would decrement the days
                     lastDate.setDate(cal.getTime());
-                    datasource.createDayRecord("No Record", lastDate.getDate());
+                    DayRecord day = new DayRecord();
+                    day.setComment(getResources().getString(R.string.no_record));
+                    day.setIsGymDay(false);
+                    datasource.createDayRecord(day);
                     Log.d(TAG, "Incremented a day, lastDate is now" + lastDate.getDateString()
                         + "and today's date is " + todaysDate.getDateString());
                 }
@@ -193,8 +196,8 @@ public class AllinOneActivity extends AppCompatActivity {
         removeAllProximityAlerts(this);
         float range = (float) prefs.getInt("range", -1);
         if (range < 0){
-            prefs.edit().putFloat("range", (float) 50);
-            range = 50;
+            prefs.edit().putFloat("range", (float) 100);
+            range = 100;
         }
         Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
         int alertId= (int) System.currentTimeMillis();
@@ -227,13 +230,22 @@ public class AllinOneActivity extends AppCompatActivity {
     public static Location getGymLocation(Context context){
         /*Check lat/lng*/
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        double lat = Util.getDouble(prefs, "lat", 0);
-        double lng = Util.getDouble(prefs, "lng", 0);
+        double lat = Util.getDouble(prefs, "lat", Constants.DEFAULT_COORDINATE);
+        double lng = Util.getDouble(prefs, "lng", Constants.DEFAULT_COORDINATE);
 
         Location gymLocation = new Location("");
         gymLocation.setLatitude(lat);
         gymLocation.setLongitude(lng);
         return gymLocation;
+    }
+
+    public Fragment getFragmentByKey(String key){
+        switch (key){
+            case Constants.NEWSFEED_FRAG:
+                return _fragments.get(2);
+            default:
+                return null;
+        }
     }
 }
 

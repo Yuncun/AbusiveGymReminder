@@ -10,7 +10,6 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.pipit.agc.agc.data.DayRecord;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.MySQLiteHelper;
@@ -33,39 +32,52 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
-        Log.d(TAG, "Received broadcast");
         _context=context;
-        //doLocationCheck(context);
-        doDayLogging(context);
+
+        String purpose = intent.getStringExtra("purpose");
+        Log.d(TAG, "Received broadcast for " + purpose);
+        switch(purpose){
+            case "daylogging" :
+                doDayLogging(context);
+                break;
+            case "locationlogging" :
+                doLocationCheck(context);
+                break;
+            default:
+                break;
+        }
         wl.release();
     }
 
-    public void SetAlarm(Context context, Calendar calendar)
+    public void setAlarmForDayLog(Context context, Calendar calendar)
     {
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
+        i.putExtra("purpose", "daylogging");
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
         am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pi);
     }
 
+    public void setAlarmForLocationLog(Context context){
+        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
+        i.putExtra("purpose", "locationlogging");
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.MINUTE, 2);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
+        Log.d(TAG, "set alarm for location log, current time is " + System.currentTimeMillis()
+            + " alarm set for " + calendar.getTimeInMillis());
+    }
     public void CancelAlarm(Context context)
     {
         Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
+        intent.putExtra("purpose", "locationlogging");
         PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(sender);
-    }
-
-    private void doLocationCheck(Context context){
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        /*Record number of times we have done a check*/
-        int trackcount = prefs.getInt("trackcount", 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("trackcount", trackcount+1);
-        editor.commit();
-
-        Log.d("Alarm", "trackcount committed " + trackcount);
     }
 
     /**
@@ -89,11 +101,57 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
             datasource = DBRecordsSource.getInstance();
         }
         datasource.openDatabase();
-        DayRecord dayRecord = datasource.createDayRecord("Did not go to gym ", new Date());
+        DayRecord day = new DayRecord();
+        day.setComment("You have not been to the gym");
+        day.setDate(new Date());
+        day.setHasBeenToGym(false);
+        day.setIsGymDay(false);
+        DayRecord dayRecord = datasource.createDayRecord(day);
         datasource.closeDatabase();
         Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
-
     }
 
+    /**
+     *  This function checks if todays beentogym status needs to be updated
+     *
+     *  When a proximity alert is entered, there is a high chance of a false positive.
+     *  Therefore when proximity receiver gets a broadcast, it will use AlarmManager to
+     *  wait two or three minutes to check if the false positive has corrected itself (usually
+     *  takes one minute).
+     *
+     *  This function will be executed after the allotted wait time. It simply checks if
+     *  the prox alert has been nullified in the last two minutes. If not, it updates beentogym
+     *  status.
+     */
+    private void doLocationCheck(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        if (!prefs.contains("justEntered")){
+            Log.e(TAG, "No enter status found in doLocationCheck, shared preferences does not contain 'justEntered'");
+            return;
+        }
+        String verdict;
+        if (prefs.getBoolean("justEntered", false)){
+            updateLastDayRecord(true);
+            verdict="Prox alert accepted; Updating gym status";
+            Log.d(TAG, verdict);
+            Util.sendNotification(context, "Location Update", "Entered proximity at " + new Date());
+        }
+        else{
+            verdict="Prox alert rejected as false positive";
+            Log.d(TAG, verdict);
+        }
+        //Update logs
+        SharedPreferences.Editor editor = prefs.edit();
+        String lastLocation = prefs.getString("locationlist", "none");
+        String body = lastLocation+"\n" + verdict;
+        editor.putString("locationlist", body).commit();
+    }
+
+    private void updateLastDayRecord(boolean beenToGymToday){
+        DBRecordsSource datasource = DBRecordsSource.getInstance();
+        datasource.openDatabase();
+        datasource.updateLatestDayRecordGymStatus(beenToGymToday);
+        DBRecordsSource.getInstance().closeDatabase();
+    }
 
 }

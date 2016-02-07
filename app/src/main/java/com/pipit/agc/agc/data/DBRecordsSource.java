@@ -29,7 +29,8 @@ public class DBRecordsSource {
     private static MySQLiteHelper _databaseHelper;
     private static DBRecordsSource instance;
     private String[] allColumnsDayRecords = { MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_DAYRECORDS, MySQLiteHelper.COLUMN_DATE};
+            MySQLiteHelper.COLUMN_DAYRECORDS, MySQLiteHelper.COLUMN_DATE,
+            MySQLiteHelper.COLUMN_ISGYMDAY, MySQLiteHelper.COLUMN_BEENTOGYM};
     private String[] allColumnsMessages = { MySQLiteHelper.COLUMN_ID,
             MySQLiteHelper.COLUMN_MESSAGES, MySQLiteHelper.COLUMN_DATE};
 
@@ -45,7 +46,6 @@ public class DBRecordsSource {
             throw new IllegalStateException(DBRecordsSource.class.getSimpleName() +
                     " is not initialized, cannot get instance.");
         }
-
         return instance;
     }
 
@@ -66,10 +66,18 @@ public class DBRecordsSource {
     }
 
     /**DAY RECORDS STUFF**/
-    public DayRecord createDayRecord(String comment, Date date) {
+    public DayRecord createDayRecord(DayRecord day) {
+        String comment=day.getComment();
+        Date date = day.getDate();
+        boolean isGymDay = day.isGymDay();
+        boolean beenToGym = day.beenToGym();
+
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_DAYRECORDS, comment);
         values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
+        values.put(MySQLiteHelper.COLUMN_BEENTOGYM, (beenToGym) ? 1 : 0);
+        values.put(MySQLiteHelper.COLUMN_ISGYMDAY, (isGymDay) ? 1 : 0);
+
         long insertId = mDatabase.insert(MySQLiteHelper.TABLE_DAYRECORDS, null,
                 values);
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS,
@@ -88,9 +96,16 @@ public class DBRecordsSource {
                 + " = " + id, null);
     }
 
-    public void updateLatestDayRecord(String comment){
+    public void updateLatestDayRecordComment(String comment){
         String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_DAYRECORDS + " = \""
                 + comment + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+                + ")";
+        mDatabase.execSQL(query);
+    }
+
+    public void updateLatestDayRecordGymStatus(boolean beenToGymToday){
+        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_BEENTOGYM + " = \""
+                + ((beenToGymToday) ? 1 : 0) + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
                 + ")";
         mDatabase.execSQL(query);
     }
@@ -117,9 +132,6 @@ public class DBRecordsSource {
 
     public DayRecord getLastDayRecord(){
         DayRecord lastDayRecord = new DayRecord();
-        /*String command = "SELECT * FROM " + MySQLiteHelper.TABLE_DAYRECORDS + ""
-                + "WHERE " +  MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(" + MySQLiteHelper.COLUMN_ID
-                + ") FROM " +  MySQLiteHelper.TABLE_DAYRECORDS + ");"; */
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS, allColumnsDayRecords, null, null, null, null,
                 MySQLiteHelper.COLUMN_ID +" DESC", "1");
         if(cursor!=null && cursor.getCount()>0) {
@@ -139,6 +151,8 @@ public class DBRecordsSource {
         dayRecord.setId(cursor.getLong(0));
         dayRecord.setComment(cursor.getString(1));
         dayRecord.setDate(Util.stringToDate(cursor.getString(2)));
+        dayRecord.setIsGymDay(cursor.getInt(3) > 0);
+        dayRecord.setHasBeenToGym(cursor.getInt(4) > 0);
         return dayRecord;
     }
 

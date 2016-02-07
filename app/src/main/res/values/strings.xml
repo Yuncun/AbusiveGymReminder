@@ -15,6 +15,9 @@
     <string name="submit">submit</string>
     <string name="gym_day">GYM DAY</string>
     <string name="rest_day">REST DAY</string>
+    <string name="has_been">Youve been to the gym</string>
+    <string name="has_not_been">Youve not been to the gym</string>
+    <string name="no_record">No Record</string>
 
 
 </resources>

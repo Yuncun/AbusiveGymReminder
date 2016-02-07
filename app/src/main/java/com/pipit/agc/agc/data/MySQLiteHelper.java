@@ -13,17 +13,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     /**DayRecords Table**/
     public static final String TABLE_DAYRECORDS = "dayrecords";
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_DAYRECORDS = "dayrecord";
+    public static final String COLUMN_DAYRECORDS = "dayrecord"; //Any string associated with DayRecord (comments, etc)
     public static final String COLUMN_DATE = "date";
-
+    public static final String COLUMN_ISGYMDAY = "isgymday";
+    public static final String COLUMN_BEENTOGYM = "beentogym";
     private static final String DATABASE_NAME = "dayrecords.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     private static final String CREATE_TABLE_DAYRECORDS = "create table "
             + TABLE_DAYRECORDS + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_DAYRECORDS
             + " text not null, " + COLUMN_DATE
-            + " text default 0" +
+            + " text default 0, " + COLUMN_ISGYMDAY
+            + " integer default 0, " + COLUMN_BEENTOGYM
+            + " integer default 0 " +
             ");";
 
     /**Message Table**/

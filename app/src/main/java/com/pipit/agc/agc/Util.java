@@ -38,7 +38,6 @@ public class Util {
     public static boolean putListToSharedPref(final SharedPreferences.Editor edit, final String key, final List<String> list){
 
         try{
-            Log.d("Util", "putListToSharedPref with list " + list.toString());
             JSONArray mJSONArray = new JSONArray(list);
 
             edit.putString(key, mJSONArray.toString());
@@ -150,5 +149,19 @@ public class Util {
         return screen_h;
     }
 
+    public static List<Integer> listOfStringsToListOfInts(List<String> plannedDOWstrs){
+        List<Integer> plannedDOW = new ArrayList<Integer>();
+        for(String s : plannedDOWstrs){
+            try{
+                Integer dow = Integer.parseInt(s);
+                plannedDOW.add(dow);
+            } catch (Exception e){
+                //Log.e(TAG, "Unable to parse planned GYM days, failed on " + s);
+                //Log.e(TAG, "Received " + plannedDOWstrs.toArray());
+                break;
+            }
+        }
+        return plannedDOW;
+    }
 
 }

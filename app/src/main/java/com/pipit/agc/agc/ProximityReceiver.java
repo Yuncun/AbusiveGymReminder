@@ -21,40 +21,37 @@ public class ProximityReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent arg1) {
-
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
-
-        Log.d(TAG, "onReceive of PROXIMITY RECEIVER + intent action" + arg1.getAction());
-
         String k = LocationManager.KEY_PROXIMITY_ENTERING;
         boolean state = arg1.getBooleanExtra(k, false);
 
-        String enterOrLeave;
+        String enterOrLeaveStr;
+        boolean enteringFlag;
         if (state) {
-            //Todo: Enter state
-            enterOrLeave="entered";
-            updateLastDayRecord("Went to gym");
+            enterOrLeaveStr="entered";
+            markEnterSharedPref(context, true);
+            AlarmManagerBroadcastReceiver alarm = new AlarmManagerBroadcastReceiver();
+            alarm.setAlarmForLocationLog(context);
+            enteringFlag=true;
         } else {
-            //Todo: Exit state
-            enterOrLeave="exited";
+            enterOrLeaveStr="exited";
+            markEnterSharedPref(context, false);
+            enteringFlag=false;
         }
+        Log.d(TAG, "onReceive of PROXIMITY RECEIVER " + enterOrLeaveStr);
 
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
-        int radius = prefs.getInt("range", 50);
-        Location gymLocation = AllinOneActivity.getGymLocation(context);
-        Location currLocation = getCurrentLocation(context);
-        double distance = gymLocation.distanceTo(currLocation);
-        String verdict = sanitycheck((int)distance, radius);
+
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         String lastLocation = prefs.getString("locationlist", "none");
-        String body = lastLocation+"\nProximity Alert " + enterOrLeave + " at " +
-                mLastUpdateTime + " distance " + (int) distance + " " + verdict;
+        String body = lastLocation+"\n" + enterOrLeaveStr + " at " +
+                mLastUpdateTime;
         editor.putString("locationlist", body);
         Log.d(TAG, "Proximity Alert just entered last location into sharedprefs");
-        Util.sendNotification(context, "Location Update", "Entered proximity at " + mLastUpdateTime);
+
         editor.commit();
         wl.release();
     }
@@ -95,17 +92,23 @@ public class ProximityReceiver extends BroadcastReceiver {
         return lc;
     }
 
-
-    private void updateLastDayRecord(String comment){
-        DBRecordsSource datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-        datasource.updateLatestDayRecord(comment);
-        DBRecordsSource.getInstance().closeDatabase();
+    private boolean sanitycheck(int i, int range){
+        if (i>(range*2)){
+            return false;
+        }else return true;
     }
 
-    private String sanitycheck(int i, int range){
-        if (i>(range*2)){
-            return "(REJECTED)";
-        }else return "(ACCEPTED)";
+    /**
+     * If jsutEntered is marked as "entered" when the prox alert is checked after the two minute wait,
+     * then we will accept the alert (see AlarmManagerBroadcastREceiver)
+     *
+     * Otherwise, we see that the GPS has corrected a false "enter" and do not take action.
+     * @param context
+     * @param entered
+     */
+    public static void markEnterSharedPref(Context context, boolean entered){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("justEntered", entered).commit();
     }
 }

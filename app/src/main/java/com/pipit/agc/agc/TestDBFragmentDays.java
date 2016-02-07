@@ -77,7 +77,9 @@ public class TestDBFragmentDays extends ListFragment {
                 String[] comments = new String[]{"Red", "Green", "Blue"};
                 String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 int nextInt = new Random().nextInt(3);
-                DayRecord dayRecord = datasource.createDayRecord(comments[nextInt] + mLastUpdateTime, new Date());
+                DayRecord day = new DayRecord();
+                day.setComment(comments[nextInt] + mLastUpdateTime);
+                DayRecord dayRecord = datasource.createDayRecord(day);
                 adapter.add(dayRecord);
                 adapter.notifyDataSetChanged();
             }

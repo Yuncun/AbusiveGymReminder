@@ -3,6 +3,7 @@ package com.pipit.agc.agc;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,15 +22,22 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-public class DayPickerFragment extends ListFragment implements AbsListView.OnScrollListener {
+/**
+ * Created by Eric on 2/3/2016.
+ */
+public class DayOfWeekPickerFragment extends ListFragment{
     private static final String TAG = "DayPickerFragment";
-    DayPickerAdapter _adapter;
+    DayOfWeekAdapter _adapter;
     private final static String ARG_SECTION_NUMBER = "section_number";
     private DBRecordsSource datasource;
     private List<DayRecord> _allPreviousDays;
 
-    public static DayPickerFragment newInstance(int sectionNumber) {
-        DayPickerFragment fragment = new DayPickerFragment();
+    public interface UpdateGymDayToday{
+        void todayIsGymDay(boolean isGymDay);
+    }
+
+    public static DayOfWeekPickerFragment newInstance(int sectionNumber) {
+        DayOfWeekPickerFragment fragment = new DayOfWeekPickerFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -39,10 +47,9 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
-    public DayPickerFragment() {
+    public DayOfWeekPickerFragment() {
     }
 
     @Override
@@ -54,44 +61,14 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
         _allPreviousDays = datasource.getAllDayRecords();
 
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> exceptionDaysList = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_EXCEPT_DAYS);
         List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
 
-        _adapter = new DayPickerAdapter(getActivity(), _allPreviousDays, new HashSet<String>(exceptionDaysList),
-                new HashSet<Integer>(plannedDOW));
+        _adapter = new DayOfWeekAdapter(getActivity(), new HashSet<Integer>(plannedDOW));
         setListAdapter(_adapter);
-
         return rootView;
     }
 
-    @Override
-    public void onViewCreated (View view, Bundle savedInstanceState) {
-        getListView().setOnScrollListener(this);
-        getListView().setVerticalScrollBarEnabled(false);
-        getListView().setSelectionFromTop(_allPreviousDays.size() - 1, 0);
-    }
-    @Override
-    public void onScroll(AbsListView view,
-                         int firstVisible, int visibleCount, int totalCount) {
-
-        boolean loadMore = /* maybe add a padding */
-                firstVisible + visibleCount >= totalCount;
-
-        if(loadMore) {
-            _adapter.count += visibleCount; // or any other amount
-            Log.d(TAG, "Loaded more adapter count " + _adapter.getCount());
-            _adapter.notifyDataSetChanged();
-        }
-    }
-
-    public void onScrollStateChanged(AbsListView v, int s) { }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        datasource.openDatabase();
-    }
 
     @Override
     public void onPause() {
@@ -113,8 +90,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Calendar cal = getCalFromListPosition(position);
-        String datestr = (Integer.toString(cal.get(Calendar.DAY_OF_WEEK)));
+        String datestr = (Integer.toString(position));
 
         /*Remove or Add the date to the list*/
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
@@ -125,23 +101,31 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
             Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.rest_day));
             v.setBackgroundColor(getActivity().getResources().getColor(R.color.basewhite));
+            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){ executeUpdateCallback(false); } //Update the newsfeed fragment
         }else{
             dates.add(datestr);
             Log.d(TAG, "Added day " + datestr + " to weekly gym days");
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.gym_day));
             v.setBackgroundColor(getActivity().getResources().getColor(R.color.lightgreen));
+            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){ executeUpdateCallback(true); } //Update the newsfeed fragment
         }
         Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
         _adapter.updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));
+
     }
 
     private Calendar getCalFromListPosition(int pos){
-        int diff = pos-(_allPreviousDays.size()-1);
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, diff);
+        cal.add(Calendar.DATE, pos);
         return cal;
     }
 
-
+    private void executeUpdateCallback(boolean isGymDay) {
+        Log.d("Eric", "Execute callback");
+        Fragment registeredFrag = ((AllinOneActivity) getActivity()).getFragmentByKey(Constants.NEWSFEED_FRAG);
+        if (registeredFrag!=null){
+            UpdateGymDayToday update = (UpdateGymDayToday) registeredFrag;
+            update.todayIsGymDay(isGymDay);
+        }
+    }
 }
-

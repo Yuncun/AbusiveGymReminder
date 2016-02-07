@@ -3,6 +3,7 @@ package com.pipit.agc.agc;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * Created by Eric on 1/21/2016.
  */
-public class NewsfeedFragment extends android.support.v4.app.Fragment {
+public class NewsfeedFragment extends android.support.v4.app.Fragment implements DayOfWeekPickerFragment.UpdateGymDayToday{
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -71,5 +72,13 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment {
         DBRecordsSource.getInstance().closeDatabase();
         super.onPause();
     }
+    @Override
+    public void todayIsGymDay(boolean isGymDay){
+        Log.d("Eric", "todayIsGymDay");
 
+        if (_allDayRecords==null) return;
+        _allDayRecords.get(_allDayRecords.size()-1).setIsGymDay(isGymDay);
+        ((NewsfeedAdapter) mAdapter).updateDayrecords(_allDayRecords);
+        mAdapter.notifyDataSetChanged();
+    }
 }

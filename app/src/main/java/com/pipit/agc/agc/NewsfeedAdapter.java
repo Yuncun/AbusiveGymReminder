@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import com.pipit.agc.agc.data.DayRecord;
 import com.pipit.agc.agc.data.Message;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +69,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             holder.cv.setMaxCardElevation(0);
             holder.cv.setPadding(0, 0, 20, 0);
             holder.header.setText(getGymDay());
+            holder.comment.setText(getDayComments());
         }else {
             holder.header.setText(_messages.get(position - _offset).getComment());
             holder.comment.setText(_messages.get(position - _offset).getDateString());
@@ -105,16 +104,32 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         return (int) screenheight;
     }
 
-    private String getGymDay(){
+    private String getDayComments(){
         if (_days==null || _days.size()<1){
             return "No available dayrecords";
         }
         DayRecord latestDate = _days.get(_days.size()-1); //Todo: Right function to find or sort dayrecord by date
         Date systemDate = new Date();
         if (latestDate.compareToDate(systemDate)){
-            return latestDate.getComment();
+            if (latestDate.beenToGym()){
+                return "You've been to the gym today";
+            }
+            else return "You have not been to the gym today";
         }
         return "Could not retrieve today's status";
+    }
+
+    private String getGymDay(){
+        DayRecord latestDate = _days.get(_days.size()-1);
+        if (latestDate.isGymDay()){
+            return _context.getResources().getString(R.string.gym_day);
+        }else{
+            return _context.getResources().getString(R.string.rest_day);
+        }
+    }
+
+    public void updateDayrecords(List<DayRecord> newSet){
+        _days=newSet;
     }
 
 
