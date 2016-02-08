@@ -13,8 +13,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.DayRecord;
@@ -24,7 +26,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 
 public class AllinOneActivity extends AppCompatActivity {
     private static String TAG = "AllinOneActivity";
@@ -45,7 +46,6 @@ public class AllinOneActivity extends AppCompatActivity {
 
         /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        initialisePaging();
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
@@ -73,6 +73,8 @@ public class AllinOneActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivityForResult(i, 0);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -83,6 +85,7 @@ public class AllinOneActivity extends AppCompatActivity {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -90,94 +93,92 @@ public class AllinOneActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return _fragments.get(position);
-            //Todo: Used a civilized data structure
+            switch (position){
+                case 0:
+                    return DayPickerFragment.newInstance(0);
+                case 1:
+                    return NewsfeedFragment.newInstance();
+                case 2:
+                    return DayOfWeekPickerFragment.newInstance(2);
+                case 3:
+                    return PlacePickerFragment.newInstance();
+                default:
+                    return NewsfeedFragment.newInstance();
+            }
         }
 
         @Override
         public int getCount() {
-            return 7;
+            return 4;
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
-                case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
-                case 3:
-                    return "Page four";
-                case 4:
-                    return "Page Five";
-                case 5:
-                    return "Page Six";
-                case 6:
-                    return "Page Seven";
-            }
-            return null;
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
         }
     }
-
-    private void initialisePaging() {
-        //Do not willy nilly change order of this list; List position may be used to find fragments
-        _fragments = new ArrayList<Fragment>();
-        _fragments.add(LandingFragment.newInstance(1));
-        _fragments.add(DayPickerFragment.newInstance(2));
-        _fragments.add(NewsfeedFragment.newInstance());
-        _fragments.add(DayOfWeekPickerFragment.newInstance(4));
-        _fragments.add(TestDBFragmentDays.newInstance(5));
-        _fragments.add(TestDBFragmentMessages.newInstance(6));
-        _fragments.add(PlacePickerFragment.newInstance());
-    }
-
 
     protected void onStart() {
         /*Make sure that we are up to date*/
-        DBRecordsSource datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-        DayRecord lastDate = datasource.getLastDayRecord();
-        DayRecord todaysDate = new DayRecord();
-        todaysDate.setDate(new Date());
+        try {
+            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            synchronized (datasource) {
+                DayRecord lastDate = datasource.getLastDayRecord();
 
-        if (lastDate==null){
-            //No days on record - Create today
-            DayRecord day = new DayRecord();
-            day.setComment(getResources().getString(R.string.has_not_been));
-            day.checkAndSetIfGymDay(getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS));
-            datasource.createDayRecord(day);
-        }else
-        if (!lastDate.compareToDate(todaysDate.getDate())){
-            if(lastDate.getDate().before(todaysDate.getDate())){
-                //We skipped a day somehow
-                while(!lastDate.compareToDate(todaysDate.getDate())){
-                    //Add days until we match up
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(lastDate.getDate());
-                    cal.add(Calendar.DATE, 1); //minus number would decrement the days
-                    lastDate.setDate(cal.getTime());
+                DayRecord todaysDate = new DayRecord();
+                todaysDate.setDate(new Date());
+
+                if (lastDate == null) {
+                    //No days on record - Create today
                     DayRecord day = new DayRecord();
-                    day.setComment(getResources().getString(R.string.no_record));
-                    day.setIsGymDay(false);
+                    day.setComment(getResources().getString(R.string.has_not_been));
+                    day.checkAndSetIfGymDay(getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS));
                     datasource.createDayRecord(day);
-                    Log.d(TAG, "Incremented a day, lastDate is now" + lastDate.getDateString()
-                        + "and today's date is " + todaysDate.getDateString());
+                } else if (!lastDate.compareToDate(todaysDate.getDate())) {
+                    if (lastDate.getDate().before(todaysDate.getDate())) {
+                        //We skipped a day somehow
+                        while (!lastDate.compareToDate(todaysDate.getDate())) {
+                            //Add days until we match up
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(lastDate.getDate());
+                            cal.add(Calendar.DATE, 1); //minus number would decrement the days
+                            lastDate.setDate(cal.getTime());
+                            DayRecord day = new DayRecord();
+                            day.setComment(getResources().getString(R.string.no_record));
+                            day.setIsGymDay(false);
+                            datasource.createDayRecord(day);
+                            Log.d(TAG, "Incremented a day, lastDate is now" + lastDate.getDateString()
+                                    + "and today's date is " + todaysDate.getDateString());
+                        }
+                    } else if (lastDate.getDate().after(todaysDate.getDate())) {
+                        //A more nefarious case when we have dates ahead of system time
+                        //Maybe this happened because of travelling between time zones
+                        //Or because the user's phone is messed up. We will go back to original date
+                        //Todo: Send a message to user informing of this change
+                        //Todo: Save information - If correct day reappears, reapply old day records
+                        Log.d(TAG, "Current system date is " + todaysDate.getDateString() + " but last day on record "
+                                + " is " + lastDate.getDateString());
+                    }
                 }
             }
-            else if (lastDate.getDate().after(todaysDate.getDate())){
-                //A more nefarious case when we have dates ahead of system time
-                //Maybe this happened because of travelling between time zones
-                //Or because the user's phone is messed up. We will go back to original date
-                //Todo: Send a message to user informing of this change
-                //Todo: Save information - If correct day reappears, reapply old day records
-                Log.d(TAG, "Current system date is " + todaysDate.getDateString() + " but last day on record "
-                        + " is " + lastDate.getDateString());
-            }
+        }catch (Exception e){
+            Log.e(TAG, "Unable to use Database on mainactivity start " + e);
+        } finally{
+            DBRecordsSource.getInstance().closeDatabase();
         }
-        DBRecordsSource.getInstance().closeDatabase();
         super.onStart();
     }
 
@@ -209,7 +210,11 @@ public class AllinOneActivity extends AppCompatActivity {
         Log.d(TAG, "Adding prox alert, ID is " + alertId + " range is " + range);
 
         editor.commit();
-        lm.addProximityAlert(lat, lng, range, -1, pi);
+        try{
+            lm.addProximityAlert(lat, lng, range, -1, pi);
+        } catch (SecurityException e){
+            Log.e(TAG, "No permission");
+        }
     }
 
     public void removeAllProximityAlerts(Context context) {
@@ -220,7 +225,11 @@ public class AllinOneActivity extends AppCompatActivity {
 
         Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this , maxAlertId, intent, 0);
-        lm.removeProximityAlert(pendingIntent);
+        try{
+            lm.removeProximityAlert(pendingIntent);
+        } catch (SecurityException e){
+            Log.e(TAG, "No permission");
+        }
     }
 
     /**
@@ -241,8 +250,14 @@ public class AllinOneActivity extends AppCompatActivity {
 
     public Fragment getFragmentByKey(String key){
         switch (key){
+            case Constants.DAYPICKER_FRAG:
+                return mSectionsPagerAdapter.getRegisteredFragment(0);
+            case Constants.PLACEPICKER_FRAG:
+                return mSectionsPagerAdapter.getRegisteredFragment(3);
+            case Constants.DAYOFWEEK_FRAG:
+                return mSectionsPagerAdapter.getRegisteredFragment(2);
             case Constants.NEWSFEED_FRAG:
-                return _fragments.get(2);
+                return mSectionsPagerAdapter.getRegisteredFragment(1);
             default:
                 return null;
         }

@@ -30,7 +30,7 @@ public class DayOfWeekAdapter extends ArrayAdapter<String> {
     private HashSet<Integer> weeklySchedule; //Contains 0-7 days that are gym days
 
     public DayOfWeekAdapter(Context context, HashSet<Integer> weeklySchedule) {
-        super(context, R.layout.dayrowlayout);
+        super(context, R.layout.dayofweek_layout);
         this.context = context;
         this._screenheight=-1;
         this.weeklySchedule = weeklySchedule;
@@ -40,23 +40,20 @@ public class DayOfWeekAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.dayrowlayout, parent, false);
-        TextView dayOfMonthTV = (TextView) rowView.findViewById(R.id.day_of_week);
+        View rowView = inflater.inflate(R.layout.dayofweek_layout, parent, false);
+        TextView dayOfMonthTV = (TextView) rowView.findViewById(R.id.txt);
         TextView commentTV = (TextView) rowView.findViewById(R.id.comment);
-        TextView dayOfWeekTV = (TextView) rowView.findViewById(R.id.mon_to_fri);
 
-        commentTV.setText(getDayOfWeekText(position+1));
+        commentTV.setText(getDayOfWeekText(position + 1));
         dayOfMonthTV.setText(getDayMessage(position, rowView));
 
         /*Set listview height to show 7 days*/
         if (_screenheight<1){
             _screenheight = Math.round(Util.getScreenHeightMinusStatusBar(getContext()));
         }
-
-        //The weight of the day number is 3/4 of the total height
-        int txtheight = (int) (.66 * (_screenheight / 7));
-        dayOfMonthTV.setHeight(txtheight);
-        refitText(dayOfMonthTV, txtheight);
+        int txtheight = (int) (_screenheight / 7);
+        commentTV.setHeight(txtheight);
+        //refitText(commentTV, txtheight);
 
         return rowView;
     }
@@ -97,19 +94,19 @@ public class DayOfWeekAdapter extends ArrayAdapter<String> {
     private String getDayOfWeekText(int n){
         switch(n){
             case 1:
-                return "Sun";
+                return "Sunday";
             case 2:
-                return "Mon";
+                return "Monday";
             case 3:
-                return "Tue";
+                return "Tuesday";
             case 4:
-                return "Wed";
+                return "Wednesday";
             case 5:
-                return "Thu";
+                return "Thursday";
             case 6:
-                return "Fri";
+                return "Friday";
             case 7:
-                return "Sat";
+                return "Saturday";
         }
         return null;
     }

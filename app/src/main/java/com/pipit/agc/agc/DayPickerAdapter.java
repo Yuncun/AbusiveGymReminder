@@ -2,14 +2,11 @@ package com.pipit.agc.agc;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.data.DayRecord;
@@ -49,7 +46,7 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.dayrowlayout, parent, false);
-        TextView dayOfMonthTV = (TextView) rowView.findViewById(R.id.day_of_week);
+        TextView dayOfMonthTV = (TextView) rowView.findViewById(R.id.txt);
         TextView commentTV = (TextView) rowView.findViewById(R.id.comment);
         TextView dayOfWeekTV = (TextView) rowView.findViewById(R.id.mon_to_fri);
 

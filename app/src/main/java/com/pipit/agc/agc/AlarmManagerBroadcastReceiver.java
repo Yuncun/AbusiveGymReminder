@@ -66,7 +66,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.MINUTE, 2);
+        calendar.add(Calendar.MINUTE, 3);
         am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
         Log.d(TAG, "set alarm for location log, current time is " + System.currentTimeMillis()
             + " alarm set for " + calendar.getTimeInMillis());

@@ -18,6 +18,8 @@
     <string name="has_been">Youve been to the gym</string>
     <string name="has_not_been">Youve not been to the gym</string>
     <string name="no_record">No Record</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_setting_wrapper">SettingWrapperActivity</string>
 
 
 </resources>
