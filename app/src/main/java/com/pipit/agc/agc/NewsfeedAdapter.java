@@ -26,7 +26,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     private List<Message> _messages;
     private List<DayRecord> _days;
     private Context _context;
-    private int _offset = 1; //Used because the first element is not a list item
+    private int _offset = 0; //Used because the first element is not a list item
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -62,14 +62,14 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
         //The gym status card
-        if(position==0){
+        if(false){
             holder.cv.setMinimumHeight(calculateGymStatusCardHeight());
             holder.cv.setCardBackgroundColor(_context.getResources().getColor(R.color.lightgreen));
             holder.cv.setCardElevation(0);
             holder.cv.setMaxCardElevation(0);
             holder.cv.setPadding(0, 0, 20, 0);
-            holder.header.setText(getGymDay());
-            holder.comment.setText(getDayComments());
+            //holder.header.setText(getGymDay());
+            //holder.comment.setText(getDayComments());
         }else {
             holder.header.setText(_messages.get(position - _offset).getComment());
             holder.comment.setText(_messages.get(position - _offset).getDateString());
@@ -104,29 +104,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         return (int) screenheight;
     }
 
-    private String getDayComments(){
-        if (_days==null || _days.size()<1){
-            return "No available dayrecords";
-        }
-        DayRecord latestDate = _days.get(_days.size()-1); //Todo: Right function to find or sort dayrecord by date
-        Date systemDate = new Date();
-        if (latestDate.compareToDate(systemDate)){
-            if (latestDate.beenToGym()){
-                return "You've been to the gym today";
-            }
-            else return "You have not been to the gym today";
-        }
-        return "Could not retrieve today's status";
-    }
-
-    private String getGymDay(){
-        DayRecord latestDate = _days.get(_days.size()-1);
-        if (latestDate.isGymDay()){
-            return _context.getResources().getString(R.string.gym_day);
-        }else{
-            return _context.getResources().getString(R.string.rest_day);
-        }
-    }
 
     public void updateDayrecords(List<DayRecord> newSet){
         _days=newSet;

@@ -11,6 +11,9 @@ import android.location.Location;
 import android.os.SystemClock;
 import android.util.Log;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 /**
  * Created by Eric on 1/30/2016.
  */
@@ -33,14 +36,24 @@ public class BootReceiver extends BroadcastReceiver {
             return;
         }
 
-        float range = (float) prefs.getInt("range", -1);
+        float range = (float) prefs.getInt("range", 100);
         Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
         int alertId= (int) System.currentTimeMillis();
-        PendingIntent pi = PendingIntent.getBroadcast(context, alertId , intent, 0);
+        PendingIntent pi = PendingIntent.getBroadcast(context, alertId, intent, 0);
         Log.d(TAG, "Adding prox alert, ID is " + alertId + " range is " + range);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("maxAlertId", alertId).commit();
-        lm.addProximityAlert(gymlocation.getLatitude(), gymlocation.getLongitude(), range, -1, pi);
+        try{
+            lm.addProximityAlert(gymlocation.getLatitude(), gymlocation.getLongitude(), range, -1, pi);
+        } catch (SecurityException e){
+            Log.e(TAG, e.getMessage());
+        }
+
+        //Adding log
+        String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        String lastLocation = prefs.getString("locationlist", "none");
+        String body = lastLocation+"\n" + "BOOT LOADER ADDED PROX ALERT at " + mLastUpdateTime;
+        editor.putString("locationlist", body);
 
     }
     static void scheduleAlarms(Context context) {

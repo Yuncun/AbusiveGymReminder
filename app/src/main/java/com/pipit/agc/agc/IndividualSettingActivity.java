@@ -32,6 +32,12 @@ public class IndividualSettingActivity extends AppCompatActivity  {
                 case "LandingFragment":
                     frag = LandingFragment.newInstance(0);
                     break;
+                case "TestDBFragmentMessages":
+                    frag = TestDBFragmentMessages.newInstance(1);
+                    break;
+                case "TestDBFragmentDays":
+                    frag = TestDBFragmentDays.newInstance(2);
+                    break;
                 default:
                     finish();
             }

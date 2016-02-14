@@ -6,4 +6,5 @@
     <item name="darkgreen" type="color">#FF669900</item>
     <item name="lightgreen" type="color">#E8F5E9</item>
     <item name="basewhite" type="color">#f9f9f9</item>
+    <item name="yellow" type="color">#FFEB3B</item>
 </resources>

@@ -23,17 +23,25 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String[] frags = {"Logs"};
+        String[] frags = {"Logs", "Test Message DB", "Test Days DB"};
         ArrayAdapter<String> adapter = new SettingsAdapter(this, frags);
         ListView lv = (ListView)findViewById(R.id.mylist);
         lv.setAdapter(adapter);
+        final Intent i = new Intent(SettingsActivity.this, IndividualSettingActivity.class);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 switch (position) {
                     case (0):
-                        Intent i = new Intent(SettingsActivity.this, IndividualSettingActivity.class);
                         i.putExtra("fragment", "LandingFragment");
+                        startActivity(i);
+                        break;
+                    case (1):
+                        i.putExtra("fragment", "TestDBFragmentMessages");
+                        startActivity(i);
+                        break;
+                    case (2):
+                        i.putExtra("fragment", "TestDBFragmentDays");
                         startActivity(i);
                         break;
                     default:

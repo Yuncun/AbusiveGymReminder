@@ -21,13 +21,11 @@ import android.view.ViewGroup;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.DayRecord;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-public class AllinOneActivity extends AppCompatActivity {
+public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener {
     private static String TAG = "AllinOneActivity";
 
     SectionsPagerAdapter mSectionsPagerAdapter;
@@ -95,7 +93,7 @@ public class AllinOneActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position){
                 case 0:
-                    return DayPickerFragment.newInstance(0);
+                    return StatisticsFragment.newInstance(0);
                 case 1:
                     return NewsfeedFragment.newInstance();
                 case 2:
@@ -262,5 +260,10 @@ public class AllinOneActivity extends AppCompatActivity {
                 return null;
         }
     }
+
+    public void onListFragmentInteraction(StatsContent.Stat item){
+        Log.d(TAG, "onListFragmentInteraction");
+    }
+
 }
 
