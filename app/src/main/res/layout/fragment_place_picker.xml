@@ -5,7 +5,6 @@
     android:orientation="vertical"
     tools:context="com.pipit.agc.agc.PlacePickerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:text="Gym Location" />
 

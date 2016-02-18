@@ -66,7 +66,7 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
             }
         });
         _gymstatus_cv = (CardView) rootView.findViewById(R.id.gymstatus_cv);
-        _gymstatus_cv.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.yellow));
+        _gymstatus_cv.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary_material_dark));
         _gymstatus_body = (TextView) _gymstatus_cv.findViewById(R.id.gymstatus_body);
         _gymstatus_header = (TextView) _gymstatus_cv.findViewById(R.id.gymstatus_header);
 
@@ -115,7 +115,11 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
 
         if (_allDayRecords==null) return;
         _allDayRecords.get(_allDayRecords.size()-1).setIsGymDay(isGymDay);
-        _gymstatus_header.setText("GYM DAY");
+        if (isGymDay){
+            _gymstatus_header.setText("GYM DAY");
+        }else{
+            _gymstatus_header.setText("REST DAY");
+        }
     }
 
     private String getDayComments(){
@@ -140,5 +144,9 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
         }else{
             return getResources().getString(R.string.rest_day);
         }
+    }
+
+    public void updateGymStatusVisibile(){
+        _gymstatusLayout.setVisibility(View.VISIBLE);
     }
 }

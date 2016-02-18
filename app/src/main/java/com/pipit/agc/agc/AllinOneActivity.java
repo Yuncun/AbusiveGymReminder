@@ -23,15 +23,13 @@ import com.pipit.agc.agc.data.DayRecord;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener {
+public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener{
     private static String TAG = "AllinOneActivity";
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     private AlarmManagerBroadcastReceiver _alarm;
     ViewPager mViewPager;
-    private List<Fragment> _fragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +53,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
         calendar.add(Calendar.DATE, 1);
-        _alarm.CancelAlarm(getApplicationContext());
+        _alarm.CancelAlarm(getApplicationContext(), "locationlogging", 0);
         _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
-        //Test
     }
 
     @Override
@@ -74,6 +71,15 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
             Intent i = new Intent(this, SettingsActivity.class);
             startActivityForResult(i, 0);
             return true;
+        }
+        else if (id == R.id.action_showcalendar){
+            Intent i = new Intent(this, IndividualSettingActivity.class);
+            i.putExtra("fragment", "DayPickerFragment");
+            startActivityForResult(i, 1);
+        }
+        else if (id == R.id.action_showgymstatus){
+            SharedPreferences prefs = getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+            prefs.edit().putBoolean("showGymStatus", true).commit();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -100,6 +106,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                     return DayOfWeekPickerFragment.newInstance(2);
                 case 3:
                     return PlacePickerFragment.newInstance();
+                case 4:
+                    return LocationListFragment.newInstance(1);
                 default:
                     return NewsfeedFragment.newInstance();
             }
@@ -107,7 +115,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
 
         @Override
         public int getCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -264,6 +272,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
     public void onListFragmentInteraction(StatsContent.Stat item){
         Log.d(TAG, "onListFragmentInteraction");
     }
+
 
 }
 

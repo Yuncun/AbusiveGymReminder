@@ -38,6 +38,9 @@ public class IndividualSettingActivity extends AppCompatActivity  {
                 case "TestDBFragmentDays":
                     frag = TestDBFragmentDays.newInstance(2);
                     break;
+                case "DayPickerFragment":
+                    frag = DayPickerFragment.newInstance(3);
+                    break;
                 default:
                     finish();
             }

@@ -30,7 +30,9 @@ public class TestDBFragmentMessages extends ListFragment {
     private TextView currentTime;
     private TextView resetTime;
     private Button _addButton;
+    private Button _testReceiverAddButton;
     private Button _deleteButton;
+
     private Button _upgradeDbButton;
 
     public static TestDBFragmentMessages newInstance(int sectionNumber) {
@@ -94,7 +96,14 @@ public class TestDBFragmentMessages extends ListFragment {
 
             }
         });
-
+        _testReceiverAddButton = (Button) view.findViewById(R.id.receivertestadd);
+        _testReceiverAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlarmManagerBroadcastReceiver am = new AlarmManagerBroadcastReceiver();
+                am.leaveMessageAtTime(getContext(), 0, 0);
+            }
+        });
     }
 
     @Override

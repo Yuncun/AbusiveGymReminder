@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- To access Google+ APIs: -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".GlobalState"
@@ -49,7 +51,7 @@
 
         <receiver
             android:name=".AlarmManagerBroadcastReceiver"
-            android:process=":remote"></receiver>
+            android:process=":remote" />
         <receiver
             android:name=".ProximityReceiver"
             android:enabled="true"
@@ -67,11 +69,11 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".IndividualSettingActivity"
             android:label="@string/title_activity_setting_wrapper"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

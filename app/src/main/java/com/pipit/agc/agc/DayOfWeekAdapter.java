@@ -2,20 +2,17 @@ package com.pipit.agc.agc;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Switch;
 import android.widget.TextView;
 
-import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.DayRecord;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -41,11 +38,10 @@ public class DayOfWeekAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.dayofweek_layout, parent, false);
-        TextView dayOfMonthTV = (TextView) rowView.findViewById(R.id.txt);
         TextView commentTV = (TextView) rowView.findViewById(R.id.comment);
 
         commentTV.setText(getDayOfWeekText(position + 1));
-        dayOfMonthTV.setText(getDayMessage(position, rowView));
+        setDayStatus(position, rowView);
 
         /*Set listview height to show 7 days*/
         if (_screenheight<1){
@@ -114,22 +110,23 @@ public class DayOfWeekAdapter extends ArrayAdapter<String> {
     /*
         Also styles the rowview
      */
-    private String getDayMessage(int dayOfWeek, View rowview){
-        String primaryText;
+    private void setDayStatus(int dayOfWeek, View rowview){
+        TextView gymstatetxt = (TextView) rowview.findViewById(R.id.txt);
+        Switch switchView = (Switch) rowview.findViewById(R.id.switch1);
+
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
         String gymDay = getContext().getResources().getString(R.string.gym_day);
         String restDay = getContext().getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(dayOfWeek)){
-            primaryText = gymDay;
-        } else{
-            primaryText = restDay;
-        }
-        if (primaryText.equals(gymDay)){
             rowview.setBackgroundColor(context.getResources().getColor(R.color.lightgreen));
-        }else{
+            gymstatetxt.setText(gymDay);
+            switchView.setChecked(true);
+        } else{
             rowview.setBackgroundColor(context.getResources().getColor(R.color.basewhite));
+            gymstatetxt.setText(restDay);
+            switchView.setChecked(false);
         }
-        return primaryText;
+
     }
 
     public void updateData(List<DayRecord> allPreviousDays, HashSet<String> exceptionDays,

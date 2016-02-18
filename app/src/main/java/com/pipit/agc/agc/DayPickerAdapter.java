@@ -52,7 +52,18 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
 
         if (position<allPreviousDays.size()){
             //The Past
-            String primaryText = allPreviousDays.get(position).getComment();
+            DayRecord d = allPreviousDays.get(position);
+            String primaryText = "";
+            if (d.beenToGym()){
+                primaryText = "WENT TO GYM";
+            }else{
+                if (d.isGymDay()){
+                    primaryText = "MISSED GYM";
+                }else{
+                    primaryText = "NO GYM - REST DAY";
+                }
+            }
+
             Date date = allPreviousDays.get(position).getDate();
             String dayOfWeekTxt;
             String dayOfMonthTxt;

@@ -12,8 +12,6 @@
             android:id="@+id/gymstatus_cv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            cardview:cardElevation="4dp"
             android:padding="10dp">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -23,10 +21,12 @@
                     android:id="@+id/gymstatus_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@android:color/primary_text_dark"
                     android:textSize="40sp"/>
                 <TextView
                     android:id="@+id/gymstatus_body"
                     android:layout_width="wrap_content"
+                    android:textColor="@android:color/primary_text_dark"
                     android:layout_height="wrap_content" />
             </LinearLayout>
         </android.support.v7.widget.CardView>

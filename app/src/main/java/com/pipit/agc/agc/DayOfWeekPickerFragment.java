@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.data.DBRecordsSource;
@@ -100,14 +101,22 @@ public class DayOfWeekPickerFragment extends ListFragment{
             dates.remove(datestr);
             Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.rest_day));
+            ((Switch) v.findViewById(R.id.switch1)).setChecked(false);
             v.setBackgroundColor(getActivity().getResources().getColor(R.color.basewhite));
-            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){ executeUpdateCallback(false); } //Update the newsfeed fragment
+            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){
+                datasource.updateLatestDayRecordIsGymDay(false);
+                executeUpdateCallback(false); //Update the newsfeed fragment
+            }
         }else{
             dates.add(datestr);
             Log.d(TAG, "Added day " + datestr + " to weekly gym days");
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.gym_day));
+            ((Switch) v.findViewById(R.id.switch1)).setChecked(true);
             v.setBackgroundColor(getActivity().getResources().getColor(R.color.lightgreen));
-            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){ executeUpdateCallback(true); } //Update the newsfeed fragment
+            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){
+                datasource.updateLatestDayRecordIsGymDay(true);
+                executeUpdateCallback(true);
+            }
         }
         Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
         _adapter.updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.pipit.agc.agc.data.DayRecord;
 import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.Message;
 import com.pipit.agc.agc.data.MySQLiteHelper;
 
 import java.text.DateFormat;
@@ -43,10 +44,43 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
             case "locationlogging" :
                 doLocationCheck(context);
                 break;
+            case "leavemessage" :
+                doLeaveMessage(context);
+                break;
             default:
                 break;
         }
         wl.release();
+    }
+
+    /**
+     * Call this to leave a message at a given time
+     * @param context
+     */
+    public void leaveMessageAtTime(Context context, Calendar calendar){
+        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
+        i.putExtra("purpose", "leavemessage");
+        PendingIntent pi = PendingIntent.getBroadcast(context, 3, i, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pi);
+        Log.d(TAG, "leaveMessageAtTime " + System.currentTimeMillis()
+                + " alarm set for " + calendar.getTimeInMillis());
+    }
+
+    /**
+     * Same as leaveMessageAtTime(Context, Calendar) but does the math for you.
+     * @param context
+     * @param minutes
+     */
+    public void leaveMessageAtTime(Context context, int hours, int minutes){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.HOUR, hours);
+        calendar.add(Calendar.MINUTE, minutes);
+        calendar.add(Calendar.SECOND, 10);
+        leaveMessageAtTime(context, calendar);
     }
 
     public void setAlarmForDayLog(Context context, Calendar calendar)
@@ -69,13 +103,13 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         calendar.add(Calendar.MINUTE, 10);
         am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
         Log.d(TAG, "set alarm for location log, current time is " + System.currentTimeMillis()
-            + " alarm set for " + calendar.getTimeInMillis());
+                + " alarm set for " + calendar.getTimeInMillis());
     }
-    public void CancelAlarm(Context context)
+    public void CancelAlarm(Context context, String purpose, int id)
     {
         Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
-        intent.putExtra("purpose", "locationlogging");
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
+        intent.putExtra("purpose", purpose);
+        PendingIntent sender = PendingIntent.getBroadcast(context, id, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(sender);
     }
@@ -150,11 +184,18 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         editor.putString("locationlist", body).commit();
     }
 
+    private void doLeaveMessage(Context context){
+        Log.d(TAG, "doLeaveMessage");
+        ReminderOracle.doReminderCreation(true, context);
+    }
+
     private void updateLastDayRecord(boolean beenToGymToday){
         DBRecordsSource datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
-        datasource.updateLatestDayRecordGymStatus(beenToGymToday);
+        datasource.updateLatestDayRecordBeenToGym(beenToGymToday);
         DBRecordsSource.getInstance().closeDatabase();
     }
+
+
 
 }

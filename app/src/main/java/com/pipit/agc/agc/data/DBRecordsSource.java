@@ -103,9 +103,16 @@ public class DBRecordsSource {
         mDatabase.execSQL(query);
     }
 
-    public void updateLatestDayRecordGymStatus(boolean beenToGymToday){
+    public void updateLatestDayRecordBeenToGym(boolean beenToGymToday){
         String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_BEENTOGYM + " = \""
                 + ((beenToGymToday) ? 1 : 0) + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+                + ")";
+        mDatabase.execSQL(query);
+    }
+
+    public void updateLatestDayRecordIsGymDay(boolean isGymDay){
+        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_ISGYMDAY + " = \""
+                + ((isGymDay) ? 1 : 0) + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
                 + ")";
         mDatabase.execSQL(query);
     }

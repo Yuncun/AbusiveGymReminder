@@ -3,4 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".AllinOneActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_showgymstatus" android:title="@string/show_gym_status"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_showcalendar" android:title="@string/show_calendar"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>
