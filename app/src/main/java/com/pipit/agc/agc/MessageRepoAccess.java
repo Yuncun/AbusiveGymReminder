@@ -68,8 +68,8 @@ public class MessageRepoAccess {
     private Message cursorToMessage(Cursor cursor) {
         Message message = new Message();
         message.setId(cursor.getLong(0));
-        message.setComment(cursor.getString(1) + cursor.getString(2));
-        //message.setDate(Util.stringToDate(cursor.getString(2)));
+        message.setHeader(cursor.getString(1));
+        message.setBody(cursor.getString(2));
         return message;
     }
 }

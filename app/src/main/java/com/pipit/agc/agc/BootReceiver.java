@@ -24,14 +24,16 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent i) {
         Log.d(TAG, "onReceive in BootReceiver");
-        addProxAlert(context);
+        for (int n = 1; n < 4; n++){
+            addProxAlert(context, n);
+        }
         scheduleAlarms(context);
     }
 
-    static void addProxAlert(Context context){
+    static void addProxAlert(Context context, int i){
         LocationManager lm=(LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        Location gymlocation = AllinOneActivity.getGymLocation(context);
+        Location gymlocation = AllinOneActivity.getGymLocation(context, i);
         if (gymlocation.getLatitude()==Constants.DEFAULT_COORDINATE && gymlocation.getLongitude()==Constants.DEFAULT_COORDINATE){
             return;
         }
@@ -42,13 +44,12 @@ public class BootReceiver extends BroadcastReceiver {
         PendingIntent pi = PendingIntent.getBroadcast(context, alertId, intent, 0);
         Log.d(TAG, "Adding prox alert, ID is " + alertId + " range is " + range);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("maxAlertId", alertId).commit();
+        editor.putInt("proxalert"+i, alertId).commit();
         try{
             lm.addProximityAlert(gymlocation.getLatitude(), gymlocation.getLongitude(), range, -1, pi);
         } catch (SecurityException e){
             Log.e(TAG, e.getMessage());
         }
-
         //Adding log
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         String lastLocation = prefs.getString("locationlist", "none");

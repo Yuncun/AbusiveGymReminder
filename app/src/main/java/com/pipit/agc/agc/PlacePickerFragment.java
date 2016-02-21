@@ -54,7 +54,8 @@ public class PlacePickerFragment extends Fragment {
 
         SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         final SharedPreferences.Editor editor = prefs.edit();
-        _addressDefault = prefs.getString("address", "no address") + "lat" +
+
+        _addressDefault = prefs.getString("address"+1, "no address") + "lat" +
                 Util.getDouble(prefs, "lat", 0) + " lng" + Util.getDouble(prefs, "lng", 0) ;
 
         View rootView = inflater.inflate(R.layout.fragment_place_picker, container, false);
@@ -95,12 +96,8 @@ public class PlacePickerFragment extends Fragment {
         _removeProxAlertsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Removing all saved locations", Toast.LENGTH_SHORT).show();
-                ((AllinOneActivity) getActivity()).removeAllProximityAlerts(getActivity());
-                SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-                SharedPreferences.Editor editor = prefs.edit();
-                Util.putDouble(editor, "lat",  0).commit();
-                Util.putDouble(editor, "lng", 0).commit();
-                editor.putString("address", "none").commit();
+                Log.d(TAG, "clicked removing all saved locations");
+                ((AllinOneActivity) getActivity()).removeAllProximityAlerts();
             }
         });
 
@@ -111,6 +108,7 @@ public class PlacePickerFragment extends Fragment {
         try {
             PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
             Intent intent = intentBuilder.build(getActivity());
+            intent.putExtra("proxid", 1);
             // Start the Intent by requesting a result, identified by a request code.
             startActivityForResult(intent, Constants.REQUEST_PLACE_PICKER);
         } catch (GooglePlayServicesRepairableException e) {
@@ -147,14 +145,17 @@ public class PlacePickerFragment extends Fragment {
                     attribution = "";
                 }
 
+                int id = 2;
+                //int id = data.getIntExtra("proxid", 1);
                 Log.d(TAG, "Place selected: " + placeId + " (" + name.toString() + ")");
                 _addressDefault = "Your gym is " + name.toString() + " \nat " + address.toString() + "\nCoordinates at " + location.toString();
                 _address.setText(_addressDefault);
 
                 SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("address", address.toString()).commit();
-                ((AllinOneActivity) getActivity()).addProximityAlert(location.latitude, location.longitude);
+                editor.putString("address"+id, address.toString()).commit();
+                editor.putString("name"+id, name.toString()).commit();
+                ((AllinOneActivity) getActivity()).addProximityAlert(location.latitude, location.longitude, id);
 
             } else {
                 Log.d(TAG, "resultCode is wrong " + "resultCode");

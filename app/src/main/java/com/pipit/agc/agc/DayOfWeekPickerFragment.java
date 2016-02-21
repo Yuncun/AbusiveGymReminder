@@ -57,9 +57,12 @@ public class DayOfWeekPickerFragment extends ListFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.day_picker_fragment, container, false);
-        datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-        _allPreviousDays = datasource.getAllDayRecords();
+        synchronized (this){
+            datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            _allPreviousDays = datasource.getAllDayRecords();
+            DBRecordsSource.getInstance().closeDatabase();
+        }
 
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
@@ -73,7 +76,6 @@ public class DayOfWeekPickerFragment extends ListFragment{
 
     @Override
     public void onPause() {
-        DBRecordsSource.getInstance().closeDatabase();
         super.onPause();
     }
 

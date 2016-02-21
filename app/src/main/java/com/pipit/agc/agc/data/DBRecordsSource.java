@@ -222,7 +222,7 @@ public class DBRecordsSource {
     private Message cursorToMessage(Cursor cursor) {
         Message message = new Message();
         message.setId(cursor.getLong(0));
-        message.setComment(cursor.getString(1));
+        message.setBody(cursor.getString(1));
         message.setDate(Util.stringToDate(cursor.getString(2)));
         return message;
     }

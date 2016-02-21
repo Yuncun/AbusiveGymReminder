@@ -75,11 +75,14 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        synchronized (this){
+            datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            _allMessages = datasource.getAllMessages();
+            _allDayRecords = datasource.getAllDayRecords();
+            DBRecordsSource.getInstance().closeDatabase();
+        }
 
-        datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-        _allMessages = datasource.getAllMessages();
-        _allDayRecords = datasource.getAllDayRecords();
 
         mAdapter = new NewsfeedAdapter(_allMessages, _allDayRecords, getActivity());
         mRecyclerView.setAdapter(mAdapter);
@@ -90,7 +93,6 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        datasource.openDatabase();
 
         //Logic for showing Gym Status card
         SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
@@ -106,7 +108,6 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
 
     @Override
     public void onPause() {
-        DBRecordsSource.getInstance().closeDatabase();
         super.onPause();
     }
     @Override

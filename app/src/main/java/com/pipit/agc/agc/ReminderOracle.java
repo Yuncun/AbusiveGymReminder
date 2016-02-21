@@ -2,7 +2,6 @@ package com.pipit.agc.agc;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Switch;
 
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.Message;
@@ -25,7 +24,7 @@ public class ReminderOracle {
             databaseAccess.open();
             Message msg = databaseAccess.getRandomMessageWithParams(1, 1);
             databaseAccess.close();
-            leaveMessage(msg.getComment());
+            leaveMessage(msg.getBody());
         }else {
             leaveMessage("You missed the gym yesterday");
 

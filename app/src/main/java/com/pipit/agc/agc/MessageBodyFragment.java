@@ -1,7 +1,5 @@
 package com.pipit.agc.agc;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -48,6 +46,7 @@ public class MessageBodyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_message_body, container, false);
         TextView header = (TextView) rootView.findViewById(R.id.header);
+        TextView body = (TextView) rootView.findViewById(R.id.body);
 
         if (_id==null){
             return rootView;
@@ -59,7 +58,8 @@ public class MessageBodyFragment extends Fragment {
             //Log.e(TAG, "Message ID " + _id + " was not found in database");
             header.setText("null message");
         }
-        header.setText(_msg.getComment());
+        header.setText(_msg.getHeader());
+        header.setText(_msg.getBody());
         return rootView;
     }
 

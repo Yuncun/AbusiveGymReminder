@@ -53,7 +53,6 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
         calendar.add(Calendar.DATE, 1);
-        _alarm.CancelAlarm(getApplicationContext(), "locationlogging", 0);
         _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
     }
 
@@ -197,22 +196,22 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
      * @param lat
      * @param lng
      */
-    public void addProximityAlert(double lat, double lng){
+    public void addProximityAlert(double lat, double lng, int n){
         LocationManager lm=(LocationManager) getSystemService(LOCATION_SERVICE);
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        removeAllProximityAlerts(this);
+        removeProxAlert(n);
         float range = (float) prefs.getInt("range", -1);
         if (range < 0){
             prefs.edit().putFloat("range", (float) 100);
             range = 100;
         }
         Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
-        int alertId= (int) System.currentTimeMillis();
+        int alertId = (int) System.currentTimeMillis();
         PendingIntent pi = PendingIntent.getBroadcast(this, alertId , intent, 0);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("maxAlertId", alertId).commit();
-        Util.putDouble(editor, Constants.DEST_LAT, lat);
-        Util.putDouble(editor, Constants.DEST_LNG, lng);
+        editor.putInt("proxalert"+n, alertId).commit();
+        Util.putDouble(editor, Constants.DEST_LAT+n, lat);
+        Util.putDouble(editor, Constants.DEST_LNG+n, lng);
         Log.d(TAG, "Adding prox alert, ID is " + alertId + " range is " + range);
 
         editor.commit();
@@ -223,16 +222,28 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         }
     }
 
-    public void removeAllProximityAlerts(Context context) {
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        int maxAlertId = prefs.getInt("maxAlertId", 0); //Todo: Remember individual IDs
-        Log.d(TAG, "Attempting to remove prox alert, id is " + maxAlertId);
-        LocationManager lm=(LocationManager) getSystemService(LOCATION_SERVICE);
+    public void removeAllProximityAlerts() {
+        for (int i=1 ; i<4 ; i++){
+            removeProxAlert(i);
+        }
+    }
 
+    public void removeProxAlert(int i){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        int proxid = prefs.getInt("proxalert"+i, 0); //Todo: Remember individual IDs
+        Log.d(TAG, "Attempting to remove prox alert, id is " + proxid);
+        LocationManager lm=(LocationManager) getSystemService(LOCATION_SERVICE);
         Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this , maxAlertId, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this , proxid, intent, 0);
         try{
             lm.removeProximityAlert(pendingIntent);
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.remove("lat"+i);
+            edit.remove("lng"+i);
+            edit.remove("proxalert"+i);
+            edit.remove("address"+i);
+            edit.remove("name"+i);
+            edit.commit();
         } catch (SecurityException e){
             Log.e(TAG, "No permission");
         }
@@ -242,11 +253,11 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
      * Utility function for getting the location of the gym
      * @return Location object, with the gym coordinates
      */
-    public static Location getGymLocation(Context context){
+    public static Location getGymLocation(Context context, int i){
         /*Check lat/lng*/
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        double lat = Util.getDouble(prefs, "lat", Constants.DEFAULT_COORDINATE);
-        double lng = Util.getDouble(prefs, "lng", Constants.DEFAULT_COORDINATE);
+        double lat = Util.getDouble(prefs, "lat"+i, Constants.DEFAULT_COORDINATE);
+        double lng = Util.getDouble(prefs, "lng"+i, Constants.DEFAULT_COORDINATE);
 
         Location gymLocation = new Location("");
         gymLocation.setLatitude(lat);

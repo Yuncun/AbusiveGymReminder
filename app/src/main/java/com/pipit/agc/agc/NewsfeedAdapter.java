@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.pipit.agc.agc.data.DayRecord;
 import com.pipit.agc.agc.data.Message;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,33 +57,21 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        //The gym status card
-        if(false){
-            holder.cv.setMinimumHeight(calculateGymStatusCardHeight());
-            holder.cv.setCardBackgroundColor(_context.getResources().getColor(R.color.lightgreen));
-            holder.cv.setCardElevation(0);
-            holder.cv.setMaxCardElevation(0);
-            holder.cv.setPadding(0, 0, 20, 0);
-            //holder.header.setText(getGymDay());
-            //holder.comment.setText(getDayComments());
-        }else {
-            holder.header.setText(_messages.get(position - _offset).getComment());
-            holder.comment.setText(_messages.get(position - _offset).getDateString());
-            Bitmap bMap = BitmapFactory.decodeResource(_context.getResources(), R.drawable.notification_icon);
-            final int mpos = position;
-            holder.cv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(_context, MessageBodyActivity.class);
-                    intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos - _offset).getId());
-                    _context.startActivity(intent);
-                    //Todo: Mark comment as "read"
-                }
-            });
-        }
+        holder.comment.setText(_messages.get(position - _offset).getBody());
+        holder.header.setText(_messages.get(position - _offset).getDateString());
+        Bitmap bMap = BitmapFactory.decodeResource(_context.getResources(), R.drawable.notification_icon);
+        final int mpos = position;
+        holder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(_context, MessageBodyActivity.class);
+                intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos - _offset).getId());
+                _context.startActivity(intent);
+                //Todo: Mark comment as "read"
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

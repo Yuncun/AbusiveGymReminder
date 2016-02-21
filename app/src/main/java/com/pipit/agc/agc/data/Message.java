@@ -9,7 +9,8 @@ import java.util.Date;
  */
 public class Message {
     private long id;
-    private String comment;
+    private String body;
+    private String header;
     private Date date;
     public long getId() {
         return id;
@@ -19,12 +20,16 @@ public class Message {
         this.id = id;
     }
 
-    public String getComment() {
-        return comment;
+    public String getHeader(){ return header; }
+
+    public void setHeader(String header) { this.header = header ; }
+
+    public String getBody() {
+        return body;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setBody(String comment) {
+        this.body = comment;
     }
 
     public void setDate(Date date){
@@ -42,6 +47,6 @@ public class Message {
     // Will be used by the ArrayAdapter in the ListView
     @Override
     public String toString() {
-        return comment;
+        return body;
     }
 }

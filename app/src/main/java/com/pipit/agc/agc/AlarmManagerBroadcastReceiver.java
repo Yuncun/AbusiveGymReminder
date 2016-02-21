@@ -63,8 +63,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         i.putExtra("purpose", "leavemessage");
         PendingIntent pi = PendingIntent.getBroadcast(context, 3, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pi);
+        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
         Log.d(TAG, "leaveMessageAtTime " + System.currentTimeMillis()
                 + " alarm set for " + calendar.getTimeInMillis());
     }
@@ -97,10 +96,10 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
         i.putExtra("purpose", "locationlogging");
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 5, i, PendingIntent.FLAG_CANCEL_CURRENT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.MINUTE, 10);
+        calendar.add(Calendar.MINUTE, 2);
         am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
         Log.d(TAG, "set alarm for location log, current time is " + System.currentTimeMillis()
                 + " alarm set for " + calendar.getTimeInMillis());
@@ -169,12 +168,13 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         String verdict;
         if (prefs.getBoolean("justEntered", false)){
             updateLastDayRecord(true);
-            verdict="Prox alert accepted; Updating gym status";
+            verdict="Prox alert accepted; Updating gym status at " + new Date() + "/n";
             Log.d(TAG, verdict);
-            Util.sendNotification(context, "Location Update", "Entered proximity at " + new Date());
+            LocationUpdater lu = new LocationUpdater();
+            lu.requestLocation(context);
         }
         else{
-            verdict="Prox alert rejected as false positive";
+            verdict="Prox alert rejected as false positive at " + new Date();
             Log.d(TAG, verdict);
         }
         //Update logs

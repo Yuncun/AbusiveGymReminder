@@ -27,23 +27,20 @@ public class ProximityReceiver extends BroadcastReceiver {
         String k = LocationManager.KEY_PROXIMITY_ENTERING;
         boolean state = arg1.getBooleanExtra(k, false);
 
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+
         String enterOrLeaveStr;
-        boolean enteringFlag;
         if (state) {
             enterOrLeaveStr="entered";
-            markEnterSharedPref(context, true);
             AlarmManagerBroadcastReceiver alarm = new AlarmManagerBroadcastReceiver();
+            markEnterSharedPref(context, true);
             alarm.setAlarmForLocationLog(context);
-            enteringFlag=true;
         } else {
             enterOrLeaveStr="exited";
             markEnterSharedPref(context, false);
-            enteringFlag=false;
         }
         Log.d(TAG, "onReceive of PROXIMITY RECEIVER " + enterOrLeaveStr);
-
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        SharedPreferences.Editor editor = prefs.edit();
 
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         String lastLocation = prefs.getString("locationlist", "none");
@@ -54,48 +51,6 @@ public class ProximityReceiver extends BroadcastReceiver {
 
         editor.commit();
         wl.release();
-    }
-
-    private Location getCurrentLocation(Context context){
-        LocationManager locationManager;
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setCostAllowed(true);
-        criteria.setPowerRequirement(Criteria.POWER_LOW);
-        String provider = locationManager.getBestProvider(criteria, true);
-        String gpsMsg = "";
-        Location lc = new Location("");
-
-        if (null != provider)
-        {
-            Location location = locationManager.getLastKnownLocation(provider);
-            if (null != location) {
-                double currentLat = location.getLatitude();
-                double currentLon = location.getLongitude();
-                gpsMsg = "curr location is " + currentLat + " " + currentLon;
-                lc.setLongitude(currentLon);
-                lc.setLatitude(currentLat);
-            }
-            else
-            {
-                gpsMsg="Current Location can not be resolved!";
-            }
-        }
-        else
-        {
-            gpsMsg="Provider is not available!";
-        }
-        Log.d(TAG, "getCurrentLocation: " + gpsMsg);
-        return lc;
-    }
-
-    private boolean sanitycheck(int i, int range){
-        if (i>(range*2)){
-            return false;
-        }else return true;
     }
 
     /**
