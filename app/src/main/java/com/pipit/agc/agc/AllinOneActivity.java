@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,20 +17,36 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.DayRecord;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener{
+public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
     private static String TAG = "AllinOneActivity";
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     private AlarmManagerBroadcastReceiver _alarm;
     ViewPager mViewPager;
+
+    protected ArrayList<Geofence> mGeofenceList;
+    private boolean mGeofencesAdded;
+    private PendingIntent mGeofencePendingIntent;
+    protected GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +71,15 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
         calendar.add(Calendar.DATE, 1);
         _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
+
+
+        buildGoogleApiClient();
+        mGeofenceList = new ArrayList<Geofence>();
+        populategeofencelist();
+        //addGeofenceFromListposition(2);
+        // Initially set the PendingIntent used in addGeofences() and removeGeofences() to null.
+        mGeofencePendingIntent = null;
+
     }
 
     @Override
@@ -184,11 +210,16 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         } finally{
             DBRecordsSource.getInstance().closeDatabase();
         }
+
         super.onStart();
+        mGoogleApiClient.connect();
+
     }
 
     protected void onStop() {
         super.onStop();
+        mGoogleApiClient.disconnect();
+
     }
     /**
      * Adds proximity alert to given coordinates; removes old proximity alerts.
@@ -202,8 +233,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         removeProxAlert(n);
         float range = (float) prefs.getInt("range", -1);
         if (range < 0){
-            prefs.edit().putFloat("range", (float) 100);
-            range = 100;
+            prefs.edit().putFloat("range", (float) Constants.DEFAULT_RADIUS);
+            range = Constants.DEFAULT_RADIUS;
         }
         Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
         int alertId = (int) System.currentTimeMillis();
@@ -223,14 +254,14 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
     }
 
     public void removeAllProximityAlerts() {
-        for (int i=1 ; i<4 ; i++){
+        for (int i=1 ; i<Constants.GYM_LIMIT ; i++){
             removeProxAlert(i);
         }
     }
 
     public void removeProxAlert(int i){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        int proxid = prefs.getInt("proxalert"+i, 0); //Todo: Remember individual IDs
+        int proxid = prefs.getInt("proxalert" + i, 0); //Todo: Remember individual IDs
         Log.d(TAG, "Attempting to remove prox alert, id is " + proxid);
         LocationManager lm=(LocationManager) getSystemService(LOCATION_SERVICE);
         Intent intent = new Intent(Constants.PROX_INTENT_FILTER);
@@ -250,10 +281,165 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
     }
 
     /**
-     * Utility function for getting the location of the gym
-     * @return Location object, with the gym coordinates
+     * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the LocationServices API.
      */
-    public static Location getGymLocation(Context context, int i){
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    public void populategeofencelist(){
+        mGeofenceList = new ArrayList<Geofence>();
+        for (int i = 1; i<Constants.GYM_LIMIT; i++){
+            addGeofenceFromListposition(i);
+        }
+    }
+
+    public void addGeofenceFromListposition(int n){
+        Log.d(TAG, "addGeoFenceFromListPosition n=" + n);
+        if (mGeofenceList==null){
+            this.mGeofenceList = new ArrayList<Geofence>();
+        }
+        Gym gym = getGymLocation(this, n);
+        if (gym == null || gym.location==null){
+            Log.d(TAG, "addGeoFenceFromListPosition gym retrieved from " + n + " is null");
+            return;
+        }
+        mGeofenceList.add(new Geofence.Builder()
+                .setRequestId(Integer.toString(gym.proxid))
+                .setCircularRegion(
+                        gym.location.getLatitude(),
+                        gym.location.getLongitude(),
+                        Constants.DEFAULT_RADIUS
+                )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
+
+    }
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        return PendingIntent.getService(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+    }
+
+    private PendingIntent getGeofencePendingIntentById(int proxid){
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        return PendingIntent.getService(this, proxid, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+    }
+
+    /**
+     * Adds geofences, which sets alerts to be notified when the device enters or exits one of the
+     * specified geofences. Handles the success or failure results returned by addGeofences().
+     */
+    public void addGeofencesButtonHandler() {
+        Log.d(TAG, "Adding geoFencesButtonHandler click");
+        if (!mGoogleApiClient.isConnected()) {
+            Toast.makeText(this, "not connected in addgeofence", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            LocationServices.GeofencingApi.addGeofences(
+                    mGoogleApiClient,
+                    // The GeofenceRequest object.
+                    getGeofencingRequest(),
+                    // A pending intent that that is reused when calling removeGeofences(). This
+                    // pending intent is used to generate an intent when a matched geofence
+                    // transition is observed.
+                    getGeofencePendingIntent()
+            ).setResultCallback(this); // Result processed in onResult().
+        } catch (SecurityException securityException) {
+            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
+            logSecurityException(securityException);
+        }
+    }
+
+    /**
+     * Builds and returns a GeofencingRequest. Specifies the list of geofences to be monitored.
+     * Also specifies how the geofence notifications are initially triggered.
+     */
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+
+        // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
+        // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
+        // is already inside that geofence.
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+
+        // Add the geofences to be monitored by geofencing service.
+        builder.addGeofences(mGeofenceList);
+
+        // Return a GeofencingRequest.
+        return builder.build();
+    }
+
+    /**
+     * Removes geofences, which stops further notifications when the device enters or exits
+     * previously registered geofences.
+     */
+    public void removeGeofencesButtonHandler() {
+        Log.d(TAG, "Removing geoFencesButtonHandler click");
+        if (!mGoogleApiClient.isConnected()) {
+            Toast.makeText(this, "google api not connected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            // Remove geofences.
+            LocationServices.GeofencingApi.removeGeofences(
+                    mGoogleApiClient,
+                    // This is the same pending intent that was used in addGeofences().
+                    getGeofencePendingIntent()
+            ).setResultCallback(this); // Result processed in onResult().
+        } catch (SecurityException securityException) {
+            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
+            logSecurityException(securityException);
+        }
+    }
+
+    public void removeGeofencesById(int proxid){
+        Log.d(TAG, "Removing geoFencesButtonHandler click");
+        if (!mGoogleApiClient.isConnected()) {
+            Toast.makeText(this, "google api not connected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            // Remove geofences.
+            LocationServices.GeofencingApi.removeGeofences(
+                    mGoogleApiClient,
+                    // This is the same pending intent that was used in addGeofences().
+                    getGeofencePendingIntentById(proxid)
+            ).setResultCallback(this); // Result processed in onResult().
+        } catch (SecurityException securityException) {
+            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
+            logSecurityException(securityException);
+        }
+    }
+
+    private void logSecurityException(SecurityException securityException) {
+        Log.e(TAG, "Invalid location permission. " +
+                "You need to use ACCESS_FINE_LOCATION with geofences", securityException);
+    }
+
+
+    /**
+     * Utility function for getting the location of the gym
+     * @return Gym if a gym is found, and null if gym is not found
+     */
+    public static Gym getGymLocation(Context context, int i){
         /*Check lat/lng*/
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         double lat = Util.getDouble(prefs, "lat"+i, Constants.DEFAULT_COORDINATE);
@@ -262,7 +448,12 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         Location gymLocation = new Location("");
         gymLocation.setLatitude(lat);
         gymLocation.setLongitude(lng);
-        return gymLocation;
+        Gym gym = new Gym();
+        gym.location = gymLocation;
+        gym.address = prefs.getString("address"+i, "No Address");
+        gym.name = prefs.getString("name"+i, "");
+        gym.proxid = prefs.getInt("proxalert"+i, 0);
+        return gym;
     }
 
     public Fragment getFragmentByKey(String key){
@@ -284,6 +475,61 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         Log.d(TAG, "onListFragmentInteraction");
     }
 
+    /**
+     * Runs when a GoogleApiClient object successfully connects.
+     */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.i(TAG, "Connected to GoogleApiClient");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason.
+        Log.i(TAG, "Connection suspended");
+
+        // onConnected() will be called again automatically when the service reconnects
+    }
+
+    /**
+     * Runs when the result of calling addGeofences() and removeGeofences() becomes available.
+     * Either method can complete successfully or with an error.
+     *
+     * Since this activity implements the {@link ResultCallback} interface, we are required to
+     * define this method.
+     *
+     * @param status The Status returned through a PendingIntent when addGeofences() or
+     *               removeGeofences() get called.
+     */
+    public void onResult(Status status) {
+        if (status.isSuccess()) {
+            // Update state and save in shared preferences.
+            mGeofencesAdded = !mGeofencesAdded;
+            SharedPreferences.Editor editor =  getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS).edit();
+            editor.putBoolean(Constants.GEOFENCES_ADDED_KEY, mGeofencesAdded);
+            editor.apply();
+
+            // Update the UI. Adding geofences enables the Remove Geofences button, and removing
+            // geofences enables the Add Geofences button.
+            Toast.makeText(
+                    this,
+                    mGeofencesAdded ? "Added geofence" :
+                            "Removed geofence",
+                    Toast.LENGTH_SHORT
+            ).show();
+        } else {
+            // Get the status code for the error and log it using a user-friendly message.
+            String errorMessage = "Some error in onResult";
+            Log.e(TAG, errorMessage);
+        }
+    }
 
 }
 

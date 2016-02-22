@@ -33,7 +33,7 @@ public class BootReceiver extends BroadcastReceiver {
     static void addProxAlert(Context context, int i){
         LocationManager lm=(LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        Location gymlocation = AllinOneActivity.getGymLocation(context, i);
+        Location gymlocation = AllinOneActivity.getGymLocation(context, i).location;
         if (gymlocation.getLatitude()==Constants.DEFAULT_COORDINATE && gymlocation.getLongitude()==Constants.DEFAULT_COORDINATE){
             return;
         }

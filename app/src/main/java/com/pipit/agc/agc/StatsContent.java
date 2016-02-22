@@ -32,7 +32,7 @@ public class StatsContent {
         ITEMS=new ArrayList<Stat>();
         updateCurrentStreak();
         updateLongestStreak();
-        updateLastSevenDaysStats();
+        //updateLastSevenDaysStats();
     }
 
     private static Stat createDummyItem(int position) {

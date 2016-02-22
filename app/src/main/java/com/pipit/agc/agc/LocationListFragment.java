@@ -1,6 +1,8 @@
 package com.pipit.agc.agc;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -8,10 +10,19 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +32,11 @@ import java.util.List;
  */
 public class LocationListFragment extends Fragment {
 
+    private static final String TAG = "LocationListFragment";
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
+    public int mFlag;
+    private RecyclerView mRecyclerView;
     private OnListFragmentInteractionListener mListener;
 
     public LocationListFragment() {
@@ -41,7 +55,7 @@ public class LocationListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mFlag=0;
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -54,18 +68,19 @@ public class LocationListFragment extends Fragment {
         RecyclerView recyclerlist = (RecyclerView) view.findViewById(R.id.recyclerlist);
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) recyclerlist;
+        mRecyclerView = (RecyclerView) recyclerlist;
         if (mColumnCount <= 1) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
-            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        recyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener));
+        mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
 
         return view;
     }
 
     public List<Gym> getGymLocations(){
+        Log.d(TAG, "getGymLocations()");
         SharedPreferences prefs = getActivity().getApplicationContext()
                 .getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<Gym> gymlocations = new ArrayList<Gym>();
@@ -105,4 +120,72 @@ public class LocationListFragment extends Fragment {
         // TODO: Update argument type and name
         void onListFragmentInteraction();
     }
+
+    public void startPlacePicker(int i){
+        try {
+            PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+            Intent intent = intentBuilder.build(getActivity());
+            intent.putExtra("proxid", i);
+
+            // Start the Intent by requesting a result, identified by a request code.
+            startActivityForResult(intent, Constants.REQUEST_PLACE_PICKER);
+        } catch (GooglePlayServicesRepairableException e) {
+            GooglePlayServicesUtil
+                    .getErrorDialog(e.getConnectionStatusCode(), getActivity(), 0);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(getActivity(), "Google Play Services is not available.",
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.REQUEST_PLACE_PICKER) {
+
+            if (resultCode == Activity.RESULT_OK) {
+                /* User has picked a place, extract data.
+                   Data is extracted from the returned intent by retrieving a Place object from
+                   the PlacePicker.
+                 */
+                final Place place = PlacePicker.getPlace(data, getActivity());
+
+                /* A Place object contains details about that place, such as its name, address
+                and phone number. Extract the name, address, phone number, place ID and place types.
+                 */
+                final CharSequence name = place.getName();
+                final CharSequence address = place.getAddress();
+                final CharSequence phone = place.getPhoneNumber();
+                final String placeId = place.getId();
+                final LatLng location = place.getLatLng();
+                String attribution = PlacePicker.getAttributions(data);
+                if(attribution == null){
+                    attribution = "";
+                }
+
+                int id = mFlag;
+                mFlag=0;
+                //int id = data.getIntExtra("proxid", 1);
+
+                SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("address"+id, address.toString()).commit();
+                editor.putString("name"+id, name.toString()).commit();
+                Log.d(TAG, "Just picked a location, id=" + id);
+                ((AllinOneActivity) getActivity()).addProximityAlert(location.latitude, location.longitude, id);
+                ((AllinOneActivity) getActivity()).addGeofenceFromListposition(id);
+                ((AllinOneActivity) getActivity()).addGeofencesButtonHandler();
+                mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
+            } else {
+                Log.d(TAG, "resultCode is wrong " + "resultCode");
+
+            }
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+        // END_INCLUDE(activity_result)
+    }
+
+
 }

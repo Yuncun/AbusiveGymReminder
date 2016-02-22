@@ -10,4 +10,14 @@ public class Gym {
     public String address;
     public String name;
     public int proxid;
+
+    public Gym(){
+        location=new Location("");
+        location.setLatitude(Constants.DEFAULT_COORDINATE);
+        location.setLongitude(Constants.DEFAULT_COORDINATE);
+        proxid = 0;
+        name = "";
+        address = "No address";
+    }
+
 }

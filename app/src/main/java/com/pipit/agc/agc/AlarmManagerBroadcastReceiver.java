@@ -170,8 +170,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
             updateLastDayRecord(true);
             verdict="Prox alert accepted; Updating gym status at " + new Date() + "/n";
             Log.d(TAG, verdict);
-            LocationUpdater lu = new LocationUpdater();
-            lu.requestLocation(context);
+            //Util.sendNotification(context, "Location Update", "Entered proximity at " + new Date());
         }
         else{
             verdict="Prox alert rejected as false positive at " + new Date();

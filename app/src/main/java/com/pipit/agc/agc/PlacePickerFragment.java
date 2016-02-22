@@ -31,6 +31,8 @@ public class PlacePickerFragment extends Fragment {
     private EditText _rangeEditText;
     private Button _submitButton;
     private Button _removeProxAlertsButton;
+    private Button _AddGeofencesButton;
+    private Button _RemoveGeofencesButton;
 
     public static PlacePickerFragment newInstance() {
         PlacePickerFragment fragment = new PlacePickerFragment();
@@ -83,8 +85,7 @@ public class PlacePickerFragment extends Fragment {
                     Toast.makeText(getActivity(), "range set to " + str, Toast.LENGTH_SHORT).show();
                     editor.putInt("range", range);
                     editor.commit();
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     Log.e("logtag", "Exception: " + e.toString());
                     Toast.makeText(getActivity(), "Invalid range " + str, Toast.LENGTH_SHORT).show();
                 }
@@ -101,6 +102,21 @@ public class PlacePickerFragment extends Fragment {
             }
         });
 
+        _AddGeofencesButton = (Button) rootView.findViewById(R.id.add_geofences_button);
+        _AddGeofencesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((AllinOneActivity) getActivity()).addGeofencesButtonHandler();
+            }
+        });
+        _RemoveGeofencesButton = (Button) rootView.findViewById(R.id.remove_geofences_button);
+        _RemoveGeofencesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((AllinOneActivity) getActivity()).removeGeofencesButtonHandler();
+            }
+        });
+
         return rootView;
     }
 
@@ -108,7 +124,7 @@ public class PlacePickerFragment extends Fragment {
         try {
             PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
             Intent intent = intentBuilder.build(getActivity());
-            intent.putExtra("proxid", 1);
+            intent.putExtra("proxid", 2);
             // Start the Intent by requesting a result, identified by a request code.
             startActivityForResult(intent, Constants.REQUEST_PLACE_PICKER);
         } catch (GooglePlayServicesRepairableException e) {
@@ -156,6 +172,8 @@ public class PlacePickerFragment extends Fragment {
                 editor.putString("address"+id, address.toString()).commit();
                 editor.putString("name"+id, name.toString()).commit();
                 ((AllinOneActivity) getActivity()).addProximityAlert(location.latitude, location.longitude, id);
+                ((AllinOneActivity) getActivity()).addGeofenceFromListposition(2);
+
 
             } else {
                 Log.d(TAG, "resultCode is wrong " + "resultCode");

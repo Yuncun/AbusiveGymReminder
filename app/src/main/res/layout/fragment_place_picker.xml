@@ -39,4 +39,16 @@
         android:id="@+id/remove_prox_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/add_geofences_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add GeoFence"/>
+
+    <Button
+        android:id="@+id/remove_geofences_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="remove geoFence"/>
 </LinearLayout>
