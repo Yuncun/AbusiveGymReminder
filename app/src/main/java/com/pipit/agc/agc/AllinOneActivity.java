@@ -316,8 +316,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                         Constants.DEFAULT_RADIUS
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setLoiteringDelay(1000*60*5)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
                 .build());
 
     }
@@ -378,7 +378,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
         // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
         // is already inside that geofence.
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
 
         // Add the geofences to be monitored by geofencing service.
         builder.addGeofences(mGeofenceList);
