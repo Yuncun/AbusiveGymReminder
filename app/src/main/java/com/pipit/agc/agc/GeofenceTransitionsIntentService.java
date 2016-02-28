@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.pipit.agc.agc.data.DBRecordsSource;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -60,14 +61,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         // Test that the reported transition was of interest.
-        if (//geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-            //    geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT ||
-                geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
-
-            // Get the geofences that were triggered. A single event can trigger multiple geofences.
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL)
+        {
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-
-            // Get the transition details as a String.
             String geofenceTransitionDetails = getGeofenceTransitionDetails(
                     this,
                     geofenceTransition,
@@ -84,12 +80,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
             String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
             String body = lastLocation+"\n" + geofenceTransitionDetails + " " + mLastUpdateTime;
             editor.putString("locationlist", body).commit();
+
+            //Update gym status today
+            updateLastDayRecord();
         } else {
-            // Log the error.
             Log.e(TAG, "geofenceTransition error");
         }
     }
-
 
     /**
      * Gets transition details and returns them as a formatted string.
@@ -105,7 +102,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
             List<Geofence> triggeringGeofences) {
 
         String geofenceTransitionString = getTransitionString(geofenceTransition);
-
         // Get the Ids of each geofence that was triggered.
         ArrayList triggeringGeofencesIdsList = new ArrayList();
         for (Geofence geofence : triggeringGeofences) {
@@ -180,4 +176,17 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 return "Unknown geofence transition";
         }
     }
+
+    private void updateLastDayRecord(){
+        synchronized (this){
+            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            if (!datasource.getLastDayRecord().beenToGym()){
+                datasource.updateLatestDayRecordBeenToGym(true);
+            }
+            DBRecordsSource.getInstance().closeDatabase();
+        }
+
+    }
+
 }

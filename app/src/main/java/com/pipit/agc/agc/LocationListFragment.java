@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,7 @@ public class LocationListFragment extends Fragment {
     public int mFlag;
     private RecyclerView mRecyclerView;
     private OnListFragmentInteractionListener mListener;
+    private FloatingActionButton mFab;
 
     public LocationListFragment() {
     }
@@ -56,6 +58,7 @@ public class LocationListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFlag=0;
+        mListener = (OnListFragmentInteractionListener) getActivity();
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -76,6 +79,15 @@ public class LocationListFragment extends Fragment {
         }
         mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
 
+        mFab = (FloatingActionButton) view.findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onListFragmentInteraction();
+                //Toast.makeText(getContext(), "Adding Geofences", Toast.LENGTH_SHORT);
+            }
+        });
+
         return view;
     }
 
@@ -84,15 +96,18 @@ public class LocationListFragment extends Fragment {
         SharedPreferences prefs = getActivity().getApplicationContext()
                 .getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<Gym> gymlocations = new ArrayList<Gym>();
-        for (int i=1; i<4; i++){
+        for (int i=1; i<Constants.GYM_LIMIT; i++){
             double lat = Util.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
             double lng = Util.getDouble(prefs, "lng" + i, Constants.DEFAULT_COORDINATE);
             Gym gym = new Gym();
             gym.location = new Location("");
             gym.location.setLongitude(lng);
             gym.location.setLatitude(lat);
-            gym.address = prefs.getString("address" + i, "No address");
-            gym.proxid =  prefs.getInt("proxalert"+i, 0);
+            if (lat==Constants.DEFAULT_COORDINATE && lng==Constants.DEFAULT_COORDINATE){
+                gym.isEmpty=true;
+            }
+            gym.address = prefs.getString("address" + i, getContext().getResources().getString(R.string.no_address_default));
+            gym.proxid =  prefs.getInt("proxalert" + i, 0);
             gym.name = prefs.getString("name"+i, "No name");
             gymlocations.add(gym);
         }
@@ -101,13 +116,13 @@ public class LocationListFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        super.onAttach(context);/*
+        super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
-        }*/
+        }
     }
 
     @Override
@@ -162,19 +177,20 @@ public class LocationListFragment extends Fragment {
                 if(attribution == null){
                     attribution = "";
                 }
-
                 int id = mFlag;
                 mFlag=0;
-                //int id = data.getIntExtra("proxid", 1);
-
-                SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("address"+id, address.toString()).commit();
-                editor.putString("name"+id, name.toString()).commit();
                 Log.d(TAG, "Just picked a location, id=" + id);
-                ((AllinOneActivity) getActivity()).addProximityAlert(location.latitude, location.longitude, id);
-                ((AllinOneActivity) getActivity()).addGeofenceFromListposition(id);
-                ((AllinOneActivity) getActivity()).addGeofencesButtonHandler();
+
+                Gym gym = new Gym();
+                gym.location = new Location("");
+                gym.location.setLongitude(location.longitude);
+                gym.location.setLatitude(location.latitude);
+                gym.address = "" + place.getAddress();
+                gym.name = "" + place.getName();
+                gym.proxid = id;
+
+                ((AllinOneActivity) getActivity()).addGeofenceFromListposition(gym);
+                mListener.onListFragmentInteraction();
                 mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
             } else {
                 Log.d(TAG, "resultCode is wrong " + "resultCode");
@@ -184,7 +200,6 @@ public class LocationListFragment extends Fragment {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-        // END_INCLUDE(activity_result)
     }
 
 

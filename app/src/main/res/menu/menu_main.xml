@@ -7,4 +7,5 @@
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_showcalendar" android:title="@string/show_calendar"
         android:orderInCategory="100" app:showAsAction="never" />
-</menu>
+    <item android:id="@+id/action_remove_geofences" android:title="@string/remove_geofences"
+        android:orderInCategory="100" app:showAsAction="never" /></menu>

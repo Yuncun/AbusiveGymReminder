@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.LocationListFragment.OnListFragmentInteractionListener;
@@ -37,17 +38,28 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        if (mValues.get(position).isEmpty){
+            holder.mCv.setVisibility(View.GONE);
+            return;
+        }
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(Integer.toString(mValues.get(position).proxid));
-        holder.mContentView.setText(mValues.get(position).address + " " + mValues.get(position).location.getLongitude()
-            + " " + mValues.get(position).location.getLatitude());
+        holder.mIdView.setText("Gym " + Integer.toString(mValues.get(position).proxid));
+        holder.mNameTextView.setText(mValues.get(position).name);
+        if (mValues.get(position).address.equals(mFrag.getResources().getString(R.string.no_address_default))){
+            //If there is no address, use the coordinates
+            holder.mContentView.setText(mValues.get(position).location.getLongitude()
+                    + " " + mValues.get(position).location.getLatitude());
+        }
+        else{
+            holder.mContentView.setText(mValues.get(position).address + " ");
+        }
 
-        holder.mAddButton.setOnClickListener(new View.OnClickListener() {
+        holder.mClickableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "clicked addButton");
-                mFrag.mFlag = position+1;
-                mFrag.startPlacePicker(position+1);
+                mFrag.mFlag = position + 1;
+                mFrag.startPlacePicker(position + 1);
             }
         });
 
@@ -55,7 +67,6 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             @Override
             public void onClick(View v){
                 Log.d(TAG, "clicked removeButton");
-                ((AllinOneActivity) mFrag.getActivity()).removeProxAlert(position + 1);
                 ((AllinOneActivity) mFrag.getActivity()).removeGeofencesById(position + 1);
                 mValues.set(position, new Gym());
                 notifyDataSetChanged();
@@ -75,7 +86,8 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         public final CardView mCv;
         public final TextView mIdView;
         public final TextView mContentView;
-        public final Button mAddButton;
+        public final RelativeLayout mClickableLayout;
+        public final TextView mNameTextView;
         public final Button mRemoveButton;
 
         public Gym mItem;
@@ -86,8 +98,9 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             mCv = (CardView) view.findViewById(R.id.location_cv);
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
-            mAddButton = (Button) view.findViewById(R.id.addButton);
+            mClickableLayout = (RelativeLayout) view.findViewById(R.id.location_description);
             mRemoveButton = (Button) view.findViewById(R.id.removeButton);
+            mNameTextView = (TextView) view.findViewById(R.id.name);
         }
 
         @Override

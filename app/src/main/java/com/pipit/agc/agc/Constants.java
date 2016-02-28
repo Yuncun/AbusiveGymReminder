@@ -10,7 +10,6 @@ public class Constants {
     public static final String PROXIMITY_INTENT_ACTION = "com.pipit.agc.agc.action.PROXIMITY_ALERT";
     public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
     public static final String MESSAGE_ID = "message_id";
-    public static final String PROX_INTENT_FILTER = "com.pipit.agc.agc.ProximityReceiver";
     public static final double DEFAULT_COORDINATE = 0.0;
 
     /*Settings*/
@@ -34,7 +33,11 @@ public class Constants {
     public static final String NEWSFEED_FRAG = "newsfeed_fragment";
     public static final String DAYOFWEEK_FRAG = "dayofweek_fragment";
     public static final String DAYPICKER_FRAG = "daypicker_fragment";
+    public static final String LOCATION_FRAG = "location_fragment";
     public static final String LOGS_FRAG = "logs_fragment";
     public static final String PLACEPICKER_FRAG = "placepicker_fragment";
+
+    /*Permissions requestcodes*/
+    public static final int GRANTED_LOCATION_PERMISSIONS = 1;
 
 }

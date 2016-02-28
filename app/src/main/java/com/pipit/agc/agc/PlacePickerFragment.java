@@ -25,7 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class PlacePickerFragment extends Fragment {
     private String TAG = "PlacePickerFragment";
     private TextView _address;
-    private String _addressDefault="No address";
+    private String _addressText = getContext().getResources().getString(R.string.no_address_default);
     private Button _launchPlacePicker;
     private TextView _rangeDescription;
     private EditText _rangeEditText;
@@ -57,7 +57,7 @@ public class PlacePickerFragment extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         final SharedPreferences.Editor editor = prefs.edit();
 
-        _addressDefault = prefs.getString("address"+1, "no address") + "lat" +
+        _addressText = prefs.getString("address"+1, getContext().getResources().getString(R.string.no_address_default)) + "lat" +
                 Util.getDouble(prefs, "lat", 0) + " lng" + Util.getDouble(prefs, "lng", 0) ;
 
         View rootView = inflater.inflate(R.layout.fragment_place_picker, container, false);
@@ -69,7 +69,7 @@ public class PlacePickerFragment extends Fragment {
             }
         });
         _address=(TextView) rootView.findViewById(R.id.addressText);
-        _address.setText(_addressDefault);
+        _address.setText(_addressText);
         _rangeDescription = (TextView) rootView.findViewById(R.id.range_description);
         _rangeDescription.setText(getResources().getText(R.string.range_picker_description) + " Currently "
                 + prefs.getInt("range", -1));
@@ -94,13 +94,6 @@ public class PlacePickerFragment extends Fragment {
 
         _removeProxAlertsButton = (Button) rootView.findViewById(R.id.remove_prox_button);
         _removeProxAlertsButton.setText("Remove All Locations");
-        _removeProxAlertsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Removing all saved locations", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "clicked removing all saved locations");
-                ((AllinOneActivity) getActivity()).removeAllProximityAlerts();
-            }
-        });
 
         _AddGeofencesButton = (Button) rootView.findViewById(R.id.add_geofences_button);
         _AddGeofencesButton.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +106,7 @@ public class PlacePickerFragment extends Fragment {
         _RemoveGeofencesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AllinOneActivity) getActivity()).removeGeofencesButtonHandler();
+                ((AllinOneActivity) getActivity()).removeAllGeofences();
             }
         });
 
@@ -164,16 +157,13 @@ public class PlacePickerFragment extends Fragment {
                 int id = 2;
                 //int id = data.getIntExtra("proxid", 1);
                 Log.d(TAG, "Place selected: " + placeId + " (" + name.toString() + ")");
-                _addressDefault = "Your gym is " + name.toString() + " \nat " + address.toString() + "\nCoordinates at " + location.toString();
-                _address.setText(_addressDefault);
+                _addressText = "Your gym is " + name.toString() + " \nat " + address.toString() + "\nCoordinates at " + location.toString();
+                _address.setText(_addressText);
 
                 SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("address"+id, address.toString()).commit();
                 editor.putString("name"+id, name.toString()).commit();
-                ((AllinOneActivity) getActivity()).addProximityAlert(location.latitude, location.longitude, id);
-                ((AllinOneActivity) getActivity()).addGeofenceFromListposition(2);
-
 
             } else {
                 Log.d(TAG, "resultCode is wrong " + "resultCode");

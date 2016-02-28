@@ -10,6 +10,7 @@ public class Gym {
     public String address;
     public String name;
     public int proxid;
+    public boolean isEmpty;
 
     public Gym(){
         location=new Location("");
@@ -18,6 +19,7 @@ public class Gym {
         proxid = 0;
         name = "";
         address = "No address";
+        isEmpty = false;
     }
 
 }

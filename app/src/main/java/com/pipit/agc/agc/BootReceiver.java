@@ -25,12 +25,12 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent i) {
         Log.d(TAG, "onReceive in BootReceiver");
         for (int n = 1; n < 4; n++){
-            addProxAlert(context, n);
+            //addProxAlert(context, n);
         }
         scheduleAlarms(context);
     }
 
-    static void addProxAlert(Context context, int i){
+    /*static void addProxAlert(Context context, int i){
         LocationManager lm=(LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         Location gymlocation = AllinOneActivity.getGymLocation(context, i).location;
@@ -56,7 +56,7 @@ public class BootReceiver extends BroadcastReceiver {
         String body = lastLocation+"\n" + "BOOT LOADER ADDED PROX ALERT at " + mLastUpdateTime;
         editor.putString("locationlist", body);
 
-    }
+    } */
     static void scheduleAlarms(Context context) {
         /*AlarmManager mgr=
                 (AlarmManager)ctxt.getSystemService(Context.ALARM_SERVICE);

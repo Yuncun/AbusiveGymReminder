@@ -41,9 +41,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
             case "daylogging" :
                 doDayLogging(context);
                 break;
-            case "locationlogging" :
-                doLocationCheck(context);
-                break;
             case "leavemessage" :
                 doLeaveMessage(context);
                 break;
@@ -92,27 +89,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                 AlarmManager.INTERVAL_DAY, pi);
     }
 
-    public void setAlarmForLocationLog(Context context){
-        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
-        i.putExtra("purpose", "locationlogging");
-        PendingIntent pi = PendingIntent.getBroadcast(context, 5, i, PendingIntent.FLAG_CANCEL_CURRENT);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.MINUTE, 2);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
-        Log.d(TAG, "set alarm for location log, current time is " + System.currentTimeMillis()
-                + " alarm set for " + calendar.getTimeInMillis());
-    }
-    public void CancelAlarm(Context context, String purpose, int id)
-    {
-        Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
-        intent.putExtra("purpose", purpose);
-        PendingIntent sender = PendingIntent.getBroadcast(context, id, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(sender);
-    }
-
     /**
      * Executed by Alarm Manager at midnight to add a new day into database
      */
@@ -147,54 +123,9 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         editor.putBoolean("showGymStatus", true);
     }
 
-    /**
-     *  This function checks if todays beentogym status needs to be updated
-     *
-     *  When a proximity alert is entered, there is a high chance of a false positive.
-     *  Therefore when proximity receiver gets a broadcast, it will use AlarmManager to
-     *  wait two or three minutes to check if the false positive has corrected itself (usually
-     *  takes one minute).
-     *
-     *  This function will be executed after the allotted wait time. It simply checks if
-     *  the prox alert has been nullified in the last two minutes. If not, it updates beentogym
-     *  status.
-     */
-    private void doLocationCheck(Context context){
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        if (!prefs.contains("justEntered")){
-            Log.e(TAG, "No enter status found in doLocationCheck, shared preferences does not contain 'justEntered'");
-            return;
-        }
-        String verdict;
-        if (prefs.getBoolean("justEntered", false)){
-            updateLastDayRecord(true);
-            verdict="Prox alert accepted; Updating gym status at " + new Date() + "/n";
-            Log.d(TAG, verdict);
-            //Util.sendNotification(context, "Location Update", "Entered proximity at " + new Date());
-        }
-        else{
-            verdict="Prox alert rejected as false positive at " + new Date();
-            Log.d(TAG, verdict);
-        }
-        //Update logs
-        SharedPreferences.Editor editor = prefs.edit();
-        String lastLocation = prefs.getString("locationlist", "none");
-        String body = lastLocation+"\n" + verdict;
-        editor.putString("locationlist", body).commit();
-    }
-
     private void doLeaveMessage(Context context){
         Log.d(TAG, "doLeaveMessage");
         ReminderOracle.doReminderCreation(true, context);
     }
-
-    private void updateLastDayRecord(boolean beenToGymToday){
-        DBRecordsSource datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-        datasource.updateLatestDayRecordBeenToGym(beenToGymToday);
-        DBRecordsSource.getInstance().closeDatabase();
-    }
-
-
 
 }

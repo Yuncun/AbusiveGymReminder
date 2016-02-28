@@ -12,8 +12,9 @@
         android:name="com.pipit.agc.agc.LocationListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.pipit.agc.agc.LocationListFragment"
         tools:listitem="@layout/location_item" />
