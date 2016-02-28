@@ -38,22 +38,25 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        //Show layout for empty gym
         if (mValues.get(position).isEmpty){
-            holder.mCv.setVisibility(View.GONE);
-            return;
-        }
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText("Gym " + Integer.toString(mValues.get(position).proxid));
-        holder.mNameTextView.setText(mValues.get(position).name);
-        if (mValues.get(position).address.equals(mFrag.getResources().getString(R.string.no_address_default))){
-            //If there is no address, use the coordinates
-            holder.mContentView.setText(mValues.get(position).location.getLongitude()
-                    + " " + mValues.get(position).location.getLatitude());
-        }
-        else{
-            holder.mContentView.setText(mValues.get(position).address + " ");
-        }
+            holder.mRemoveButton.setVisibility(View.GONE);
+            holder.mIdView.setVisibility(View.GONE);
+            holder.mContentView.setVisibility(View.GONE);
+            holder.mNameTextView.setText("Touch to add gym");
+        }else {
 
+            holder.mItem = mValues.get(position);
+            holder.mIdView.setText("Gym " + Integer.toString(mValues.get(position).proxid));
+            holder.mNameTextView.setText(mValues.get(position).name);
+            if (mValues.get(position).address.equals(mFrag.getResources().getString(R.string.no_address_default))) {
+                //If there is no address, use the coordinates
+                holder.mContentView.setText(mValues.get(position).location.getLongitude()
+                        + " " + mValues.get(position).location.getLatitude());
+            } else {
+                holder.mContentView.setText(mValues.get(position).address + " ");
+            }
+        }
         holder.mClickableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

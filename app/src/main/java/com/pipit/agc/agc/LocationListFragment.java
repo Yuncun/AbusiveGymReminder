@@ -83,8 +83,8 @@ public class LocationListFragment extends Fragment {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onListFragmentInteraction();
-                //Toast.makeText(getContext(), "Adding Geofences", Toast.LENGTH_SHORT);
+                //mListener.onListFragmentInteraction();
+                Toast.makeText(getContext(), "Feature is not ready yet", Toast.LENGTH_SHORT);
             }
         });
 
@@ -193,7 +193,7 @@ public class LocationListFragment extends Fragment {
                 mListener.onListFragmentInteraction();
                 mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
             } else {
-                Log.d(TAG, "resultCode is wrong " + "resultCode");
+                Log.d(TAG, "resultCode is wrong " + resultCode);
 
             }
 
