@@ -8,6 +8,7 @@ import android.util.Log;
 import com.pipit.agc.agc.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +32,8 @@ public class DBRecordsSource {
     private String[] allColumnsDayRecords = { MySQLiteHelper.COLUMN_ID,
             MySQLiteHelper.COLUMN_DAYRECORDS, MySQLiteHelper.COLUMN_DATE,
             MySQLiteHelper.COLUMN_ISGYMDAY, MySQLiteHelper.COLUMN_BEENTOGYM};
-    private String[] allColumnsMessages = { MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_MESSAGES, MySQLiteHelper.COLUMN_DATE};
+    private String[] allColumnsMessages = { MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_MESSAGE_HEADER,
+            MySQLiteHelper.COLUMN_MESSAGE_BODY, MySQLiteHelper.COLUMN_DATE};
 
     public static synchronized void initializeInstance(MySQLiteHelper helper) {
         if (instance == null) {
@@ -164,9 +165,10 @@ public class DBRecordsSource {
     }
 
     /** MESSAGES STUFF **/
-    public Message createMessage(String comment, Date date) {
+    public Message createMessage(Message msg, Date date) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_MESSAGES, comment);
+        values.put(MySQLiteHelper.COLUMN_MESSAGE_HEADER, msg.getHeader());
+        values.put(MySQLiteHelper.COLUMN_MESSAGE_BODY, msg.getBody());
         values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
         long insertId = mDatabase.insert(MySQLiteHelper.TABLE_MESSAGES, null,
                 values);
@@ -187,7 +189,7 @@ public class DBRecordsSource {
     }
 
     public void updateLatestMessage(String comment){
-        String query = "UPDATE " + MySQLiteHelper.TABLE_MESSAGES + " SET " + MySQLiteHelper.COLUMN_MESSAGES + " = \""
+        String query = "UPDATE " + MySQLiteHelper.TABLE_MESSAGES + " SET " + MySQLiteHelper.COLUMN_MESSAGE_BODY + " = \""
                 + comment + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_MESSAGES
                 + ")";
         mDatabase.execSQL(query);
@@ -222,9 +224,21 @@ public class DBRecordsSource {
     private Message cursorToMessage(Cursor cursor) {
         Message message = new Message();
         message.setId(cursor.getLong(0));
-        message.setBody(cursor.getString(1));
-        message.setDate(Util.stringToDate(cursor.getString(2)));
+        message.setHeader(cursor.getString(1));
+        message.setBody(cursor.getString(2));
+        message.setDate(Util.stringToDate(cursor.getString(3)));
+        //Log.d(TAG, "in cursorToMessage, id = " + message.getId() + " message = " + message.getHeader() + " body = "
+        //        + message.getBody() + " date = " + message.getDateString());
+
         return message;
+    }
+
+    //Used for debugging
+    public String[] getColumnNames(String tablename){
+        Cursor dbCursor = mDatabase.query(tablename, null, null, null, null, null, null);
+        String[] columnNames = dbCursor.getColumnNames();
+        Log.d(TAG, "Column names for table " + tablename + " " + Arrays.toString(columnNames));
+        return columnNames;
     }
 
 }

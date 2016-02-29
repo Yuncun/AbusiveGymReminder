@@ -77,7 +77,10 @@ public class TestDBFragmentMessages extends ListFragment {
                 String[] comments = new String[]{"You suck", "This is why you're fat", "Obesity kills`"};
                 String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 int nextInt = new Random().nextInt(3);
-                Message message = datasource.createMessage(comments[nextInt], new Date());
+                Message m = new Message();
+                m.setHeader(comments[nextInt]);
+                m.setBody("Placeholder body");
+                Message message = datasource.createMessage(m, new Date());
                 adapter.add(message);
                 adapter.notifyDataSetChanged();
             }

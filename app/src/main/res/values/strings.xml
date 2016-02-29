@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AgC</string>
+    <string name="app_name">Abusive Gym Reminder</string>
     <string name="intro_label">Intro</string>
     <string name="message_label">Message</string>
     <string name="title_section1">Section 1</string>

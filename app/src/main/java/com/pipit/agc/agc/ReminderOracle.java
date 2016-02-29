@@ -17,16 +17,19 @@ public class ReminderOracle {
     /**
      * Creates a reminder
      */
-    public static void doReminderCreation(boolean wentToGymYesterday, Context context){
+    public static void doLeaveMessageBasedOnPerformance(boolean wentToGymYesterday, Context context){
         if (wentToGymYesterday){
-            Log.d(TAG, "doReminderCreation - about to access MessageRepo");
+            Log.d(TAG, "doLeaveMessageBasedOnPerformance - about to access MessageRepo");
             MessageRepoAccess databaseAccess = MessageRepoAccess.getInstance(context);
             databaseAccess.open();
             Message msg = databaseAccess.getRandomMessageWithParams(1, 1);
             databaseAccess.close();
-            leaveMessage(msg.getBody());
+            leaveMessage(msg);
         }else {
-            leaveMessage("You missed the gym yesterday");
+            Message m = new Message();
+            m.setHeader("Placeholder");
+            m.setBody("Placeholder in Oracle");
+            leaveMessage(m);
 
         }
     }
@@ -38,12 +41,12 @@ public class ReminderOracle {
 
     }
 
-    private static void leaveMessage(String messagebody) {
+    private static void leaveMessage(Message msg) {
         DBRecordsSource datasource;
         //Updates Data
         datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
-        datasource.createMessage(messagebody, new Date());
+        datasource.createMessage(msg, new Date());
         DBRecordsSource.getInstance().closeDatabase();
     }
 

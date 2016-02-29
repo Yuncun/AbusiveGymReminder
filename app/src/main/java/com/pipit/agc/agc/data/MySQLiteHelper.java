@@ -18,7 +18,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ISGYMDAY = "isgymday";
     public static final String COLUMN_BEENTOGYM = "beentogym";
     private static final String DATABASE_NAME = "dayrecords.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String CREATE_TABLE_DAYRECORDS = "create table "
             + TABLE_DAYRECORDS + "(" + COLUMN_ID
@@ -31,14 +31,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /**Message Table**/
     public static final String TABLE_MESSAGES = "messages";
-    public static final String COLUMN_MESSAGES = "message";
+    public static final String COLUMN_MESSAGE_BODY = "message";
+    public static final String COLUMN_MESSAGE_HEADER = "header";
 
     private static final String CREATE_TABLE_MESSAGES = "create table "
             + TABLE_MESSAGES + "(" + COLUMN_ID
-            + " integer primary key autoincrement, " + COLUMN_MESSAGES
-            + " text not null, " + COLUMN_DATE
-            + " text default 0" +
-            ");";
+            + " integer primary key autoincrement, "
+            + COLUMN_MESSAGE_HEADER + " text not null, "
+            + COLUMN_MESSAGE_BODY + " text not null, "
+            + COLUMN_DATE + " text default 0"
+            + ");";
 
     /**SQL Helper functions**/
 

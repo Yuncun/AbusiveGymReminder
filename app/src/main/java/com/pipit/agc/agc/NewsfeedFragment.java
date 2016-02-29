@@ -18,6 +18,7 @@ import com.pipit.agc.agc.data.DayRecord;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.Message;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -79,6 +80,7 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
             datasource = DBRecordsSource.getInstance();
             datasource.openDatabase();
             _allMessages = datasource.getAllMessages();
+            Collections.reverse(_allMessages);
             _allDayRecords = datasource.getAllDayRecords();
             DBRecordsSource.getInstance().closeDatabase();
         }

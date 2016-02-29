@@ -59,7 +59,8 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        holder.comment.setText(_messages.get(position - _offset).getBody());
+        Message m = _messages.get(position - _offset);
+        holder.comment.setText(_messages.get(position - _offset).getHeader());
         holder.header.setText(_messages.get(position - _offset).getDateString());
         Bitmap bMap = BitmapFactory.decodeResource(_context.getResources(), R.drawable.notification_icon);
         final int mpos = position;
@@ -95,6 +96,5 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     public void updateDayrecords(List<DayRecord> newSet){
         _days=newSet;
     }
-
 
 }

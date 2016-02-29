@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.pipit.agc.agc.data.Message;
 import com.pipit.agc.agc.data.MessageRepoDBHelper;
@@ -13,6 +14,8 @@ import com.pipit.agc.agc.data.MessageRepoDBHelper;
  * Created by Eric on 2/17/2016.
  */
 public class MessageRepoAccess {
+    private static final String TAG = "MessageRepoAccess";
+
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase database;
     private static MessageRepoAccess instance;
@@ -70,6 +73,8 @@ public class MessageRepoAccess {
         message.setId(cursor.getLong(0));
         message.setHeader(cursor.getString(1));
         message.setBody(cursor.getString(2));
+        Log.d(TAG, "Retrieving a message from local repo - id = " + message.getId() + " header = " + message.getHeader()
+            + " body is " + message.getBody());
         return message;
     }
 }

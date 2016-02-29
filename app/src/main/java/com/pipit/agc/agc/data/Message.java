@@ -12,6 +12,7 @@ public class Message {
     private String body;
     private String header;
     private Date date;
+
     public long getId() {
         return id;
     }

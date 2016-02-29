@@ -2,6 +2,7 @@ package com.pipit.agc.agc;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -70,6 +71,9 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
         getListView().setOnScrollListener(this);
         getListView().setVerticalScrollBarEnabled(false);
         getListView().setSelectionFromTop(_allPreviousDays.size() - 1, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getListView().setNestedScrollingEnabled(true);
+        }
     }
     @Override
     public void onScroll(AbsListView view,

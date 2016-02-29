@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.pipit.agc.agc.data.DayRecord;
 import com.pipit.agc.agc.data.DBRecordsSource;
-import com.pipit.agc.agc.data.Message;
 import com.pipit.agc.agc.data.MySQLiteHelper;
 
 import java.text.DateFormat;
@@ -52,6 +51,8 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
     /**
      * Call this to leave a message at a given time
+     * Note that the message to leave is determined by the ReminderOracle and is not specfied at this time
+     * All this does is set an alarm to consult the oracle for a message at a given time
      * @param context
      */
     public void leaveMessageAtTime(Context context, Calendar calendar){
@@ -121,11 +122,12 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
         //Show the gym status card in Newsfeed
         editor.putBoolean("showGymStatus", true);
+        leaveMessageAtTime(context, 0, 10); //Makes tomorrow's reminder
     }
 
     private void doLeaveMessage(Context context){
         Log.d(TAG, "doLeaveMessage");
-        ReminderOracle.doReminderCreation(true, context);
+        ReminderOracle.doLeaveMessageBasedOnPerformance(true, context);
     }
 
 }
