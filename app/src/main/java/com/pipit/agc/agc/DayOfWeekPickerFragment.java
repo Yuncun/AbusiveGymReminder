@@ -5,11 +5,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,13 +30,18 @@ import java.util.List;
 /**
  * Created by Eric on 2/3/2016.
  */
-public class DayOfWeekPickerFragment extends ListFragment{
+public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
     private static final String TAG = "DayPickerFragment";
     DayOfWeekAdapter _adapter;
     private final static String ARG_SECTION_NUMBER = "section_number";
     private DBRecordsSource datasource;
     private List<DayRecord> _allPreviousDays;
 
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView mRecyclerView;
+
+    //This is used to update the "GYM DAY" cardview in the Newsfeed
     public interface UpdateGymDayToday{
         void todayIsGymDay(boolean isGymDay);
     }
@@ -68,8 +77,15 @@ public class DayOfWeekPickerFragment extends ListFragment{
         List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
 
-        _adapter = new DayOfWeekAdapter(getActivity(), new HashSet<Integer>(plannedDOW));
-        setListAdapter(_adapter);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new DayOfWeekAdapter( new HashSet<Integer>(plannedDOW), this);
+        mRecyclerView.setAdapter(mAdapter);
+
         return rootView;
     }
 
@@ -90,40 +106,7 @@ public class DayOfWeekPickerFragment extends ListFragment{
         return dow;
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        String datestr = (Integer.toString(position));
 
-        /*Remove or Add the date to the list*/
-        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> dates = (Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
-        if (dates.contains(datestr)){
-            //The clicked date was previously a Gym Day, and we need to toggle it off
-            dates.remove(datestr);
-            Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
-            ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.rest_day));
-            ((Switch) v.findViewById(R.id.switch1)).setChecked(false);
-            v.setBackgroundColor(getActivity().getResources().getColor(R.color.basewhite));
-            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){
-                datasource.updateLatestDayRecordIsGymDay(false);
-                executeUpdateCallback(false); //Update the newsfeed fragment
-            }
-        }else{
-            dates.add(datestr);
-            Log.d(TAG, "Added day " + datestr + " to weekly gym days");
-            ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.gym_day));
-            ((Switch) v.findViewById(R.id.switch1)).setChecked(true);
-            v.setBackgroundColor(getActivity().getResources().getColor(R.color.lightgreen));
-            if (position==Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1){
-                datasource.updateLatestDayRecordIsGymDay(true);
-                executeUpdateCallback(true);
-            }
-        }
-        Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
-        _adapter.updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));
-
-    }
 
     private Calendar getCalFromListPosition(int pos){
         Calendar cal = Calendar.getInstance();
@@ -138,5 +121,10 @@ public class DayOfWeekPickerFragment extends ListFragment{
             UpdateGymDayToday update = (UpdateGymDayToday) registeredFrag;
             update.todayIsGymDay(isGymDay);
         }
+    }
+
+    public void toggleCurrentGymDayData(boolean gymDay){
+        datasource.updateLatestDayRecordIsGymDay(false);
+        executeUpdateCallback(false); //Update the newsfeed fragment
     }
 }

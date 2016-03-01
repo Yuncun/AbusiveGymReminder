@@ -1,61 +1,139 @@
 package com.pipit.agc.agc;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.data.DayRecord;
+import com.pipit.agc.agc.data.Message;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 
 /**
  * Created by Eric on 2/3/2016.
  */
-public class DayOfWeekAdapter extends ArrayAdapter<String> {
+public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.CardViewHolder>{
     private final Context context;
+    private final DayOfWeekPickerFragment mFrag;
     public int count = 7;
     private static int _screenheight;
     public static String TAG = "DayPickerAdapter";
     private HashSet<Integer> weeklySchedule; //Contains 0-7 days that are gym days
 
-    public DayOfWeekAdapter(Context context, HashSet<Integer> weeklySchedule) {
-        super(context, R.layout.dayofweek_layout);
-        this.context = context;
+    public static class CardViewHolder extends RecyclerView.ViewHolder {
+        CardView cv;
+        TextView comment;
+        TextView gymstatetxt;
+        Switch switchView;
+
+        CardViewHolder(View itemView) {
+            super(itemView);
+            comment = (TextView) itemView.findViewById(R.id.comment);
+            cv = (CardView)  itemView.findViewById(R.id.cv);
+            gymstatetxt = (TextView) itemView.findViewById(R.id.txt);
+            switchView = (Switch) itemView.findViewById(R.id.switch1);
+        }
+    }
+
+    public DayOfWeekAdapter( HashSet<Integer> weeklySchedule, Fragment frag) {
+        this.mFrag = (DayOfWeekPickerFragment) frag;
+        this.context = frag.getContext();
         this._screenheight=-1;
         this.weeklySchedule = weeklySchedule;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.dayofweek_layout, parent, false);
-        TextView commentTV = (TextView) rowView.findViewById(R.id.comment);
+    public CardViewHolder onCreateViewHolder(ViewGroup parent,
+                                             int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.dayofweek_layout, parent, false);
+        CardViewHolder vh = new CardViewHolder(v);
+        return vh;
+    }
 
-        commentTV.setText(getDayOfWeekText(position + 1));
-        setDayStatus(position, rowView);
+
+    @Override
+    public void onBindViewHolder(final CardViewHolder holder, final int position) {
+        holder.comment.setText(getDayOfWeekText(position + 1));
 
         /*Set listview height to show 7 days*/
         if (_screenheight<1){
-            _screenheight = Math.round(Util.getScreenHeightMinusStatusBar(getContext()));
+            _screenheight = Math.round(Util.getScreenHeightMinusStatusBar(context));
         }
         int txtheight = (int) (_screenheight / 7);
-        commentTV.setHeight(txtheight);
-        //refitText(commentTV, txtheight);
+        holder.cv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, txtheight));
 
-        return rowView;
+
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        final String gymDay = context.getResources().getString(R.string.gym_day);
+        final String restDay = context.getResources().getString(R.string.rest_day);
+        if (weeklySchedule.contains(position)){
+            holder.cv.setBackgroundColor(context.getResources().getColor(R.color.lightgreen));
+            holder.gymstatetxt.setText(gymDay);
+            holder.switchView.setChecked(true);
+        } else{
+            holder.cv.setBackgroundColor(context.getResources().getColor(R.color.basewhite));
+            holder.gymstatetxt.setText(restDay);
+            holder.switchView.setChecked(false);
+        }
+
+        holder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                        /*Remove or Add the date to the list*/
+                String datestr = (Integer.toString(position));
+
+                SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+                List<String> dates = (Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
+                if (dates.contains(datestr)) {
+                    //The clicked date was previously a Gym Day, and we need to toggle it off
+                    dates.remove(datestr);
+                    Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
+                    holder.gymstatetxt.setText(restDay);
+                    holder.switchView.setChecked(false);
+                    holder.cv.setBackgroundColor(context.getResources().getColor(R.color.basewhite, context.getTheme()));
+                    if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
+                        mFrag.toggleCurrentGymDayData(false);
+                    }
+                } else {
+                    dates.add(datestr);
+                    Log.d(TAG, "Added day " + datestr + " to weekly gym days");
+                    holder.gymstatetxt.setText(gymDay);
+                    holder.switchView.setChecked(true);
+                    holder.cv.setBackgroundColor(context.getResources().getColor(R.color.lightgreen, context.getTheme()));
+                    if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
+                        mFrag.toggleCurrentGymDayData(true);
+                    }
+                }
+                Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
+                updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));
+            }
+        });
+
+
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return count;
     }
 
@@ -111,21 +189,7 @@ public class DayOfWeekAdapter extends ArrayAdapter<String> {
         Also styles the rowview
      */
     private void setDayStatus(int dayOfWeek, View rowview){
-        TextView gymstatetxt = (TextView) rowview.findViewById(R.id.txt);
-        Switch switchView = (Switch) rowview.findViewById(R.id.switch1);
 
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
-        String gymDay = getContext().getResources().getString(R.string.gym_day);
-        String restDay = getContext().getResources().getString(R.string.rest_day);
-        if (weeklySchedule.contains(dayOfWeek)){
-            rowview.setBackgroundColor(context.getResources().getColor(R.color.lightgreen));
-            gymstatetxt.setText(gymDay);
-            switchView.setChecked(true);
-        } else{
-            rowview.setBackgroundColor(context.getResources().getColor(R.color.basewhite));
-            gymstatetxt.setText(restDay);
-            switchView.setChecked(false);
-        }
 
     }
 
@@ -134,7 +198,9 @@ public class DayOfWeekAdapter extends ArrayAdapter<String> {
         if (weeklySchedule!=null){
             this.weeklySchedule=weeklySchedule;
         }
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
+
+        //this.notifyDataSetChanged();
     }
 
 }
