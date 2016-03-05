@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.pipit.agc.agc.Util;
+import com.pipit.agc.agc.util.Util;
+import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.model.Message;
 
 import java.util.ArrayList;
 import java.util.Arrays;

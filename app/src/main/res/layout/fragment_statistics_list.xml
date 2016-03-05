@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.pipit.agc.agc.StatisticsFragment"
+    tools:context=".fragment.StatisticsFragment"
     tools:listitem="@layout/fragment_statistics" />

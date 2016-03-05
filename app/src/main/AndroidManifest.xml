@@ -11,13 +11,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".GlobalState"
+        android:name=".util.GlobalState"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".AllinOneActivity"
+            android:name=".activity.AllinOneActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,20 +28,20 @@
                 android:value="@integer/google_play_services_version" />
         </activity>
         <activity
-            android:name=".IntroductionActivity"
+            android:name=".activity.IntroductionActivity"
             android:label="@string/intro_label"
-            android:parentActivityName=".AllinOneActivity">
+            android:parentActivityName=".activity.AllinOneActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AllinOneActivity" />
+                android:value=".activity.AllinOneActivity" />
         </activity>
         <activity
-            android:name=".MessageBodyActivity"
+            android:name=".activity.MessageBodyActivity"
             android:label="@string/message_label"
-            android:parentActivityName=".AllinOneActivity">
+            android:parentActivityName=".activity.AllinOneActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AllinOneActivity" />
+                android:value=".activity.AllinOneActivity" />
         </activity>
 
         <meta-data
@@ -52,24 +52,24 @@
             android:value="@string/GOOGLE_API_KEY" />
 
         <receiver
-            android:name=".AlarmManagerBroadcastReceiver"
+            android:name=".receiver.AlarmManagerBroadcastReceiver"
             android:process=":remote" />
-        <receiver android:name=".BootReceiver">
+        <receiver android:name=".receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".IndividualSettingActivity"
+            android:name=".activity.IndividualSettingActivity"
             android:label="@string/title_activity_setting_wrapper"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".GeofenceTransitionsIntentService" />
+        <service android:name=".service.GeofenceTransitionsIntentService" />
     </application>
 
 </manifest>

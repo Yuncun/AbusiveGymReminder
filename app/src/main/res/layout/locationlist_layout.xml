@@ -16,7 +16,7 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.pipit.agc.agc.LocationListFragment"
+        tools:context=".fragment.LocationListFragment"
         tools:listitem="@layout/location_item" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
