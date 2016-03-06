@@ -66,6 +66,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
     private boolean mGeofencesAdded;
     private PendingIntent mGeofencePendingIntent;
     protected GoogleApiClient mGoogleApiClient;
+    private TabLayout mTabLayout;
 
     private boolean updateGeofencesWhenReadyFlag = false;
 
@@ -89,14 +90,13 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
             setSupportActionBar(toolbar);
         }
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.addTab(tabLayout.newTab().setText("Stats"));
-        tabLayout.addTab(tabLayout.newTab().setText("Inbox"));
-        tabLayout.addTab(tabLayout.newTab().setText("Days"));
-        tabLayout.addTab(tabLayout.newTab().setText("Gyms"));
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout.addTab(mTabLayout.newTab().setText("Stats"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Inbox"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Days"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Gyms"));
         //tabLayout.setupWithViewPager(mViewPager);
-
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
 
 
         Log.d(TAG, "remaking _alarmmanager " + _alarm);

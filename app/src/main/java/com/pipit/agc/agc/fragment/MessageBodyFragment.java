@@ -1,5 +1,6 @@
 package com.pipit.agc.agc.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -47,6 +48,7 @@ public class MessageBodyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_message_body, container, false);
+        View background = rootView.findViewById(R.id.msgbackground);
         TextView header = (TextView) rootView.findViewById(R.id.header);
         TextView body = (TextView) rootView.findViewById(R.id.body);
 
@@ -61,7 +63,16 @@ public class MessageBodyFragment extends Fragment {
             header.setText("null message");
         }
         header.setText(_msg.getHeader());
-        header.setText(_msg.getBody());
+        //Typeface type = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Roboto-Black.ttf");
+        header.setTypeface(null, Typeface.BOLD);;
+        header.setTextSize(48);
+        body.setText(_msg.getBody());
+        body.setTypeface(null, Typeface.BOLD);;
+        body.setTextSize(36);
+
+        header.setTextColor(getResources().getColor(R.color.schemeone_mediumblue, getActivity().getTheme()));
+        background.setBackgroundColor(getResources().getColor(R.color.schemeone_tan, getActivity().getTheme()));
+        //body.setTextColor(getResources().getColor(R.color.basewhite, getActivity().getTheme()));
         return rootView;
     }
 

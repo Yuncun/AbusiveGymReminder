@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
+        TextView timestamp;
         TextView header;
         TextView comment;
         ImageView icon;
@@ -43,6 +45,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             header = (TextView)itemView.findViewById(R.id.header);
             comment = (TextView)itemView.findViewById(R.id.comment);
             icon = (ImageView)itemView.findViewById(R.id.icon);
+            timestamp = (TextView) itemView.findViewById(R.id.date);
         }
     }
 
@@ -64,8 +67,14 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
         Message m = _messages.get(position - _offset);
-        holder.comment.setText(_messages.get(position - _offset).getHeader());
-        holder.header.setText(_messages.get(position - _offset).getDateString());
+        holder.header.setText(_messages.get(position - _offset).getHeader());
+        holder.comment.setText(_messages.get(position - _offset).getBody());
+        holder.timestamp.setText(_messages.get(position - _offset).getIntelligentDateString());
+        if (!m.getRead()){
+            //Todo: Add "read" field to database
+            //holder.header.setTypeface(null, Typeface.BOLD);
+            //holder.timestamp.setTypeface(null, Typeface.BOLD);
+        }
         Bitmap bMap = BitmapFactory.decodeResource(_context.getResources(), R.drawable.notification_icon);
         final int mpos = position;
         holder.cv.setOnClickListener(new View.OnClickListener() {

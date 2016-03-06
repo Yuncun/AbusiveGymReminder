@@ -7,4 +7,11 @@
     <item name="lightgreen" type="color">#E8F5E9</item>
     <item name="basewhite" type="color">#f9f9f9</item>
     <item name="yellow" type="color">#FFEB3B</item>
+    <item name="black" type="color">#000000</item>
+
+    <!--Experimental colors for msg background-->
+    <item name="schemeone_lightblue" type="color">#89AABB</item>
+    <item name="schemeone_mediumblue" type="color">#28546C</item>
+    <item name="schemeone_tan" type="color">#FFDEB7</item>
+
 </resources>
