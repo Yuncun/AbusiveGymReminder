@@ -143,7 +143,9 @@ public class Util {
 
         TypedValue typedValue = new TypedValue();
         if(context.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)){
-            screen_h -= context.getResources().getDimensionPixelSize(typedValue.resourceId);
+            /* EXPERIMENTAL HERE */
+            //screen_h -= context.getResources().getDimensionPixelSize(typedValue.resourceId);
+            screen_h -= 2*context.getResources().getDimensionPixelSize(typedValue.resourceId);
         }
 
         return screen_h;

@@ -1,0 +1,127 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    >
+    <android.support.v7.widget.CardView
+        android:id="@+id/location_cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        card_view:cardUseCompatPadding="true"
+        android:layout_marginTop="2dp"
+        android:elevation="2dp"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/title_name"
+                android:text="This Week"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.pipit.agc.agc.widget.WeekCalendarView
+                android:id="@+id/calendar_component"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title_name"
+                />
+<!--
+            <include layout="@layout/week_calendar"
+                android:id="@+id/calendar_component"
+                android:layout_below="@id/title_name"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:layout_width="match_parent"
+                />
+-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/calendar_component"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:padding="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/stat_circle_1"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:text="10"
+                        android:textSize="40dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/basewhite"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/circle"/>
+                    <TextView
+                        android:id="@+id/stat_name_1"
+                        android:text="days gone to gym"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/stat_circle_2"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:text="10"
+                        android:textSize="40dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/basewhite"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/circle"/>
+                    <TextView
+                        android:id="@+id/stat_name_2"
+                        android:text="days gone to gym"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/stat_circle_3"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:text="10"
+                        android:textSize="40dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/basewhite"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/circle"/>
+                    <TextView
+                        android:id="@+id/stat_name_3"
+                        android:text="days gone to gym"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

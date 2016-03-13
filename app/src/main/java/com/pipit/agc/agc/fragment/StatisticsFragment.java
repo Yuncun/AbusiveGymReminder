@@ -50,7 +50,6 @@ public class StatisticsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        updateStatistics();
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -70,7 +69,7 @@ public class StatisticsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new StatisticsRecyclerViewAdapter(StatsContent.ITEMS, mListener));
+            recyclerView.setAdapter(new StatisticsRecyclerViewAdapter(getFreshStats(), mListener));
         }
         return view;
     }
@@ -107,15 +106,11 @@ public class StatisticsFragment extends Fragment {
         void onListFragmentInteraction(Stat item);
     }
 
-    private void updateStatistics(){
-        //Updates Data
-        datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-         datasource.openDatabase();
-        StatsContent._allDayRecords = datasource.getAllDayRecords();
-        DBRecordsSource.getInstance().closeDatabase();
-
-        StatsContent.updateAll();
+    private StatsContent getFreshStats(){
+        StatsContent stats = StatsContent.getInstance();
+        stats.refreshDayRecords();
+        stats.updateAll();
+        return stats;
     }
 
 

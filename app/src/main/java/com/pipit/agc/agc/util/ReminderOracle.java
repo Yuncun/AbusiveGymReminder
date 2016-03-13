@@ -33,7 +33,6 @@ public class ReminderOracle {
             leaveMessage(msg);
         }
         databaseAccess.close();
-
     }
 
     /**
@@ -43,7 +42,7 @@ public class ReminderOracle {
 
     }
 
-    private static void leaveMessage(Message msg) {
+    public static void leaveMessage(Message msg) {
         DBRecordsSource datasource;
         //Updates Data
         datasource = DBRecordsSource.getInstance();
@@ -51,16 +50,4 @@ public class ReminderOracle {
         datasource.createMessage(msg, new Date());
         DBRecordsSource.getInstance().closeDatabase();
     }
-
-    private static void doStats(){
-        DBRecordsSource datasource;
-        //Updates Data
-        datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-        StatsContent._allDayRecords = datasource.getAllDayRecords();
-        DBRecordsSource.getInstance().closeDatabase();
-        StatsContent.updateAll();
-
-    }
-
 }

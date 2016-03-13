@@ -71,7 +71,8 @@ public class Message {
     public String getIntelligentDateString(){
         if (date == null ) return "No date avaiable";
         if (isSameDay(date, new Date())){
-            return getTimeFormat_HHmm();
+            return "Today"; //Today
+            //return getTimeFormat_HHmm();
         }
         DateFormat dateFormat = new SimpleDateFormat("M/dd");
         return dateFormat.format(date);

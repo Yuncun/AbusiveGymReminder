@@ -13,6 +13,7 @@ import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
+import com.pipit.agc.agc.util.ReminderOracle;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -75,16 +76,10 @@ public class TestDBFragmentMessages extends ListFragment {
         _addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayAdapter<Message> adapter = (ArrayAdapter<Message>) getListAdapter();
-                String[] comments = new String[]{"You suck", "This is why you're fat", "Obesity kills`"};
-                String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-                int nextInt = new Random().nextInt(3);
-                Message m = new Message();
-                m.setHeader(comments[nextInt]);
-                m.setBody("Placeholder body");
-                Message message = datasource.createMessage(m, new Date());
-                adapter.add(message);
-                adapter.notifyDataSetChanged();
+                Message f = new Message();
+                f.setBody("Stop missing the gym");
+                f.setHeader("You fucking faggot");
+                ReminderOracle.leaveMessage(f);
             }
         });
         _deleteButton = (Button) view.findViewById(R.id.delete);

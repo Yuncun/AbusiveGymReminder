@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/todaymarker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true"
+        android:textSize="@dimen/textSmall"
+        android:visibility="invisible"
+        android:text="(Today)"/>
+    <TextView
+        android:id="@+id/calendar_day_info"
+        android:gravity="center"
+        android:text="MISS"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginTop="2dp"
+        android:layout_margin="4dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/circle"/>
+    <TextView
+        android:id="@+id/calendar_day_name"
+        android:text="Mon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+</LinearLayout>

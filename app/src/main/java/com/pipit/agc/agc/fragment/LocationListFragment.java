@@ -45,8 +45,6 @@ public class LocationListFragment extends Fragment {
     public int mFlag;
     private RecyclerView mRecyclerView;
     private OnListFragmentInteractionListener mListener;
-    private FloatingActionButton mFab;
-
     public LocationListFragment() {
     }
 
@@ -84,15 +82,6 @@ public class LocationListFragment extends Fragment {
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
         mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
-
-        mFab = (FloatingActionButton) view.findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //mListener.onListFragmentInteraction();
-                Toast.makeText(getContext(), "Feature is not ready yet", Toast.LENGTH_SHORT);
-            }
-        });
 
         return view;
     }

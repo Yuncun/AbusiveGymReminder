@@ -13,5 +13,6 @@
     <item name="schemeone_lightblue" type="color">#89AABB</item>
     <item name="schemeone_mediumblue" type="color">#28546C</item>
     <item name="schemeone_tan" type="color">#FFDEB7</item>
+    <item name="schemeone_tan_two" type="color">#E7DED1</item>
 
 </resources>

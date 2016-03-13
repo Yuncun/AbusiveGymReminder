@@ -71,7 +71,7 @@ public class MessageBodyFragment extends Fragment {
         body.setTextSize(36);
 
         header.setTextColor(getResources().getColor(R.color.schemeone_mediumblue, getActivity().getTheme()));
-        background.setBackgroundColor(getResources().getColor(R.color.schemeone_tan, getActivity().getTheme()));
+        background.setBackgroundColor(getResources().getColor(R.color.schemeone_tan_two, getActivity().getTheme()));
         //body.setTextColor(getResources().getColor(R.color.basewhite, getActivity().getTheme()));
         return rootView;
     }

@@ -18,14 +18,4 @@
         app:layoutManager="LinearLayoutManager"
         tools:context=".fragment.LocationListFragment"
         tools:listitem="@layout/location_item" />
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        fab:pressedTranslationZ="12dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        app:layout_anchor="@id/recyclerlist"
-        fab:elevation="6dp" />
-
 </android.support.design.widget.CoordinatorLayout>

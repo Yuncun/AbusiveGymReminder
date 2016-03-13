@@ -6,7 +6,8 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="newsfeeditem_padding">6dp</dimen>
 
-    <dimen name="textLarge">16sp</dimen>
+    <dimen name="textLarge">18sp</dimen>
     <dimen name="textMedium">14sp</dimen>
+    <dimen name="textSmall">10sp</dimen>
 
 </resources>

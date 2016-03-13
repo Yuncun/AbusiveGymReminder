@@ -1,10 +1,9 @@
-package com.pipit.agc.agc.fragment;
+package com.pipit.agc.agc.adapter;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,15 +36,15 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         TextView timestamp;
         TextView header;
         TextView comment;
-        ImageView icon;
+        TextView reason;
 
         CardViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             header = (TextView)itemView.findViewById(R.id.header);
             comment = (TextView)itemView.findViewById(R.id.comment);
-            icon = (ImageView)itemView.findViewById(R.id.icon);
             timestamp = (TextView) itemView.findViewById(R.id.date);
+            reason = (TextView) itemView.findViewById(R.id.reason);
         }
     }
 
@@ -70,6 +69,9 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         holder.header.setText(_messages.get(position - _offset).getHeader());
         holder.comment.setText(_messages.get(position - _offset).getBody());
         holder.timestamp.setText(_messages.get(position - _offset).getIntelligentDateString());
+        holder.reason.setTextSize(12);
+        holder.timestamp.setTextSize(12);
+
         if (!m.getRead()){
             //Todo: Add "read" field to database
             //holder.header.setTypeface(null, Typeface.BOLD);

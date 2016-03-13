@@ -9,8 +9,12 @@ import android.widget.TextView;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
 import com.pipit.agc.agc.fragment.StatisticsFragment.OnListFragmentInteractionListener;
+import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
+import com.pipit.agc.agc.widget.WeekCalendarView;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -19,62 +23,144 @@ import java.util.List;
  * TODO: Replace the implementation with code for your data type.
  */
 public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.ViewHolder> {
+    private final int TODAY_STATS_VIEWTYPE = 0;
+    private final int WEEK__STATS_VIEWTYPE = 1;
+    private final int MONTH_STATS_VIEWTYPE = 2;
 
-    private final List<Stat> mValues;
+    private final StatsContent mStats;
     private final OnListFragmentInteractionListener mListener;
 
-    public StatisticsRecyclerViewAdapter(List<Stat> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public StatisticsRecyclerViewAdapter(StatsContent stats, OnListFragmentInteractionListener listener) {
+        mStats = stats;
         mListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.stats_row_item, parent, false);
+        View view = null;
+        switch (viewType){
+            case 0:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.daily_stats_card, parent, false);
+                return new DayViewHolder(view);
+            case 1:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.weekly_stats_card, parent, false);
+                return new WeeklyViewHolder(view);
+            default:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.stats_row_item, parent, false);
+            }
+
 
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).details);
-        holder.mContentView.setText( mValues.get(position).content.toString());
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+        int type = getItemViewType(position);
+        switch (type){
+            case 0:
+                //daily stat card;
+                holder.mTitleView.setText("Today");
+                DayRecord today = mStats.getToday(false);
+                if (today.isGymDay()){
+                    ((DayViewHolder) holder).gymstate_circle.setText("GYM\nDAY");
+                }else{
+                    ((DayViewHolder) holder).gymstate_circle.setText("REST\nDAY");
                 }
-            }
-        });
+
+                if (today.beenToGym()){
+                    ((DayViewHolder) holder).gymstate_text.setText("Gym visit recorded today");
+                }else{
+                    ((DayViewHolder) holder).gymstate_text.setText("No gym visit recorded today");
+                }
+                ((DayViewHolder) holder).gymstate_text.setTextSize(30);
+
+                break;
+
+            case 1:
+                //weekly_stats_card;
+                holder.mTitleView.setText("Last seven days");
+                ((WeeklyViewHolder) holder).stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get().toString());
+                ((WeeklyViewHolder) holder).stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get().toString());
+                ((WeeklyViewHolder) holder).stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get().toString());
+
+                ((WeeklyViewHolder) holder).stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
+                ((WeeklyViewHolder) holder).stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
+                ((WeeklyViewHolder) holder).stat_text_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).details);
+
+                ((WeeklyViewHolder) holder).calendar.setDayOfWeekEnd(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                ((WeeklyViewHolder) holder).calendar.showLastDayMarker();
+                ((WeeklyViewHolder) holder).calendar.setCalendarInfo(mStats.getGymVisitListForWeek());
+
+                break;
+            default:
+                holder.mTitleView.setText("Default");
+                break;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return 2;
+    }
+
+    public class DayViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
+        public final TextView gymstate_circle;
+        public final TextView gymstate_text;
+
+        public DayViewHolder(View view){
+            super(view);
+            gymstate_circle = (TextView) view.findViewById(R.id.gymstate_circle);
+            gymstate_text = (TextView) view.findViewById(R.id.gymstate_text);
+        }
+    }
+
+    public class WeeklyViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
+        public final TextView stat_circle_1;
+        public final TextView stat_text_1;
+        public final TextView stat_circle_2;
+        public final TextView stat_text_2;
+        public final TextView stat_circle_3;
+        public final TextView stat_text_3;
+
+        public final WeekCalendarView calendar;
+
+        public WeeklyViewHolder(View view){
+            super(view);
+            stat_circle_1 = (TextView) view.findViewById(R.id.stat_circle_1);
+            stat_circle_2 = (TextView) view.findViewById(R.id.stat_circle_2);
+            stat_circle_3 = (TextView) view.findViewById(R.id.stat_circle_3);
+
+            stat_text_1 = (TextView) view.findViewById(R.id.stat_name_1);
+            stat_text_2 = (TextView) view.findViewById(R.id.stat_name_2);
+            stat_text_3 = (TextView) view.findViewById(R.id.stat_name_3);
+
+            calendar = (WeekCalendarView) view.findViewById(R.id.calendar_component);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mTitleView;
         public Stat mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.stat_key);
-            mContentView = (TextView) view.findViewById(R.id.stat_value);
+            mTitleView = (TextView) view.findViewById(R.id.title_name);
+
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mTitleView.getText() + "'";
         }
+    }
+
+    public int getItemViewType (int position) {
+
+        return position;
     }
 }

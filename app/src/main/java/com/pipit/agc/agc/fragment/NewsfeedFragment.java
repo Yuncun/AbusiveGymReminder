@@ -2,17 +2,20 @@ package com.pipit.agc.agc.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.pipit.agc.agc.adapter.NewsfeedAdapter;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.DayRecord;
@@ -68,7 +71,9 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
             }
         });
         _gymstatus_cv = (CardView) rootView.findViewById(R.id.gymstatus_cv);
-        _gymstatus_cv.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary_material_dark));
+        _gymstatus_cv.setBackgroundColor(fetchAccentColor());
+
+        //_gymstatus_cv.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary_material_dark));
         _gymstatus_body = (TextView) _gymstatus_cv.findViewById(R.id.gymstatus_body);
         _gymstatus_header = (TextView) _gymstatus_cv.findViewById(R.id.gymstatus_header);
 
@@ -147,6 +152,17 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
         }else{
             return getResources().getString(R.string.rest_day);
         }
+    }
+
+    private int fetchAccentColor() {
+        TypedValue typedValue = new TypedValue();
+
+        TypedArray a = getActivity().obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorAccent });
+        int color = a.getColor(0, 0);
+
+        a.recycle();
+
+        return color;
     }
 
     public void updateGymStatusVisibile(){
