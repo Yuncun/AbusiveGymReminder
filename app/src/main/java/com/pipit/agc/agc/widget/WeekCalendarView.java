@@ -74,6 +74,15 @@ public class WeekCalendarView extends LinearLayout {
         }
     }
 
+    public View getDayViewFromPosition(int pos){
+        if (pos<1 || pos>7){ return null; }
+        Resources r = getResources();
+        String name = this.getContext().getPackageName();
+        int viewid = r.getIdentifier("day_" + pos, "id", name);
+        View weekitem = findViewById(viewid);
+        return weekitem;
+    }
+
     public void showLastDayMarker(){
         findViewById(R.id.day_7).findViewById(R.id.todaymarker).setVisibility(VISIBLE);
     }

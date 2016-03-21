@@ -1,5 +1,9 @@
 package com.pipit.agc.agc.util;
 
+import android.content.Context;
+import android.content.res.Resources;
+
+import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
 
@@ -10,7 +14,7 @@ import java.util.Map;
 
 public class StatsContent {
     public List<Stat> ITEMS = new ArrayList<Stat>();
-    public static final Map<String, Stat> STAT_MAP = new HashMap<String, Stat>();
+    public Map<String, Stat> STAT_MAP = new HashMap<String, Stat>();
     public List<DayRecord> _allDayRecords;
 
     public static final String CURRENT_STREAK = "currentstreak";
@@ -21,12 +25,12 @@ public class StatsContent {
     public static final String REST_DAYS_WEEK = "totalrestdaysweek";
     public static final String DAYS_PLANNED_WEEK = "totalplanneddaysweek";
 
-    public class Stat<T> {
+    public class Stat {
         public final String id;
-        public T content;
+        public int content;
         public String details;
 
-        public Stat(String id, T content, String details) {
+        public Stat(String id, int content, String details) {
             this.id = id;
             this.content = content;
             this.details = details;
@@ -35,8 +39,8 @@ public class StatsContent {
         public Stat(String id){
             this.id=id;
         }
-        public void set(T t) { this.content = t; }
-        public T get() { return content; }
+        public void set(int t) { this.content = t; }
+        public int get() { return content; }
 
         @Override
         public String toString() {
@@ -92,7 +96,17 @@ public class StatsContent {
         if (forceupdate){
             updateAll();
         }
-        return _allDayRecords.get(_allDayRecords.size()-1);
+        return _allDayRecords.get(_allDayRecords.size() - 1);
+    }
+
+    public DayRecord getYesterday(boolean forceupdate){
+        if (forceupdate){
+            updateAll();
+        }
+        if (_allDayRecords.size()<2){
+            return null;
+        }
+        return _allDayRecords.get(_allDayRecords.size()-2);
     }
 
 
@@ -104,8 +118,8 @@ public class StatsContent {
             }
             count++;
         }
-        Stat currentstreak = new Stat<Integer>(CURRENT_STREAK);
-        currentstreak.content = new Integer(count);
+        Stat currentstreak = new Stat(CURRENT_STREAK);
+        currentstreak.content = count;
         currentstreak.details = "Current Streak";
         STAT_MAP.put(currentstreak.id, currentstreak);
         ITEMS.add(currentstreak);
@@ -122,7 +136,7 @@ public class StatsContent {
                 if (curr>longest) longest=curr;
             }
         }
-        Stat longeststreak = new Stat<Integer>(LONGEST_STREAK);
+        Stat longeststreak = new Stat(LONGEST_STREAK);
         longeststreak.content = new Integer(longest);
         longeststreak.details = "Longest Streak";
         STAT_MAP.put(longeststreak.id, longeststreak);
@@ -133,16 +147,17 @@ public class StatsContent {
      * Used to populate the WeekCalendarView that shows attendance over last seven days
      * @return A list of strings containing "HIT", or "MISS"
      */
-    public List<String> getGymVisitListForWeek(){
+    public List<String> getGymVisitListForWeek(Context context){
         ArrayList<String> hitlist = new ArrayList<String>();
+        Resources r = context.getResources();
         int k = _allDayRecords.size()-7; //Dayrecord of seven days past;
         for (int i = 0 ; i < 7; i++){
             if (k+i<0) {
-                hitlist.add("N/A");
+                hitlist.add(r.getString(R.string.noinfo));
                 continue;
             }
             if (_allDayRecords.get(k+i).beenToGym()){
-                hitlist.add("hit");
+                hitlist.add(r.getString(R.string.hit));
             }
             else{
                 /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
@@ -150,11 +165,11 @@ public class StatsContent {
                 if (_allDayRecords.get(k+i).isGymDay()){
                     if (k==6){
                         //The message for today; don't say "missed"
-                        hitlist.add("?");
+                        hitlist.add(r.getString(R.string.questionmark));
                     }
-                    else hitlist.add("Miss");
+                    else hitlist.add(r.getString(R.string.miss));
                 }else{
-                    hitlist.add("Rest");
+                    hitlist.add(r.getString(R.string.rest));
                 }
             }
         }
@@ -169,7 +184,7 @@ public class StatsContent {
         int hitTotalDays = 0;
         int restDaysTotal = 0;
         for (int i = 1 ; i < 8 ; i++){
-            if (_allDayRecords.size() >= i){
+            if (_allDayRecords.size() < i){
                 break;
             }
             boolean wentToGym =  _allDayRecords.get(_allDayRecords.size()-i).beenToGym();
@@ -190,7 +205,8 @@ public class StatsContent {
             if (wasGymDay) committedTotalDays++;
 
         }
-        Stat hitdaysStat = new Stat(DAYS_HIT_WEEK, new Integer(hitTotalDays), "Gym Visits");
+
+        Stat hitdaysStat = new Stat(DAYS_HIT_WEEK, hitTotalDays, "Gym Visits");
         STAT_MAP.put(hitdaysStat.id, hitdaysStat);
         ITEMS.add(hitdaysStat);
 

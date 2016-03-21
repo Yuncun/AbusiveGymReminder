@@ -1,5 +1,7 @@
 package com.pipit.agc.agc.fragment;
 
+import android.app.AlarmManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -8,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.MySQLiteHelper;
+import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.agc.util.ReminderOracle;
@@ -35,6 +40,7 @@ public class TestDBFragmentMessages extends ListFragment {
     private Button _addButton;
     private Button _testReceiverAddButton;
     private Button _deleteButton;
+    private Button _addDay;
 
     private Button _upgradeDbButton;
 
@@ -100,8 +106,29 @@ public class TestDBFragmentMessages extends ListFragment {
         _testReceiverAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlarmManagerBroadcastReceiver am = new AlarmManagerBroadcastReceiver();
-                am.leaveMessageAtTime(getContext(), 0, 0);
+                ReminderOracle.doLeaveMessageBasedOnPerformance(getContext(), true);
+            }
+        });
+        _addDay = (Button) view.findViewById(R.id.addday);
+        _addDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Copy+pasted from AlarmManagerBroadcastReceiver
+                DBRecordsSource datasource;
+                datasource = DBRecordsSource.getInstance();
+                if (datasource==null){
+                    DBRecordsSource.initializeInstance(new MySQLiteHelper(getActivity()));
+                    datasource = DBRecordsSource.getInstance();
+                }
+                datasource.openDatabase();
+                DayRecord day = new DayRecord();
+                day.setComment("You have not been to the gym");
+                day.setDate(new Date());
+                day.setHasBeenToGym(false);
+                day.setIsGymDay(false);
+                DayRecord dayRecord = datasource.createDayRecord(day);
+                datasource.closeDatabase();
+                Toast.makeText(getActivity(), "new day added!", Toast.LENGTH_LONG);
             }
         });
     }

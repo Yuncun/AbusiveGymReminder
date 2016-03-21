@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textView1"
@@ -9,17 +9,19 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:gravity="left"
         android:text="Welcome to Abusive Gym Reminder"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textStyle="bold"
+        android:textSize="60sp" />
 
-    <Button
+    <TextView
         android:id="@+id/finishbutton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:paddingTop="16dp"
-        android:layout_below="@id/textView1"
-        android:text="Finish" />
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:layout_alignParentBottom="true"
+        android:textSize="30sp"
+        android:text="START ME UP" />
 
 </RelativeLayout>

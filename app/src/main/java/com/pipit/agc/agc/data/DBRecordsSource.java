@@ -35,7 +35,7 @@ public class DBRecordsSource {
             MySQLiteHelper.COLUMN_DAYRECORDS, MySQLiteHelper.COLUMN_DATE,
             MySQLiteHelper.COLUMN_ISGYMDAY, MySQLiteHelper.COLUMN_BEENTOGYM};
     private String[] allColumnsMessages = { MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_MESSAGE_HEADER,
-            MySQLiteHelper.COLUMN_MESSAGE_BODY, MySQLiteHelper.COLUMN_DATE};
+            MySQLiteHelper.COLUMN_MESSAGE_BODY, MySQLiteHelper.COLUMN_DATE, MySQLiteHelper.COLUMN_REASON};
 
     public static synchronized void initializeInstance(MySQLiteHelper helper) {
         if (instance == null) {
@@ -172,6 +172,7 @@ public class DBRecordsSource {
         values.put(MySQLiteHelper.COLUMN_MESSAGE_HEADER, msg.getHeader());
         values.put(MySQLiteHelper.COLUMN_MESSAGE_BODY, msg.getBody());
         values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
+        values.put(MySQLiteHelper.COLUMN_REASON, msg.getReason());
         long insertId = mDatabase.insert(MySQLiteHelper.TABLE_MESSAGES, null,
                 values);
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_MESSAGES,
@@ -229,6 +230,7 @@ public class DBRecordsSource {
         message.setHeader(cursor.getString(1));
         message.setBody(cursor.getString(2));
         message.setDate(Util.stringToDate(cursor.getString(3)));
+        message.setReason(cursor.getInt(4));
         //Log.d(TAG, "in cursorToMessage, id = " + message.getId() + " message = " + message.getHeader() + " body = "
         //        + message.getBody() + " date = " + message.getDateString());
 

@@ -1,6 +1,7 @@
 package com.pipit.agc.agc.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
 import com.pipit.agc.agc.widget.WeekCalendarView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -28,11 +30,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     private final int MONTH_STATS_VIEWTYPE = 2;
 
     private final StatsContent mStats;
+    private StatisticsFragment mFrag;
     private final OnListFragmentInteractionListener mListener;
 
-    public StatisticsRecyclerViewAdapter(StatsContent stats, OnListFragmentInteractionListener listener) {
+    public StatisticsRecyclerViewAdapter(StatsContent stats, OnListFragmentInteractionListener listener, StatisticsFragment frag) {
         mStats = stats;
         mListener = listener;
+        mFrag = frag;
     }
 
     @Override
@@ -82,9 +86,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             case 1:
                 //weekly_stats_card;
                 holder.mTitleView.setText("Last seven days");
-                ((WeeklyViewHolder) holder).stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get().toString());
-                ((WeeklyViewHolder) holder).stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get().toString());
-                ((WeeklyViewHolder) holder).stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get().toString());
+                ((WeeklyViewHolder) holder).stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get()+"");
+                ((WeeklyViewHolder) holder).stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get()+"");
+                ((WeeklyViewHolder) holder).stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get()+"");
 
                 ((WeeklyViewHolder) holder).stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
                 ((WeeklyViewHolder) holder).stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
@@ -92,8 +96,21 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
                 ((WeeklyViewHolder) holder).calendar.setDayOfWeekEnd(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
                 ((WeeklyViewHolder) holder).calendar.showLastDayMarker();
-                ((WeeklyViewHolder) holder).calendar.setCalendarInfo(mStats.getGymVisitListForWeek());
-
+                List<String> txtlist = mStats.getGymVisitListForWeek(mFrag.getContext());
+                ((WeeklyViewHolder) holder).calendar.setCalendarInfo(txtlist);
+                //Set the color
+                for (int i = 1; i < 8 ; i++){
+                    View dayview = ((WeeklyViewHolder) holder).calendar.getDayViewFromPosition(i);
+                    TextView circle = (TextView) dayview.findViewById(R.id.calendar_day_info);
+                    String s = txtlist.get(i-1);
+                    if (s.equals(mFrag.getResources().getString(R.string.reason_missed_gym))){
+                        circle.setBackgroundColor(mFrag.getResources().getColor(R.color.light_red, mFrag.getActivity().getTheme()));
+                        circle.setTextColor(mFrag.getResources().getColor(R.color.light_red, mFrag.getActivity().getTheme()));
+                    }
+                    else if (s.equals(mFrag.getResources().getString(R.string.noinfo))){
+                        dayview.setVisibility(View.GONE);
+                    }
+                }
                 break;
             default:
                 holder.mTitleView.setText("Default");

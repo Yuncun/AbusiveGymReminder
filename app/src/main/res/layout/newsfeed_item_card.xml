@@ -28,7 +28,7 @@
                 android:singleLine="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:text="You missed a gym day"
+                android:visibility="gone"
                 />
             <TextView
                 android:id="@+id/date"

@@ -41,6 +41,7 @@ import com.pipit.agc.agc.fragment.LocationListFragment;
 import com.pipit.agc.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.data.DBRecordsSource;
@@ -76,8 +77,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                 setContentView(R.layout.activity_main_layout);
 
         /*Launch Intro Activity*/
-        //Intent intent = new Intent(this, IntroductionActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, IntroductionActivity.class);
+        startActivity(intent);
 
         /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -445,8 +446,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
     public static Gym getGymLocation(Context context, int i){
         /*Check lat/lng*/
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        double lat = Util.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
-        double lng = Util.getDouble(prefs, "lng"+i, Constants.DEFAULT_COORDINATE);
+        double lat = SharedPrefUtil.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
+        double lng = SharedPrefUtil.getDouble(prefs, "lng"+i, Constants.DEFAULT_COORDINATE);
 
         Location gymLocation = new Location("");
         gymLocation.setLatitude(lat);

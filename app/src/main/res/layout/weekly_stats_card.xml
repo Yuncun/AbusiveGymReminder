@@ -58,7 +58,6 @@
                         android:text="10"
                         android:textSize="40dp"
                         android:textStyle="bold"
-                        android:textColor="@color/basewhite"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:background="@drawable/circle"/>
@@ -82,7 +81,6 @@
                         android:text="10"
                         android:textSize="40dp"
                         android:textStyle="bold"
-                        android:textColor="@color/basewhite"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:background="@drawable/circle"/>
@@ -106,7 +104,6 @@
                         android:text="10"
                         android:textSize="40dp"
                         android:textStyle="bold"
-                        android:textColor="@color/basewhite"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:background="@drawable/circle"/>

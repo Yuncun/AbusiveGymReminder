@@ -10,15 +10,19 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.MySQLiteHelper;
+import com.pipit.agc.agc.util.Util;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Eric on 12/12/2015.
@@ -43,7 +47,10 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                 doDayLogging(context);
                 break;
             case "leavemessage" :
-                doLeaveMessage(context);
+                String msgJson = intent.getStringExtra("message");
+                Log.d(TAG, "RECEIVER " + msgJson);
+                Message m = Message.fromJson(msgJson);
+                ReminderOracle.leaveMessage(m);
                 break;
             default:
                 break;
@@ -51,36 +58,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         wl.release();
     }
 
-    /**
-     * Call this to leave a message at a given time
-     * Note that the message to leave is determined by the ReminderOracle and is not specfied at this time
-     * All this does is set an alarm to consult the oracle for a message at a given time
-     * @param context
-     */
-    public void leaveMessageAtTime(Context context, Calendar calendar){
-        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
-        i.putExtra("purpose", "leavemessage");
-        PendingIntent pi = PendingIntent.getBroadcast(context, 3, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
-        Log.d(TAG, "leaveMessageAtTime " + System.currentTimeMillis()
-                + " alarm set for " + calendar.getTimeInMillis());
-    }
-
-    /**
-     * Same as leaveMessageAtTime(Context, Calendar) but does the math for you.
-     * @param context
-     * @param minutes
-     */
-    public void leaveMessageAtTime(Context context, int hours, int minutes){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.HOUR, hours);
-        calendar.add(Calendar.MINUTE, minutes);
-        calendar.add(Calendar.SECOND, 10);
-        leaveMessageAtTime(context, calendar);
-    }
 
     public void setAlarmForDayLog(Context context, Calendar calendar)
     {
@@ -117,19 +95,35 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         day.setComment("You have not been to the gym");
         day.setDate(new Date());
         day.setHasBeenToGym(false);
-        day.setIsGymDay(false);
+        day.setIsGymDay(isTheNewDayAGymDay(context));
         DayRecord dayRecord = datasource.createDayRecord(day);
         datasource.closeDatabase();
         Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
 
         //Show the gym status card in Newsfeed
         editor.putBoolean("showGymStatus", true);
-        leaveMessageAtTime(context, 0, 10); //Makes tomorrow's reminder
+        //ReminderOracle.leaveMessageAtTime(context, 0, 10); //Makes tomorrow's reminder
+        ReminderOracle.doLeaveMessageBasedOnPerformance(context);
     }
 
-    private void doLeaveMessage(Context context){
+    private void doLeaveMessage(Context context, Message m){
         Log.d(TAG, "doLeaveMessage");
-        ReminderOracle.doLeaveMessageBasedOnPerformance(true, context);
+        ReminderOracle.leaveMessage(m);
+    }
+
+    private boolean isTheNewDayAGymDay(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
+        HashSet<Integer> set = new HashSet<Integer>(plannedDOW);
+        Calendar cal = Calendar.getInstance();
+        int DOW = cal.get(Calendar.DAY_OF_WEEK);
+        DOW--;
+        if (set.contains(DOW)){
+            return true;
+        }
+        else return false;
+
     }
 
 }

@@ -17,13 +17,14 @@
     <LinearLayout
         android:id="@+id/group"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add faggot\nmessage"
+            android:text="Add faggot message"
             android:onClick="onClick"/>
 
         <Button
@@ -37,7 +38,14 @@
             android:id="@+id/receivertestadd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Test Add from Receiver"
+            android:text="Test Add Message"
+            android:onClick="onClick"/>
+
+        <Button
+            android:id="@+id/addday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Add Day"
             android:onClick="onClick"/>
 
     </LinearLayout>

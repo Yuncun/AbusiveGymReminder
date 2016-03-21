@@ -29,7 +29,6 @@ public class StatisticsFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
     private DBRecordsSource datasource;
 
     /**
@@ -69,7 +68,7 @@ public class StatisticsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new StatisticsRecyclerViewAdapter(getFreshStats(), mListener));
+            recyclerView.setAdapter(new StatisticsRecyclerViewAdapter(getFreshStats(), mListener, this));
         }
         return view;
     }

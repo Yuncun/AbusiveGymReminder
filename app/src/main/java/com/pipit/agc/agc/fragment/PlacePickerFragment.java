@@ -23,6 +23,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.activity.AllinOneActivity;
 
@@ -62,7 +63,7 @@ public class PlacePickerFragment extends Fragment {
         final SharedPreferences.Editor editor = prefs.edit();
 
         _addressText = prefs.getString("address"+1, getContext().getResources().getString(R.string.no_address_default)) + "lat" +
-                Util.getDouble(prefs, "lat", 0) + " lng" + Util.getDouble(prefs, "lng", 0) ;
+                SharedPrefUtil.getDouble(prefs, "lat", 0) + " lng" + SharedPrefUtil.getDouble(prefs, "lng", 0) ;
 
         View rootView = inflater.inflate(R.layout.fragment_place_picker, container, false);
         _launchPlacePicker=(Button) rootView.findViewById(R.id.launch_placepicker);

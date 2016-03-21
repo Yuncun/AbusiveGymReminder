@@ -2,6 +2,7 @@ package com.pipit.agc.agc.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.CardView;
@@ -29,7 +30,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     private List<Message> _messages;
     private List<DayRecord> _days;
     private Context _context;
-    private int _offset = 0; //Used because the first element is not a list item
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -65,16 +65,26 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        Message m = _messages.get(position - _offset);
-        holder.header.setText(_messages.get(position - _offset).getHeader());
-        holder.comment.setText(_messages.get(position - _offset).getBody());
-        holder.timestamp.setText(_messages.get(position - _offset).getIntelligentDateString());
-        holder.reason.setTextSize(12);
-        holder.timestamp.setTextSize(12);
+        Message m = _messages.get(position);
+        Resources r = _context.getResources();
+        holder.header.setText(m.getHeader());
+        holder.comment.setText(m.getBody());
+        holder.timestamp.setText(m.getIntelligentDateString());
+        if (m.getReason()==1) {
+            holder.reason.setText(r.getText(R.string.reason_hit_gym));
+            holder.reason.setTextColor(r.getColor(R.color.darkgreen, _context.getTheme()));
+            holder.reason.setVisibility(View.VISIBLE);
+        }
+        if (m.getReason()==0) {
+            holder.reason.setText(r.getText(R.string.reason_missed_gym));
+            holder.reason.setTextColor(r.getColor(R.color.neon_red, _context.getTheme()));
+            holder.reason.setVisibility(View.VISIBLE);
+        }
+    holder.reason.setTextSize(12);
+    holder.timestamp.setTextSize(12);
 
-        if (!m.getRead()){
-            //Todo: Add "read" field to database
-            //holder.header.setTypeface(null, Typeface.BOLD);
+    if (!m.getRead()){
+        //Todo: Add "read" field to databaseace(null, Typeface.BOLD);
             //holder.timestamp.setTypeface(null, Typeface.BOLD);
         }
         Bitmap bMap = BitmapFactory.decodeResource(_context.getResources(), R.drawable.notification_icon);
@@ -83,7 +93,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(_context, MessageBodyActivity.class);
-                intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos - _offset).getId());
+                intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos).getId());
                 _context.startActivity(intent);
                 //Todo: Mark comment as "read"
             }
@@ -93,7 +103,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return _messages.size()+_offset;
+        return _messages.size();
     }
 
     @Override

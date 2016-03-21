@@ -19,9 +19,11 @@ import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
 import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -86,6 +88,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             //Update gym status today
             updateLastDayRecord();
+            rememberGymHabits(getApplicationContext());
         } else {
             Log.e(TAG, "geofenceTransition error");
         }
@@ -192,4 +195,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     }
 
+
+    /**
+     * Call this function to remember what time the user went to the gym
+     * Todo: Make this function more intelligent, perhaps by looking up stats in DayRecords
+     */
+    public static void rememberGymHabits(Context context){
+        SharedPrefUtil.putLong(context, "lastgymtime", Calendar.getInstance().getTimeInMillis());
+    }
 }

@@ -22,8 +22,8 @@ public class GeofenceUtils {
         }
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("proxalert"+id, gym.proxid).commit();
-        Util.putDouble(editor, Constants.DEST_LAT + id, gym.location.getLatitude());
-        Util.putDouble(editor, Constants.DEST_LNG+id, gym.location.getLongitude());
+        SharedPrefUtil.putDouble(editor, Constants.DEST_LAT + id, gym.location.getLatitude());
+        SharedPrefUtil.putDouble(editor, Constants.DEST_LNG+id, gym.location.getLongitude());
         editor.putString("address"+id, gym.address).commit();
         editor.putString("name"+id, gym.name).commit();
 

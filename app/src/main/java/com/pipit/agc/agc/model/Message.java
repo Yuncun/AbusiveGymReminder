@@ -2,6 +2,7 @@ package com.pipit.agc.agc.model;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.pipit.agc.agc.util.Util;
 
 import java.text.DateFormat;
@@ -19,6 +20,11 @@ public class Message {
     private Date date;
     private Calendar timeCreated;
     private boolean read;
+    private int reason = NO_RECORD;
+
+    public final static int NO_RECORD = -1;
+    public final static int MISSED_YESTERDAY = 0;
+    public final static int HIT_YESTERDAY = 1;
 
     public Message(){
         timeCreated =  Calendar.getInstance();
@@ -57,12 +63,19 @@ public class Message {
         return Util.dateToString(getDate());
     }
 
+    public void setReason(int r){
+        reason=r;
+    }
+
+    public int getReason(){
+        return reason;
+    }
+
     // Will be used by the ArrayAdapter in the ListView
     @Override
     public String toString() {
         return body;
     }
-
 
     /**
      *
@@ -76,7 +89,6 @@ public class Message {
         }
         DateFormat dateFormat = new SimpleDateFormat("M/dd");
         return dateFormat.format(date);
-
     }
 
     public String getTimeFormat_HHmm(){
@@ -108,5 +120,16 @@ public class Message {
 
     public boolean getRead(){
         return read;
+    }
+
+    // You can add those functions as LiveTemplate !
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    public static Message fromJson(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, Message.class);
     }
 }

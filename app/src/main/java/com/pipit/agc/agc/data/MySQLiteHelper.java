@@ -17,8 +17,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_ISGYMDAY = "isgymday";
     public static final String COLUMN_BEENTOGYM = "beentogym";
+    public static final String COLUMN_REASON = "reason";
     private static final String DATABASE_NAME = "dayrecords.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     private static final String CREATE_TABLE_DAYRECORDS = "create table "
             + TABLE_DAYRECORDS + "(" + COLUMN_ID
@@ -39,7 +40,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + " integer primary key autoincrement, "
             + COLUMN_MESSAGE_HEADER + " text not null, "
             + COLUMN_MESSAGE_BODY + " text not null, "
-            + COLUMN_DATE + " text default 0"
+            + COLUMN_DATE + " text default 0, "
+            + COLUMN_REASON + " integer default 0"
             + ");";
 
     /**SQL Helper functions**/
@@ -63,7 +65,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_DAYRECORDS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
             onCreate(db);
-
     }
 
 }

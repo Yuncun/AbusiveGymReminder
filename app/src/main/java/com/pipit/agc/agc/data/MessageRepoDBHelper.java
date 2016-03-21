@@ -32,7 +32,5 @@ public class MessageRepoDBHelper extends SQLiteAssetHelper {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         onCreate(db);
-
     }
-
 }

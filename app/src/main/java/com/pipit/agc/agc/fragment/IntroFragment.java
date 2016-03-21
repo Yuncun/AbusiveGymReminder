@@ -6,15 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.activity.IntroductionActivity;
 
 /**
  * Created by Eric on 12/13/2015.
  */
 public class IntroFragment extends Fragment {
 
-   private Button _finishButton;
+   private TextView _finishButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -24,11 +26,11 @@ public class IntroFragment extends Fragment {
         View view =  inflater.inflate(R.layout.intro_opening_message,
                 container, false);
 
-        _finishButton = (Button) view.findViewById(R.id.finishbutton);
+        _finishButton = (TextView) view.findViewById(R.id.finishbutton);
         _finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().finish();
+                ((IntroductionActivity)getActivity()).selectFrag(1);
             }
         });
         return view;

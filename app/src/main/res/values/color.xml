@@ -8,6 +8,10 @@
     <item name="basewhite" type="color">#f9f9f9</item>
     <item name="yellow" type="color">#FFEB3B</item>
     <item name="black" type="color">#000000</item>
+    <item name="flat_red" type="color">#F44336</item>
+    <item name="neon_green" type="color">#69F0AE</item>
+    <item name="neon_red" type="color">#FF5252</item>
+    <item name="light_red" type="color">#FF8A80</item>
 
     <!--Experimental colors for msg background-->
     <item name="schemeone_lightblue" type="color">#89AABB</item>

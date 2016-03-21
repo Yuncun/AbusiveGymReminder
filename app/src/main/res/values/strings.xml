@@ -24,6 +24,13 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_setting_wrapper">SettingWrapperActivity</string>
     <string name="no_address_default">No Address</string>
+    <string name="reason_missed_gym">You missed a gym day yesterday</string>
+    <string name="reason_hit_gym">You went to the gym yesterday</string>
+    <string name="hit">Hit</string>
+    <string name="miss">Miss</string>
+    <string name="rest">Rest</string>
+    <string name="noinfo">N/A</string>
+    <string name="questionmark">/?</string>
 
 
 </resources>

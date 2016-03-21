@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.adapter.LocationListAdapter;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.activity.AllinOneActivity;
 import com.pipit.agc.agc.model.Gym;
@@ -92,8 +93,8 @@ public class LocationListFragment extends Fragment {
                 .getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<Gym> gymlocations = new ArrayList<Gym>();
         for (int i=1; i<Constants.GYM_LIMIT; i++){
-            double lat = Util.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
-            double lng = Util.getDouble(prefs, "lng" + i, Constants.DEFAULT_COORDINATE);
+            double lat = SharedPrefUtil.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
+            double lng = SharedPrefUtil.getDouble(prefs, "lng" + i, Constants.DEFAULT_COORDINATE);
             Gym gym = new Gym();
             gym.location = new Location("");
             gym.location.setLongitude(lng);

@@ -122,7 +122,12 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
     }
 
     public void toggleCurrentGymDayData(boolean gymDay){
-        datasource.updateLatestDayRecordIsGymDay(false);
+        if (datasource==null){
+            datasource = DBRecordsSource.getInstance();
+        }
+        datasource.openDatabase();
+        datasource.updateLatestDayRecordIsGymDay(gymDay);
+        DBRecordsSource.getInstance().closeDatabase();
         executeUpdateCallback(false); //Update the newsfeed fragment
     }
 }
