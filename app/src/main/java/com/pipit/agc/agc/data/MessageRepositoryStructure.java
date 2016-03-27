@@ -19,8 +19,5 @@ public class MessageRepositoryStructure {
     public static final int NOT_ANGRY = 0;
     public static final int KINDA_ANNOYED = 1;
     public static final int ANGRY = 2;
-
-
-
 }
 

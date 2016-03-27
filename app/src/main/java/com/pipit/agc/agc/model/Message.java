@@ -25,6 +25,7 @@ public class Message {
     public final static int NO_RECORD = -1;
     public final static int MISSED_YESTERDAY = 0;
     public final static int HIT_YESTERDAY = 1;
+    public final static int HIT_TODAY = 2;
 
     public Message(){
         timeCreated =  Calendar.getInstance();

@@ -94,14 +94,14 @@ public class StatsContent {
 
     public DayRecord getToday(boolean forceupdate){
         if (forceupdate){
-            updateAll();
+            refreshDayRecords();
         }
         return _allDayRecords.get(_allDayRecords.size() - 1);
     }
 
     public DayRecord getYesterday(boolean forceupdate){
         if (forceupdate){
-            updateAll();
+            refreshDayRecords();
         }
         if (_allDayRecords.size()<2){
             return null;

@@ -61,9 +61,17 @@ public class MessageRepoAccess {
      * @return
      */
     public Message getRandomMessageWithParams(int type, int anger){
-        Cursor cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
-                + " WHERE " + //MessageRepoDBHelper.COLUMN_ANGER + " = " + anger + ", " +
-                MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
+        Cursor cursorc = null;
+        if (anger <= MessageRepositoryStructure.ANGRY && anger > -1){
+            cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
+                    + " WHERE " + //MessageRepoDBHelper.COLUMN_ANGER + " = " + anger + ", " +
+                    MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
+        }
+        else {
+            cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
+                    + " WHERE " + MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
+        }
+
         Random rn = new Random();
         int rand = rn.nextInt(cursorc.getCount());
         cursorc.moveToPosition(rand);

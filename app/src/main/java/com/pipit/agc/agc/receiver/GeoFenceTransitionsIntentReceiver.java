@@ -1,8 +1,9 @@
-package com.pipit.agc.agc.service;
+package com.pipit.agc.agc.receiver;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,31 +32,17 @@ import java.util.List;
 /**
  * Created by Eric on 2/21/2016.
  */
-public class GeofenceTransitionsIntentService extends IntentService {
-
-    protected static final String TAG = "GeofenceTransitionsIS";
-
-    /**
-     * This constructor is required, and calls the super IntentService(String)
-     * constructor with the name for a worker thread.
-     */
-    public GeofenceTransitionsIntentService() {
-        // Use the TAG to name the worker thread.
-        super(TAG);
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
+public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
+    protected static final String TAG = "GeofenceReceiver";
     /**
      * Handles incoming intents.
      * @param intent sent by Location Services. This Intent is provided to Location
      *               Services (inside a PendingIntent) when addGeofences() is called.
      */
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onReceive(Context context, Intent intent)
+    {
+        Log.d(TAG, "onRECEIVE");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = Integer.toString(geofencingEvent.getErrorCode());
@@ -71,16 +58,16 @@ public class GeofenceTransitionsIntentService extends IntentService {
         {
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
             String geofenceTransitionDetails = getGeofenceTransitionDetails(
-                    this,
+                    context,
                     geofenceTransition,
                     triggeringGeofences
             );
 
             // Send notification and log the transition details.
-            sendNotification(geofenceTransitionDetails);
+            sendNotification(geofenceTransitionDetails, context);
             Log.i(TAG, geofenceTransitionDetails);
             //Update logs
-            SharedPreferences prefs = this.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+            SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
             SharedPreferences.Editor editor = prefs.edit();
             String lastLocation = prefs.getString("locationlist", "none");
             String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
@@ -89,9 +76,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             //Update gym status today
             updateLastDayRecord();
-            rememberGymHabits(getApplicationContext());
-            ReminderOracle.doLeaveOnGymArrivalMessage(getApplicationContext(), true);
-            sendNotification("GEO FENCE FROM SERVICE");
+            rememberGymHabits(context);
+            ReminderOracle.doLeaveOnGymArrivalMessage(context, true);
+            sendNotification("GEO FENCE FROM SERVICE", context);
         } else {
             Log.e(TAG, "geofenceTransition error");
         }
@@ -125,12 +112,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * Posts a notification in the notification bar when a transition is detected.
      * If the user clicks the notification, control goes to the MainActivity.
      */
-    private void sendNotification(String notificationDetails) {
+    private void sendNotification(String notificationDetails, Context context) {
         // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = new Intent(getApplicationContext(), AllinOneActivity.class);
+        Intent notificationIntent = new Intent(context, AllinOneActivity.class);
 
         // Construct a task stack.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
         // Add the main Activity to the task stack as the parent.
         stackBuilder.addParentStack(AllinOneActivity.class);
@@ -143,13 +130,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get a notification builder that's compatible with platform versions >= 4
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
         // Define the notification settings.
         builder.setSmallIcon(R.drawable.notification_icon)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.drawable.notification_icon))
                 .setColor(Color.RED)
                 .setContentTitle(notificationDetails)
@@ -161,7 +148,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         // Get an instance of the Notification manager
         NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Issue the notification
         mNotificationManager.notify(0, builder.build());

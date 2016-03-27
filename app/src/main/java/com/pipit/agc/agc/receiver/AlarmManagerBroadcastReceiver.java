@@ -50,15 +50,31 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                 String msgJson = intent.getStringExtra("message");
                 Log.d(TAG, "RECEIVER " + msgJson);
                 Message m = Message.fromJson(msgJson);
+
+                //Directly leave message in inbox
                 ReminderOracle.leaveMessage(m);
+                String header = "";
+                String body = "";
+                //Construct notification message and show
+                switch (m.getReason()){
+                    case Message.MISSED_YESTERDAY:
+                        header = "You missed a gym day yesterday";
+                        body = "New Message";
+                        break;
+                    case Message.HIT_YESTERDAY:
+                    case Message.HIT_TODAY:
+                    case Message.NO_RECORD:
+                    default:
+                        header = "New Message from Abusive Gym Reminder";
+                        body = "";
+                }
+                ReminderOracle.showNotification(context, header, body);
                 break;
             default:
                 break;
         }
         wl.release();
     }
-
-
 
     public void setAlarmForDayLog(Context context, Calendar calendar)
     {
@@ -100,18 +116,12 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         datasource.closeDatabase();
         Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
 
-        //Show the gym status card in Newsfeed
+        //Show gym message
         editor.putBoolean("showGymStatus", true);
-        //ReminderOracle.leaveMessageAtTime(context, 0, 10); //Makes tomorrow's reminder
-        ReminderOracle.doLeaveMessageBasedOnPerformance(context);
+        ReminderOracle.doLeaveMessageBasedOnPerformance(context, false);
     }
 
-    private void doLeaveMessage(Context context, Message m){
-        Log.d(TAG, "doLeaveMessage");
-        ReminderOracle.leaveMessage(m);
-    }
-
-    private boolean isTheNewDayAGymDay(Context context){
+    private static boolean isTheNewDayAGymDay(Context context){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
@@ -123,7 +133,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
             return true;
         }
         else return false;
-
     }
 
 }

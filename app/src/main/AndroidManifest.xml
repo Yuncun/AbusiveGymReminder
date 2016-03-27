@@ -54,11 +54,17 @@
         <receiver
             android:name=".receiver.AlarmManagerBroadcastReceiver"
             android:process=":remote" />
+
         <receiver android:name=".receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".receiver.GeoFenceTransitionsIntentReceiver"
+            android:process=":remote" />
+
 
         <activity
             android:name=".activity.SettingsActivity"

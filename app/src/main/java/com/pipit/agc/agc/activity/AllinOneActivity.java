@@ -32,6 +32,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
+import com.pipit.agc.agc.receiver.GeoFenceTransitionsIntentReceiver;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
 import com.pipit.agc.agc.service.GeofenceTransitionsIntentService;
@@ -77,8 +78,12 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                 setContentView(R.layout.activity_main_layout);
 
         /*Launch Intro Activity*/
-        Intent intent = new Intent(this, IntroductionActivity.class);
-        startActivity(intent);
+        if (SharedPrefUtil.getIsFirstTime(this)){
+            Intent intent = new Intent(this, IntroductionActivity.class);
+            startActivity(intent);
+            SharedPrefUtil.setFirstTime(this, false);
+        }
+
 
         /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -141,6 +146,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         else if (id == R.id.action_showgymstatus){
             SharedPreferences prefs = getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
             prefs.edit().putBoolean("showGymStatus", true).commit();
+            SharedPrefUtil.setFirstTime(this, true);
         }
         else if (id == R.id.action_remove_geofences){
             removeAllGeofences();
@@ -315,10 +321,15 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
+
+        /*
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         return PendingIntent.getService(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);*/
+        Intent intent = new Intent(this, GeoFenceTransitionsIntentReceiver.class);
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
     }
 

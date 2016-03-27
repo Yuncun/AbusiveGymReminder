@@ -37,5 +37,16 @@ public class SharedPrefUtil {
         return prefs.getLong(key, defaultlong);
     }
 
+    public static void setFirstTime(Context context, boolean firsttime){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("firsttime", firsttime);
+        editor.commit();
+    }
+
+    public static boolean getIsFirstTime(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        return prefs.getBoolean("firsttime", true);
+    }
 
 }
