@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashSet;
 
 /**
  * Created by Eric on 2/6/2016.
@@ -48,5 +49,6 @@ public class SharedPrefUtil {
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         return prefs.getBoolean("firsttime", true);
     }
+
 
 }

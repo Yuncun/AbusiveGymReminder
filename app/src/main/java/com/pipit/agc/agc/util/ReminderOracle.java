@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
@@ -13,6 +14,7 @@ import android.util.Log;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
+import com.pipit.agc.agc.activity.MessageBodyActivity;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.MessageRepoAccess;
 import com.pipit.agc.agc.data.MessageRepositoryStructure;
@@ -20,8 +22,11 @@ import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -40,29 +45,53 @@ public class ReminderOracle {
 
         DayRecord yesterday = StatsContent.getInstance().getYesterday(true);
         DayRecord today = StatsContent.getInstance().getToday(false);
-        MessageRepoAccess databaseAccess = MessageRepoAccess.getInstance(context);
-        databaseAccess.open();
+        MessageRepoAccess messagerepo = MessageRepoAccess.getInstance(context);
+        messagerepo.open();
         Message msg = null;
         if (yesterday==null){
             msg = new Message();
             msg.setHeader("Welcome!");
             msg.setBody("In the future you will messages like this calling you fat when you miss gym days");
         }
+        else if (testmode){
+            int type = 0;
+            int reason = 0;
+            if (yesterday.beenToGym()){
+                type = MessageRepositoryStructure.REMINDER_HITYESTERDAY;
+                reason = Message.HIT_TODAY;
+            }else{
+                type = MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY;
+                reason = Message.MISSED_YESTERDAY;
+            }
+            try{
+                Log.d(TAG, "Attempting to get a new message");
+                long id = findANewMessageId(context, type);
+                if (!messagerepo.isOpen()) { messagerepo.open(); }
+                if (id < 1){
+                    Log.d(TAG, "No id's found, getting random message");
+                    msg = messagerepo.getRandomMessageWithParams(type,
+                            MessageRepositoryStructure.KINDA_ANNOYED);
+                    msg.setReason(reason);
+                }else{
+                    msg = messagerepo.getMessageById(id);
+                    msg.setReason(reason);
+                }
+            } catch (Exception e){
+                Log.d(TAG, e.toString());
+            }
+        }
         else if (yesterday.beenToGym()) {
-            /*
-            msg = databaseAccess.getRandomMessageWithParams(MessageRepositoryStructure.REMINDER_HITYESTERDAY,
-                    MessageRepositoryStructure.KINDA_ANNOYED);
-            msg.setReason(Message.HIT_YESTERDAY);
-            Log.d(TAG, "ReminderOracle leaving message " + msg + " header:" + msg.getHeader() + "body" + msg.getBody() );  */
             // Todo: Figure out if we want to leave a message here or not - am exploring the idea of leaving message immediately
             // Todo: when user goes to the gym, which would make this redundant.
-        }else if (!yesterday.beenToGym()) {
-            msg = databaseAccess.getRandomMessageWithParams(MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY,
+        }
+        else if (!yesterday.beenToGym()) {
+            //long testid = findANewMessageId(context, 2);
+            //Log.d(TAG, "RANDOM GENERATED ID " + testid);
+            msg = messagerepo.getRandomMessageWithParams(MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY,
                     MessageRepositoryStructure.KINDA_ANNOYED);
             msg.setReason(Message.MISSED_YESTERDAY);
         }
-        databaseAccess.close();
-
+        messagerepo.close();
         /*Calculate time*/
         Random rand = new Random();
         int hr_noise = rand.nextInt(POST_TIME_NOISE_HOURS);
@@ -98,7 +127,7 @@ public class ReminderOracle {
         datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
         datasource.createMessage(msg, new Date());
-        DBRecordsSource.getInstance().closeDatabase();
+        datasource.closeDatabase();
     }
 
     /**
@@ -139,7 +168,7 @@ public class ReminderOracle {
      * receives it presumably after his or her workout
      */
     public static void doLeaveOnGymArrivalMessage(Context context, boolean immediate){
-        Log.d(TAG, "doLeaveOnGymArrivalMessage(Context, " + immediate+")");
+        Log.d(TAG, "doLeaveOnGymArrivalMessage(Context, " + immediate + ")");
         MessageRepoAccess databaseAccess = MessageRepoAccess.getInstance(context);
         databaseAccess.open();
         Message msg = null;
@@ -149,7 +178,7 @@ public class ReminderOracle {
         databaseAccess.close();
 
         if (immediate){
-           setLeaveMessageAlarm(context, msg, 0, 0);
+            setLeaveMessageAlarm(context, msg, 0, 0);
         }
         else{
             setLeaveMessageAlarm(context, msg, 1, 0);
@@ -160,9 +189,12 @@ public class ReminderOracle {
      * Posts a notification in the notification bar when a transition is detected.
      * If the user clicks the notification, control goes to the MainActivity.
      */
-    public static void showNotification(Context context, String header, String body){
-        // Create an explicit content Intent that starts the main Activity.
+    public static void showNotification(Context context, String header, String body, long messageID, int reason){
         Intent notificationIntent = new Intent(context, AllinOneActivity.class);
+        if (messageID>0){
+            notificationIntent = new Intent(context, AllinOneActivity.class);
+            notificationIntent.putExtra(Constants.MESSAGE_ID, messageID);
+        }
 
         // Construct a task stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -179,26 +211,56 @@ public class ReminderOracle {
 
         // Get a notification builder that's compatible with platform versions >= 4
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
-        // Define the notification settings.
-        builder.setSmallIcon(R.drawable.notification_icon)
+        if (reason==Message.MISSED_YESTERDAY){
+            builder.setSmallIcon(R.drawable.notification_icon)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.drawable.notification_icon))
-                .setColor(Color.BLUE)
+                .setColor(Color.RED)
                 .setContentTitle(header)
                 .setContentText(body)
                 .setContentIntent(notificationPendingIntent);
-
+        }
+        else{
+            builder.setSmallIcon(R.drawable.notification_icon)
+            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.notification_icon))
+            .setColor(Color.RED)
+            .setContentTitle(header)
+            .setContentText(body)
+            .setContentIntent(notificationPendingIntent);
+        }
         // Dismiss notification once the user touches it.
         builder.setAutoCancel(true);
-        // Get an instance of the Notification manager
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
     }
 
+    public static long findANewMessageId(Context context, int type){
+        /* Get available Ids */
+        StatsContent sc = StatsContent.getInstance();
+        MessageRepoAccess datasource;
+        datasource = MessageRepoAccess.getInstance(context);
+        datasource.open();
+        List<Long> available_ids = datasource.getListOfIDsForMessageType(type);
+        datasource.close();
 
+        /* Get taken Ids */
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        List<Long> taken_ids = new ArrayList<Long>(Util.listOfStringsToListOfLongs(Util.getListFromSharedPref(prefs, Constants.TAKEN_MESSAGE_IDS)));
+
+        /* Combine both lists */
+        List<Long> common = new ArrayList<Long>(available_ids);
+        common.removeAll(taken_ids);
+
+        if (common.size()<1){
+            return -1;
+        }
+        /*Pick a random element*/
+        int index = (int)(Math.random()*(common.size()-1));
+        return common.get(index);
+    }
 }

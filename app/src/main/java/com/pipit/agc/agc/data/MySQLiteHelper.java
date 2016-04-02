@@ -19,29 +19,29 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_BEENTOGYM = "beentogym";
     public static final String COLUMN_REASON = "reason";
     private static final String DATABASE_NAME = "dayrecords.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 11;
 
     private static final String CREATE_TABLE_DAYRECORDS = "create table "
-            + TABLE_DAYRECORDS + "(" + COLUMN_ID
-            + " integer primary key autoincrement, " + COLUMN_DAYRECORDS
-            + " text not null, " + COLUMN_DATE
-            + " text default 0, " + COLUMN_ISGYMDAY
-            + " integer default 0, " + COLUMN_BEENTOGYM
-            + " integer default 0 " +
-            ");";
+            + TABLE_DAYRECORDS + "(" + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_DAYRECORDS + " text not null, "
+            + COLUMN_DATE + " text default 0, "
+            + COLUMN_ISGYMDAY + " integer default 0, "
+            + COLUMN_BEENTOGYM + " integer default 0 "
+            + ");";
 
     /**Message Table**/
     public static final String TABLE_MESSAGES = "messages";
     public static final String COLUMN_MESSAGE_BODY = "message";
     public static final String COLUMN_MESSAGE_HEADER = "header";
+    public static final String COLUMN_REPO_ID = "repoid"; //The message repo ID of the message - can be 0 from non-repo messages
 
     private static final String CREATE_TABLE_MESSAGES = "create table "
-            + TABLE_MESSAGES + "(" + COLUMN_ID
-            + " integer primary key autoincrement, "
+            + TABLE_MESSAGES + "(" + COLUMN_ID + " integer primary key autoincrement, "
             + COLUMN_MESSAGE_HEADER + " text not null, "
             + COLUMN_MESSAGE_BODY + " text not null, "
             + COLUMN_DATE + " text default 0, "
-            + COLUMN_REASON + " integer default 0"
+            + COLUMN_REASON + " integer default 0, "
+            + COLUMN_REPO_ID + " integer default 0 "
             + ");";
 
     /**SQL Helper functions**/

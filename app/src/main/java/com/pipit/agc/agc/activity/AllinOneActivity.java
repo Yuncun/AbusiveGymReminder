@@ -31,6 +31,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.agc.receiver.GeoFenceTransitionsIntentReceiver;
 import com.pipit.agc.agc.util.Constants;
@@ -53,6 +54,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status>,
@@ -77,13 +80,28 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_main_layout);
 
+        /*If opened from a notification, redirect to correct page*/
+        if (getIntent().hasExtra(Constants.MESSAGE_ID)){
+            long id = getIntent().getLongExtra(Constants.MESSAGE_ID, -1);
+            Log.d(TAG, "Received intent with message id " + id);
+            if (id>0){
+                DBRecordsSource datasource = DBRecordsSource.getInstance();
+                datasource.openDatabase();
+                List<Message> msgs = datasource.getAllMessages();
+                long index = msgs.get(msgs.size()-1).getId(); //This is a bit hacky, but we need to direct user to last msg
+                datasource.closeDatabase();
+                Intent intent = new Intent(this, MessageBodyActivity.class);
+                intent.putExtra(Constants.MESSAGE_ID, index);
+                startActivity(intent);
+            }
+        }
+
         /*Launch Intro Activity*/
         if (SharedPrefUtil.getIsFirstTime(this)){
             Intent intent = new Intent(this, IntroductionActivity.class);
             startActivity(intent);
             SharedPrefUtil.setFirstTime(this, false);
         }
-
 
         /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.util.Constants;
@@ -70,14 +69,19 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         holder.header.setText(m.getHeader());
         holder.comment.setText(m.getBody());
         holder.timestamp.setText(m.getIntelligentDateString());
-        if (m.getReason()==1) {
-            holder.reason.setText(r.getText(R.string.reason_hit_gym));
+        if (m.getReason()== Message.HIT_YESTERDAY) {
+            holder.reason.setText(r.getText(R.string.reason_hit_gym_yesterday));
             holder.reason.setTextColor(r.getColor(R.color.darkgreen, _context.getTheme()));
             holder.reason.setVisibility(View.VISIBLE);
         }
-        if (m.getReason()==0) {
-            holder.reason.setText(r.getText(R.string.reason_missed_gym));
+        if (m.getReason()== Message.MISSED_YESTERDAY) {
+            holder.reason.setText(r.getText(R.string.reason_missed_gym_yesterday));
             holder.reason.setTextColor(r.getColor(R.color.neon_red, _context.getTheme()));
+            holder.reason.setVisibility(View.VISIBLE);
+        }
+        if (m.getReason()== Message.HIT_TODAY) {
+            holder.reason.setText(r.getText(R.string.reason_hit_gym_today));
+            holder.reason.setTextColor(r.getColor(R.color.darkgreen, _context.getTheme()));
             holder.reason.setVisibility(View.VISIBLE);
         }
     holder.reason.setTextSize(12);

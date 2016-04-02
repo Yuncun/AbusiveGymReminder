@@ -31,11 +31,20 @@ public class DBRecordsSource {
     private SQLiteDatabase mDatabase;
     private static MySQLiteHelper _databaseHelper;
     private static DBRecordsSource instance;
-    private String[] allColumnsDayRecords = { MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_DAYRECORDS, MySQLiteHelper.COLUMN_DATE,
-            MySQLiteHelper.COLUMN_ISGYMDAY, MySQLiteHelper.COLUMN_BEENTOGYM};
-    private String[] allColumnsMessages = { MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_MESSAGE_HEADER,
-            MySQLiteHelper.COLUMN_MESSAGE_BODY, MySQLiteHelper.COLUMN_DATE, MySQLiteHelper.COLUMN_REASON};
+    private String[] allColumnsDayRecords = {
+            MySQLiteHelper.COLUMN_ID,
+            MySQLiteHelper.COLUMN_DAYRECORDS,
+            MySQLiteHelper.COLUMN_DATE,
+            MySQLiteHelper.COLUMN_ISGYMDAY,
+            MySQLiteHelper.COLUMN_BEENTOGYM};
+
+    private String[] allColumnsMessages = {
+            MySQLiteHelper.COLUMN_ID,
+            MySQLiteHelper.COLUMN_MESSAGE_HEADER,
+            MySQLiteHelper.COLUMN_MESSAGE_BODY,
+            MySQLiteHelper.COLUMN_DATE,
+            MySQLiteHelper.COLUMN_REASON,
+            MySQLiteHelper.COLUMN_REPO_ID};
 
     public static synchronized void initializeInstance(MySQLiteHelper helper) {
         if (instance == null) {
@@ -64,7 +73,6 @@ public class DBRecordsSource {
         _count--;
         if(_count == 0) {
             mDatabase.close();
-
         }
     }
 
@@ -153,7 +161,6 @@ public class DBRecordsSource {
             return null;
         }
         return lastDayRecord;
-
     }
 
     private DayRecord cursorToDayRecord(Cursor cursor) {
@@ -173,6 +180,7 @@ public class DBRecordsSource {
         values.put(MySQLiteHelper.COLUMN_MESSAGE_BODY, msg.getBody());
         values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
         values.put(MySQLiteHelper.COLUMN_REASON, msg.getReason());
+        values.put(MySQLiteHelper.COLUMN_REPO_ID, msg.getRepoId());
         long insertId = mDatabase.insert(MySQLiteHelper.TABLE_MESSAGES, null,
                 values);
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_MESSAGES,
@@ -227,6 +235,7 @@ public class DBRecordsSource {
     private Message cursorToMessage(Cursor cursor) {
         Message message = new Message();
         message.setId(cursor.getLong(0));
+        message.setRepoId(cursor.getLong(5));
         message.setHeader(cursor.getString(1));
         message.setBody(cursor.getString(2));
         message.setDate(Util.stringToDate(cursor.getString(3)));
@@ -237,12 +246,20 @@ public class DBRecordsSource {
         return message;
     }
 
+    /*General stuff */
+
     //Used for debugging
     public String[] getColumnNames(String tablename){
         Cursor dbCursor = mDatabase.query(tablename, null, null, null, null, null, null);
         String[] columnNames = dbCursor.getColumnNames();
         Log.d(TAG, "Column names for table " + tablename + " " + Arrays.toString(columnNames));
         return columnNames;
+    }
+
+    public int getSizeOfMessagesTable(){
+        Cursor cursorc = mDatabase.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_MESSAGES, null);
+        boolean isOk = cursorc.moveToFirst();
+        return cursorc.getInt(0);
     }
 
 }

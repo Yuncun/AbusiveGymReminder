@@ -21,6 +21,7 @@ public class Message {
     private Calendar timeCreated;
     private boolean read;
     private int reason = NO_RECORD;
+    private long repoid;
 
     public final static int NO_RECORD = -1;
     public final static int MISSED_YESTERDAY = 0;
@@ -29,6 +30,8 @@ public class Message {
 
     public Message(){
         timeCreated =  Calendar.getInstance();
+        repoid=0;
+        id=0;
         read=false;
     }
 
@@ -71,6 +74,12 @@ public class Message {
     public int getReason(){
         return reason;
     }
+
+    public void setRepoId(long id){ this.repoid=id; }
+
+    public long getRepoId() { return this.repoid; }
+
+
 
     // Will be used by the ArrayAdapter in the ListView
     @Override

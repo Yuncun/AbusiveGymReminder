@@ -1,7 +1,6 @@
 package com.pipit.agc.agc.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
 import com.pipit.agc.agc.widget.WeekCalendarView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -103,7 +101,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     View dayview = ((WeeklyViewHolder) holder).calendar.getDayViewFromPosition(i);
                     TextView circle = (TextView) dayview.findViewById(R.id.calendar_day_info);
                     String s = txtlist.get(i-1);
-                    if (s.equals(mFrag.getResources().getString(R.string.reason_missed_gym))){
+                    if (s.equals(mFrag.getResources().getString(R.string.reason_missed_gym_yesterday))){
                         circle.setBackgroundColor(mFrag.getResources().getColor(R.color.light_red, mFrag.getActivity().getTheme()));
                         circle.setTextColor(mFrag.getResources().getColor(R.color.light_red, mFrag.getActivity().getTheme()));
                     }

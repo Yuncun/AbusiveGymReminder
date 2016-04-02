@@ -53,22 +53,31 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
                 //Directly leave message in inbox
                 ReminderOracle.leaveMessage(m);
+                if (m.getRepoId()>0){
+                    Util.putStringIntoListIntoSharedPrefs(context, Constants.TAKEN_MESSAGE_IDS, Long.toString(m.getRepoId()));
+                }
                 String header = "";
                 String body = "";
+                long msgid = -1;
+                int reason = Message.NO_RECORD;
                 //Construct notification message and show
                 switch (m.getReason()){
                     case Message.MISSED_YESTERDAY:
                         header = "You missed a gym day yesterday";
                         body = "New Message";
+                        msgid = m.getId();
+                        reason = Message.MISSED_YESTERDAY;
                         break;
                     case Message.HIT_YESTERDAY:
                     case Message.HIT_TODAY:
                     case Message.NO_RECORD:
                     default:
                         header = "New Message from Abusive Gym Reminder";
+                        msgid = m.getId();
                         body = "";
+                        reason = Message.HIT_TODAY;
                 }
-                ReminderOracle.showNotification(context, header, body);
+                ReminderOracle.showNotification(context, header, body, msgid, reason);
                 break;
             default:
                 break;

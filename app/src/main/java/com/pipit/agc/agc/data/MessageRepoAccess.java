@@ -8,6 +8,9 @@ import android.util.Log;
 
 import com.pipit.agc.agc.model.Message;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -61,17 +64,9 @@ public class MessageRepoAccess {
      * @return
      */
     public Message getRandomMessageWithParams(int type, int anger){
-        Cursor cursorc = null;
-        if (anger <= MessageRepositoryStructure.ANGRY && anger > -1){
-            cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
-                    + " WHERE " + //MessageRepoDBHelper.COLUMN_ANGER + " = " + anger + ", " +
-                    MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
-        }
-        else {
-            cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
-                    + " WHERE " + MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
-        }
-
+        Cursor cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
+                + " WHERE " + //MessageRepoDBHelper.COLUMN_ANGER + " = " + anger + ", " +
+                MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
         Random rn = new Random();
         int rand = rn.nextInt(cursorc.getCount());
         cursorc.moveToPosition(rand);
@@ -79,13 +74,48 @@ public class MessageRepoAccess {
         return msg;
     }
 
+    public Message getMessageById(long id){
+        Cursor cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
+                + " WHERE " + MessageRepoDBHelper.COLUMN_ID + " = " + id, null);
+        cursorc.moveToFirst();
+        Message msg = cursorToMessage(cursorc);
+        return msg;
+    }
+
     private Message cursorToMessage(Cursor cursor) {
         Message message = new Message();
-        message.setId(cursor.getLong(0));
+        message.setId(cursor.getLong(0)); //This will be overriden when it gets dropped into our own db
+        message.setRepoId(cursor.getLong(0));
         message.setHeader(cursor.getString(1));
         message.setBody(cursor.getString(2));
         Log.d(TAG, "Retrieving a message from local repo - id = " + message.getId() + " header = " + message.getHeader()
-            + " body is " + message.getBody());
+                + " body is " + message.getBody());
         return message;
+    }
+
+    /**
+     * Given a message type, return ids of all messages of that type
+     * @param type
+     * @return
+     */
+    public List<Long> getListOfIDsForMessageType(int type){
+        Cursor cursor = null;
+        List<Long> k = new ArrayList<>();
+        if (type>0 && type<=MessageRepositoryStructure.REMINDER_HITYESTERDAY){
+                cursor = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
+                        + " WHERE " + MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
+        }
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Message msg = cursorToMessage(cursor);
+            k.add(msg.getId());
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return k;
+    }
+
+    public boolean isOpen(){
+        return database.isOpen();
     }
 }

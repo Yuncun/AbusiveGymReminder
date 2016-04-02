@@ -18,7 +18,9 @@ import com.pipit.agc.agc.data.MySQLiteHelper;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
+import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.ReminderOracle;
+import com.pipit.agc.agc.util.Util;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -86,6 +88,10 @@ public class TestDBFragmentMessages extends ListFragment {
                 f.setBody("Stop missing the gym");
                 f.setHeader("You fucking faggot");
                 ReminderOracle.leaveMessage(f);
+
+                if (f.getRepoId()>0){
+                    Util.putStringIntoListIntoSharedPrefs(getContext(), Constants.TAKEN_MESSAGE_IDS, Long.toString(f.getRepoId()));
+                }
             }
         });
         _deleteButton = (Button) view.findViewById(R.id.delete);

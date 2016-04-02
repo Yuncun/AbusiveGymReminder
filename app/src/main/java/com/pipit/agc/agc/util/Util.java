@@ -27,11 +27,17 @@ import java.util.List;
  * Created by Eric on 12/14/2015.
  */
 public class Util {
-    public static boolean putListToSharedPref(final SharedPreferences.Editor edit, final String key, final List<String> list){
 
+    public static boolean putStringIntoListIntoSharedPrefs(final Context context, final String key, String s){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        List<String> strs = getListFromSharedPref(prefs, key);
+        strs.add(s);
+        return putListToSharedPref(prefs.edit(), key, strs);
+    }
+
+    public static boolean putListToSharedPref(final SharedPreferences.Editor edit, final String key, final List<String> list){
         try{
             JSONArray mJSONArray = new JSONArray(list);
-
             edit.putString(key, mJSONArray.toString());
             edit.commit();
             return true;
@@ -101,29 +107,6 @@ public class Util {
         return date;
     }
 
-    public static void sendNotification(Context context, String title, String body){
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle(title)
-                        .setContentText(body)
-                        .setAutoCancel(true);
-        Intent resultIntent = new Intent(context, AllinOneActivity.class);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(AllinOneActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(1, mBuilder.build());
-    }
-
     public static float getScreenHeightMinusStatusBar(Context context){
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float screen_h = dm.heightPixels;
@@ -152,6 +135,19 @@ public class Util {
             } catch (Exception e){
                 //Log.e(TAG, "Unable to parse planned GYM days, failed on " + s);
                 //Log.e(TAG, "Received " + plannedDOWstrs.toArray());
+                break;
+            }
+        }
+        return plannedDOW;
+    }
+
+    public static List<Long> listOfStringsToListOfLongs(List<String> plannedDOWstrs){
+        List<Long> plannedDOW = new ArrayList<Long>();
+        for(String s : plannedDOWstrs){
+            try{
+                Long dow = Long.parseLong(s);
+                plannedDOW.add(dow);
+            } catch (Exception e){
                 break;
             }
         }

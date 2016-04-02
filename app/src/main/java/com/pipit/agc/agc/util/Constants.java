@@ -27,6 +27,7 @@ public class Constants {
     public static final String DEST_LAT = "lat";
     public static final String DEST_LNG = "lng";
     public static final String GEOFENCES_ADDED_KEY= "geofenceadded";
+    public static final String TAKEN_MESSAGE_IDS = "taken_message_ids"; //repoids of messages we have received
 
 
     /*Fragment Names*/

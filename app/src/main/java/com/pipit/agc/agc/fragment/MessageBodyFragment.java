@@ -3,6 +3,7 @@ package com.pipit.agc.agc.fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class MessageBodyFragment extends Fragment {
         }
         datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
+        Log.d(TAG, "getting frag id " + _id);
         _msg = datasource.getMessageById(_id);
         if (_msg==null){
             //Log.e(TAG, "Message ID " + _id + " was not found in database");
