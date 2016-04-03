@@ -48,8 +48,6 @@ public class StatsContent {
         }
     }
 
-
-
     private static StatsContent singleton = new StatsContent( );
 
     /* A private Constructor prevents any other
@@ -109,14 +107,22 @@ public class StatsContent {
         return _allDayRecords.get(_allDayRecords.size()-2);
     }
 
+    public List<DayRecord> getAllDayRecords(boolean forceupdate){
+        if (forceupdate){
+            refreshDayRecords();
+        }
+        return _allDayRecords;
+    }
 
     public void updateCurrentStreak(){
         int count = 0;
         for (int i = _allDayRecords.size()-1; i>=0; i--){
-            if (!_allDayRecords.get(i).beenToGym()){
+            if (!_allDayRecords.get(i).beenToGym() && _allDayRecords.get(i).isGymDay()){
                 break;
             }
-            count++;
+            if (_allDayRecords.get(i).isGymDay()){
+                count++;
+            }
         }
         Stat currentstreak = new Stat(CURRENT_STREAK);
         currentstreak.content = count;
@@ -129,10 +135,12 @@ public class StatsContent {
         int longest = 0;
         int curr = 0;
         for (int i = _allDayRecords.size()-1; i>=0; i--){
-            if (!_allDayRecords.get(i).beenToGym()){
+            if (!_allDayRecords.get(i).beenToGym() && _allDayRecords.get(i).isGymDay()){
                 curr=0;
             }else{
-                curr++;
+                if (_allDayRecords.get(i).isGymDay()){
+                    curr++;
+                }
                 if (curr>longest) longest=curr;
             }
         }
@@ -143,38 +151,7 @@ public class StatsContent {
         ITEMS.add(longeststreak);
     }
 
-    /**
-     * Used to populate the WeekCalendarView that shows attendance over last seven days
-     * @return A list of strings containing "HIT", or "MISS"
-     */
-    public List<String> getGymVisitListForWeek(Context context){
-        ArrayList<String> hitlist = new ArrayList<String>();
-        Resources r = context.getResources();
-        int k = _allDayRecords.size()-7; //Dayrecord of seven days past;
-        for (int i = 0 ; i < 7; i++){
-            if (k+i<0) {
-                hitlist.add(r.getString(R.string.noinfo));
-                continue;
-            }
-            if (_allDayRecords.get(k+i).beenToGym()){
-                hitlist.add(r.getString(R.string.hit));
-            }
-            else{
-                /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
-                    and "REST" if it was a rest day. */
-                if (_allDayRecords.get(k+i).isGymDay()){
-                    if (k==6){
-                        //The message for today; don't say "missed"
-                        hitlist.add(r.getString(R.string.questionmark));
-                    }
-                    else hitlist.add(r.getString(R.string.miss));
-                }else{
-                    hitlist.add(r.getString(R.string.rest));
-                }
-            }
-        }
-        return hitlist;
-    }
+
 
     public void updateLastSevenDaysStats(){
         int missedGymDay = 0;

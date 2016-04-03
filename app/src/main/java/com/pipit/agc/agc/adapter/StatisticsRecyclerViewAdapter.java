@@ -1,9 +1,18 @@
 package com.pipit.agc.agc.adapter;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
@@ -49,6 +58,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.weekly_stats_card, parent, false);
                 return new WeeklyViewHolder(view);
+            case 2:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.misc_stats_card, parent, false);
+                return new MiscStatsViewHolder(view);
             default:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.stats_row_item, parent, false);
@@ -64,51 +77,63 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         switch (type){
             case 0:
                 //daily stat card;
+                DayViewHolder dv = ((DayViewHolder) holder);
                 holder.mTitleView.setText("Today");
                 DayRecord today = mStats.getToday(false);
                 if (today.isGymDay()){
-                    ((DayViewHolder) holder).gymstate_circle.setText("GYM\nDAY");
+                    dv.gymstate_circle.setText("GYM\nDAY");
                 }else{
-                    ((DayViewHolder) holder).gymstate_circle.setText("REST\nDAY");
+                    dv.gymstate_circle.setText("REST\nDAY");
                 }
-
                 if (today.beenToGym()){
-                    ((DayViewHolder) holder).gymstate_text.setText("Gym visit recorded today");
+                    dv.gymstate_text.setText("Gym visit recorded today");
                 }else{
-                    ((DayViewHolder) holder).gymstate_text.setText("No gym visit recorded today");
+                    dv.gymstate_text.setText("No gym visit recorded today");
                 }
-                ((DayViewHolder) holder).gymstate_text.setTextSize(30);
-
+                dv.gymstate_text.setTextSize(30);
                 break;
 
             case 1:
                 //weekly_stats_card;
                 holder.mTitleView.setText("Last seven days");
-                ((WeeklyViewHolder) holder).stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get()+"");
-                ((WeeklyViewHolder) holder).stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get()+"");
-                ((WeeklyViewHolder) holder).stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get()+"");
+                WeeklyViewHolder wv = (WeeklyViewHolder) holder;
 
-                ((WeeklyViewHolder) holder).stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
-                ((WeeklyViewHolder) holder).stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
-                ((WeeklyViewHolder) holder).stat_text_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).details);
+                /* Text */
+                wv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get()+"");
+                wv.stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get()+"");
+                wv.stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get()+"");
 
-                ((WeeklyViewHolder) holder).calendar.setDayOfWeekEnd(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
-                ((WeeklyViewHolder) holder).calendar.showLastDayMarker();
-                List<String> txtlist = mStats.getGymVisitListForWeek(mFrag.getContext());
-                ((WeeklyViewHolder) holder).calendar.setCalendarInfo(txtlist);
-                //Set the color
-                for (int i = 1; i < 8 ; i++){
-                    View dayview = ((WeeklyViewHolder) holder).calendar.getDayViewFromPosition(i);
-                    TextView circle = (TextView) dayview.findViewById(R.id.calendar_day_info);
-                    String s = txtlist.get(i-1);
-                    if (s.equals(mFrag.getResources().getString(R.string.reason_missed_gym_yesterday))){
-                        circle.setBackgroundColor(mFrag.getResources().getColor(R.color.light_red, mFrag.getActivity().getTheme()));
-                        circle.setTextColor(mFrag.getResources().getColor(R.color.light_red, mFrag.getActivity().getTheme()));
-                    }
-                    else if (s.equals(mFrag.getResources().getString(R.string.noinfo))){
-                        dayview.setVisibility(View.GONE);
-                    }
-                }
+                /* Colors */
+                /*
+                setTextCircleColor(wv.stat_circle_1, mFrag.getContext(), R.color.green);
+                wv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                setTextCircleColor(wv.stat_circle_2, mFrag.getContext(), R.color.neon_green);
+                wv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                //setTextCircleColor(wv.stat_circle_3, mFrag.getContext(), R.color.flat_red);
+                wv.stat_circle_3.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
+                */
+
+                wv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
+                wv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
+                wv.stat_text_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).details);
+
+                wv.calendar.setDayOfWeekEnd(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                wv.calendar.showLastDayMarker();
+                wv.calendar.styleFromDayrecordsData(mFrag.getContext(), mStats.getAllDayRecords(false));
+                break;
+            case 2:
+                holder.mTitleView.setText("Last seven days");
+                MiscStatsViewHolder mv = (MiscStatsViewHolder) holder;
+                /* Text */
+                mv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).get()+"");
+                mv.stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).get()+"");
+
+                mv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).details);
+                mv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
+
+                mv.stat_card_1.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.lightgreen));
+                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.lightish_green);
+                mv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                 break;
             default:
                 holder.mTitleView.setText("Default");
@@ -118,7 +143,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 
     public class DayViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
@@ -156,7 +181,28 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class MiscStatsViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder {
+        public final TextView stat_circle_1;
+        public final TextView stat_text_1;
+        public final TextView stat_circle_2;
+        public final TextView stat_text_2;
+        public final RelativeLayout stat_card_1;
+        public final RelativeLayout stat_card_2;
+
+        public MiscStatsViewHolder(View view){
+            super(view);
+            stat_card_1 = (RelativeLayout) view.findViewById(R.id.stat_card_1);
+            stat_card_2 = (RelativeLayout) view.findViewById(R.id.stat_card_2);
+
+            stat_circle_1 = (TextView) view.findViewById(R.id.stat_circle_1);
+            stat_circle_2 = (TextView) view.findViewById(R.id.stat_circle_2);
+
+            stat_text_1 = (TextView) view.findViewById(R.id.stat_text_1);
+            stat_text_2 = (TextView) view.findViewById(R.id.stat_text_2);
+        }
+    }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTitleView;
         public Stat mItem;
@@ -165,7 +211,6 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             super(view);
             mView = view;
             mTitleView = (TextView) view.findViewById(R.id.title_name);
-
         }
 
         @Override
@@ -175,7 +220,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     }
 
     public int getItemViewType (int position) {
-
         return position;
+    }
+
+    public static void setTextCircleColor(TextView tv, Context context, int my_color){
+        tv.getBackground().setColorFilter(ContextCompat.getColor(context, my_color), PorterDuff.Mode.SRC_ATOP);
     }
 }
