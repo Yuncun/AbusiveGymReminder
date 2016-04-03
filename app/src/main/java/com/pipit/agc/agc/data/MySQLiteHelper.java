@@ -17,9 +17,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_ISGYMDAY = "isgymday";
     public static final String COLUMN_BEENTOGYM = "beentogym";
-    public static final String COLUMN_REASON = "reason";
     private static final String DATABASE_NAME = "dayrecords.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     private static final String CREATE_TABLE_DAYRECORDS = "create table "
             + TABLE_DAYRECORDS + "(" + COLUMN_ID + " integer primary key autoincrement, "
@@ -34,6 +33,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MESSAGE_BODY = "message";
     public static final String COLUMN_MESSAGE_HEADER = "header";
     public static final String COLUMN_REPO_ID = "repoid"; //The message repo ID of the message - can be 0 from non-repo messages
+    public static final String COLUMN_REASON = "reason";
+    public static final String COLUMN_READ = "read";
 
     private static final String CREATE_TABLE_MESSAGES = "create table "
             + TABLE_MESSAGES + "(" + COLUMN_ID + " integer primary key autoincrement, "
@@ -41,11 +42,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_MESSAGE_BODY + " text not null, "
             + COLUMN_DATE + " text default 0, "
             + COLUMN_REASON + " integer default 0, "
-            + COLUMN_REPO_ID + " integer default 0 "
+            + COLUMN_REPO_ID + " integer default 0, "
+            + COLUMN_READ + " integer default 0"
             + ");";
 
     /**SQL Helper functions**/
-
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

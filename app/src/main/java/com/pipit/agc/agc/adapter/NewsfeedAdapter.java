@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.Util;
@@ -84,12 +86,14 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             holder.reason.setTextColor(r.getColor(R.color.darkgreen, _context.getTheme()));
             holder.reason.setVisibility(View.VISIBLE);
         }
-    holder.reason.setTextSize(12);
-    holder.timestamp.setTextSize(12);
+        //holder.reason.setTextSize(12);
+        //holder.timestamp.setTextSize(12);
 
-    if (!m.getRead()){
+        if (!m.getRead()){
         //Todo: Add "read" field to databaseace(null, Typeface.BOLD);
-            //holder.timestamp.setTypeface(null, Typeface.BOLD);
+            holder.reason.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
+            //holder.header.setTypeface(holder.comment.getTypeface(), Typeface.BOLD);
+            //holder.timestamp.setTypeface(holder.timestamp.getTypeface(), Typeface.BOLD);
         }
         Bitmap bMap = BitmapFactory.decodeResource(_context.getResources(), R.drawable.notification_icon);
         final int mpos = position;
@@ -99,8 +103,13 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 Intent intent = new Intent(_context, MessageBodyActivity.class);
                 intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos).getId());
                 _context.startActivity(intent);
-                //Todo: Mark comment as "read"
-            }
+                _messages.get(mpos).setRead(true);
+                DBRecordsSource datasource = DBRecordsSource.getInstance();
+                datasource.openDatabase();
+                datasource.markMessageRead(_messages.get(mpos).getId(), true);
+                datasource.closeDatabase();
+                notifyDataSetChanged();
+           }
         });
     }
 

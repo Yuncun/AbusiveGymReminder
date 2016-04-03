@@ -52,6 +52,7 @@ public class MessageBodyFragment extends Fragment {
         View background = rootView.findViewById(R.id.msgbackground);
         TextView header = (TextView) rootView.findViewById(R.id.header);
         TextView body = (TextView) rootView.findViewById(R.id.body);
+        TextView reason = (TextView) rootView.findViewById(R.id.reason);
 
         if (_id==null){
             return rootView;
@@ -71,10 +72,20 @@ public class MessageBodyFragment extends Fragment {
         body.setText(_msg.getBody());
         body.setTypeface(null, Typeface.BOLD);;
         body.setTextSize(36);
+        reason.setText(_msg.getIntelligentDateString());
 
         header.setTextColor(getResources().getColor(R.color.schemeone_mediumblue, getActivity().getTheme()));
         //background.setBackgroundColor(getResources().getColor(R.color.schemeone_tan_two, getActivity().getTheme()));
         //body.setTextColor(getResources().getColor(R.color.basewhite, getActivity().getTheme()));
+
+        /*Mark as read*/
+        if (!_msg.getRead()){
+            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            datasource.markMessageRead(_msg.getId(), true);
+            datasource.closeDatabase();
+            _msg.setRead(true);
+        }
         return rootView;
     }
 

@@ -132,7 +132,6 @@ public class Message {
         return read;
     }
 
-    // You can add those functions as LiveTemplate !
     public String toJson() {
         Gson gson = new Gson();
         return gson.toJson(this);

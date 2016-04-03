@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/msgbackground"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_margin="8dp"
     android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:layout_alignParentTop="true"
+        android:text="Reason"
+        />
+
     <TextView
         android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@android:style/TextAppearance.DeviceDefault.Large"
         android:text="Hello World"
-        ></TextView>
-
+        android:layout_above="@+id/body"
+        />
     <TextView
         android:id="@+id/body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@android:style/TextAppearance.DeviceDefault.Large"
         android:text="BODY"
+        android:layout_alignParentBottom="true"
         />
 
-</LinearLayout>
+</RelativeLayout>

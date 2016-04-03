@@ -44,7 +44,8 @@ public class DBRecordsSource {
             MySQLiteHelper.COLUMN_MESSAGE_BODY,
             MySQLiteHelper.COLUMN_DATE,
             MySQLiteHelper.COLUMN_REASON,
-            MySQLiteHelper.COLUMN_REPO_ID};
+            MySQLiteHelper.COLUMN_REPO_ID,
+            MySQLiteHelper.COLUMN_READ};
 
     public static synchronized void initializeInstance(MySQLiteHelper helper) {
         if (instance == null) {
@@ -181,6 +182,7 @@ public class DBRecordsSource {
         values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
         values.put(MySQLiteHelper.COLUMN_REASON, msg.getReason());
         values.put(MySQLiteHelper.COLUMN_REPO_ID, msg.getRepoId());
+        values.put(MySQLiteHelper.COLUMN_READ, (msg.getRead()) ? 1 : 0);
         long insertId = mDatabase.insert(MySQLiteHelper.TABLE_MESSAGES, null,
                 values);
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_MESSAGES,
@@ -203,6 +205,13 @@ public class DBRecordsSource {
         String query = "UPDATE " + MySQLiteHelper.TABLE_MESSAGES + " SET " + MySQLiteHelper.COLUMN_MESSAGE_BODY + " = \""
                 + comment + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_MESSAGES
                 + ")";
+        mDatabase.execSQL(query);
+    }
+
+    public void markMessageRead(long id, boolean read){
+        int readint = (read) ? 1 : 0;
+        String query = "UPDATE " + MySQLiteHelper.TABLE_MESSAGES + " SET " + MySQLiteHelper.COLUMN_READ + " = "
+                + readint + " WHERE " + MySQLiteHelper.COLUMN_ID + " = " + id;
         mDatabase.execSQL(query);
     }
 
@@ -240,9 +249,9 @@ public class DBRecordsSource {
         message.setBody(cursor.getString(2));
         message.setDate(Util.stringToDate(cursor.getString(3)));
         message.setReason(cursor.getInt(4));
+        message.setRead(cursor.getInt(6)!=0);
         //Log.d(TAG, "in cursorToMessage, id = " + message.getId() + " message = " + message.getHeader() + " body = "
         //        + message.getBody() + " date = " + message.getDateString());
-
         return message;
     }
 
