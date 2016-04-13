@@ -2,6 +2,7 @@ package com.pipit.agc.agc.adapter;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -193,9 +194,9 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
         }
 
         if (primaryText.equals(gymDay)){
-            rowview.setBackgroundColor(context.getResources().getColor(R.color.lightgreen));
+            rowview.setBackgroundColor(ContextCompat.getColor(context, R.color.lightgreen));
         }else{
-            rowview.setBackgroundColor(context.getResources().getColor(R.color.basewhite));
+            rowview.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));
         }
         return primaryText;
     }

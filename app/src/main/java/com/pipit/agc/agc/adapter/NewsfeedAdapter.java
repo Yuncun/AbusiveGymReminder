@@ -5,12 +5,17 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.data.DBRecordsSource;
@@ -38,6 +43,8 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         TextView header;
         TextView comment;
         TextView reason;
+        View icon;
+        LinearLayout iconwrapper;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -46,6 +53,8 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             comment = (TextView)itemView.findViewById(R.id.comment);
             timestamp = (TextView) itemView.findViewById(R.id.date);
             reason = (TextView) itemView.findViewById(R.id.reason);
+            icon = itemView.findViewById(R.id.statusicon);
+            iconwrapper = (LinearLayout) itemView.findViewById(R.id.iconwrapper);
         }
     }
 
@@ -71,21 +80,31 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         holder.header.setText(m.getHeader());
         holder.comment.setText(m.getBody());
         holder.timestamp.setText(m.getIntelligentDateString());
+        holder.timestamp.setTextColor(ContextCompat.getColor(_context, R.color.black));
         if (m.getReason()== Message.HIT_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_hit_gym_yesterday));
-            holder.reason.setTextColor(r.getColor(R.color.darkgreen, _context.getTheme()));
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.lightgreen), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
+            holder.icon.setVisibility(View.VISIBLE);
         }
         if (m.getReason()== Message.MISSED_YESTERDAY) {
-            holder.reason.setText(r.getText(R.string.reason_missed_gym_yesterday));
-            holder.reason.setTextColor(r.getColor(R.color.neon_red, _context.getTheme()));
+            holder.reason.setText(r.getText(R.string.reason_missed_gym));
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.pinkish), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
+            holder.icon.setVisibility(View.VISIBLE);
         }
         if (m.getReason()== Message.HIT_TODAY) {
-            holder.reason.setText(r.getText(R.string.reason_hit_gym_today));
-            holder.reason.setTextColor(r.getColor(R.color.darkgreen, _context.getTheme()));
+            holder.reason.setText(r.getText(R.string.reason_hit_gym));
+            //holder.reason.setTextColor(ContextCompat.getColor(_context, R.color.darkgreen));
             holder.reason.setVisibility(View.VISIBLE);
+            holder.icon.setVisibility(View.VISIBLE);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.lightgreen), PorterDuff.Mode.SRC_ATOP);
         }
+        if (m.getReason() == Message.WELCOME) {
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.yellow), PorterDuff.Mode.SRC_ATOP);
+            holder.reason.setText(r.getText(R.string.welcome));
+        }
+        //holder.iconwrapper.setLayoutParams(new RelativeLayout.LayoutParams(holder.iconwrapper.getMeasuredHeight(), holder.iconwrapper.getMeasuredHeight()));
         //holder.reason.setTextSize(12);
         //holder.timestamp.setTextSize(12);
 

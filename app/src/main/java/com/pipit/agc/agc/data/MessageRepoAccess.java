@@ -88,8 +88,6 @@ public class MessageRepoAccess {
         message.setRepoId(cursor.getLong(0));
         message.setHeader(cursor.getString(1));
         message.setBody(cursor.getString(2));
-        Log.d(TAG, "Retrieving a message from local repo - id = " + message.getId() + " header = " + message.getHeader()
-                + " body is " + message.getBody());
         return message;
     }
 

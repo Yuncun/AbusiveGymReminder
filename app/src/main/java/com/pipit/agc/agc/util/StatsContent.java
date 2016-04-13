@@ -120,7 +120,8 @@ public class StatsContent {
             if (!_allDayRecords.get(i).beenToGym() && _allDayRecords.get(i).isGymDay()){
                 break;
             }
-            if (_allDayRecords.get(i).isGymDay()){
+            //Only hit days count towards streak, but missed rest days do not break streak.
+            if (_allDayRecords.get(i).isGymDay() || _allDayRecords.get(i).beenToGym()){
                 count++;
             }
         }
@@ -138,7 +139,7 @@ public class StatsContent {
             if (!_allDayRecords.get(i).beenToGym() && _allDayRecords.get(i).isGymDay()){
                 curr=0;
             }else{
-                if (_allDayRecords.get(i).isGymDay()){
+                if (_allDayRecords.get(i).isGymDay() || _allDayRecords.get(i).beenToGym()){
                     curr++;
                 }
                 if (curr>longest) longest=curr;
@@ -191,7 +192,7 @@ public class StatsContent {
         STAT_MAP.put(restdaysWeekStat.id, restdaysWeekStat);
         ITEMS.add(restdaysWeekStat);
 
-        Stat daysplanned = new Stat(DAYS_PLANNED_WEEK, new Integer(restDaysTotal), "Gym Days");
+        Stat daysplanned = new Stat(DAYS_PLANNED_WEEK, new Integer(committedTotalDays), "Days Planned");
         STAT_MAP.put(daysplanned.id, daysplanned);
         ITEMS.add(daysplanned);
 

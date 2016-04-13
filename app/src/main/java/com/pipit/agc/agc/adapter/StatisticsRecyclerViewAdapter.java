@@ -19,10 +19,12 @@ import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
 import com.pipit.agc.agc.fragment.StatisticsFragment.OnListFragmentInteractionListener;
 import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
 import com.pipit.agc.agc.widget.WeekCalendarView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -86,9 +88,21 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     dv.gymstate_circle.setText("REST\nDAY");
                 }
                 if (today.beenToGym()){
-                    dv.gymstate_text.setText("Gym visit recorded today");
+                    SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+                    String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), sdf);
+                    String prefix = "Gym visit recorded today at ";
+                    if (s==null || s==""){
+                        dv.gymstate_text.setText("Gym visit recorded today");
+                    }else{
+                        dv.gymstate_text.setText(prefix + s);
+                    }
                 }else{
                     dv.gymstate_text.setText("No gym visit recorded today");
+                    String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), null);
+                    if (s!=null){
+                        dv.lastvisit_text.setText("Last visit recorded at " + s);
+                        dv.lastvisit_text.setVisibility(View.VISIBLE);
+                    }
                 }
                 dv.gymstate_text.setTextSize(30);
                 break;
@@ -122,7 +136,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 wv.calendar.styleFromDayrecordsData(mFrag.getContext(), mStats.getAllDayRecords(false));
                 break;
             case 2:
-                holder.mTitleView.setText("Last seven days");
+                holder.mTitleView.setText("Streaks");
                 MiscStatsViewHolder mv = (MiscStatsViewHolder) holder;
                 /* Text */
                 mv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).get()+"");
@@ -132,8 +146,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 mv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
 
                 mv.stat_card_1.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.lightgreen));
-                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.lightish_green);
-                mv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.basewhite);
+                //mv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                 break;
             default:
                 holder.mTitleView.setText("Default");
@@ -149,11 +163,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     public class DayViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
         public final TextView gymstate_circle;
         public final TextView gymstate_text;
+        public final TextView lastvisit_text;
 
         public DayViewHolder(View view){
             super(view);
             gymstate_circle = (TextView) view.findViewById(R.id.gymstate_circle);
             gymstate_text = (TextView) view.findViewById(R.id.gymstate_text);
+            lastvisit_text = (TextView) view.findViewById(R.id.last_visit_txt);
         }
     }
 

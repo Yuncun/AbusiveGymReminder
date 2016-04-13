@@ -201,6 +201,10 @@ public class DBRecordsSource {
                 + " = " + id, null);
     }
 
+    public void deleteAllMessages(){
+        mDatabase.execSQL("delete from "+ MySQLiteHelper.TABLE_MESSAGES);
+    }
+
     public void updateLatestMessage(String comment){
         String query = "UPDATE " + MySQLiteHelper.TABLE_MESSAGES + " SET " + MySQLiteHelper.COLUMN_MESSAGE_BODY + " = \""
                 + comment + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_MESSAGES

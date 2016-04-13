@@ -107,10 +107,10 @@ public class WeekCalendarView extends LinearLayout {
                 /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
                     and "REST" if it was a rest day. */
                 if (_allDayRecords.get(k+i).isGymDay()){
-                    if (k==6){
+                    if (i==6){
                         /* CURRENT DAY STATE */
                         //The message for today; don't say "missed"
-                        tv.setText(r.getString(R.string.questionmark));
+                        tv.setText("?");
                     }
                     else{
                         /*MISSED A GYM DAY STATE */

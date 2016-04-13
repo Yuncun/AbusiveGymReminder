@@ -2,8 +2,11 @@ package com.pipit.agc.agc.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -50,5 +53,32 @@ public class SharedPrefUtil {
         return prefs.getBoolean("firsttime", true);
     }
 
+    /**
+     * Returns the time of last visit as a string expression.
+     * @param context
+     * @param sdf
+     * @return
+     */
+    public static String getLastVisitString(Context context, SimpleDateFormat sdf){
+        if (sdf==null){
+            sdf = new SimpleDateFormat("MMM dd HH:mm");
+        }
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        Long timeinms =  prefs.getLong("last_visit_time", -1);
+        if (timeinms<0){
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(timeinms);
+        String s = sdf.format(cal.getTime());
+        return s;
+    }
 
+    public static void updateLastVisitTime(Context context, Long time){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.commit();
+        editor.putLong("last_visit_time", time);
+        editor.commit();
+    }
 }

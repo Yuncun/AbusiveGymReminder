@@ -36,6 +36,7 @@ public class ReminderOracle {
     public static final int POST_TIME_NOISE_HOURS = 2;
     public static final int POST_TIME_NOISE_MINTUES = 60;
     private static final String TAG = "ReminderOracle";
+
     /**
      * This function chooses a message and figures out a time to post it, based on gym attendance
      * Call this function AFTER moving forward to the new day (it will use yesterday's gym stats).
@@ -49,9 +50,8 @@ public class ReminderOracle {
         messagerepo.open();
         Message msg = null;
         if (yesterday==null){
-            msg = new Message();
-            msg.setHeader("Welcome!");
-            msg.setBody("In the future you will messages like this calling you fat when you miss gym days");
+            //msg = new Message();
+
         }
         else if (testmode){
             int type = 0;
@@ -226,7 +226,7 @@ public class ReminderOracle {
             builder.setSmallIcon(R.drawable.notification_icon)
             .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                     R.drawable.notification_icon))
-            .setColor(Color.RED)
+            .setColor(Color.GREEN)
             .setContentTitle(header)
             .setContentText(body)
             .setContentIntent(notificationPendingIntent);

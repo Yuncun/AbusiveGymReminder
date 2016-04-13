@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -132,12 +133,12 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
             dates.remove(datestr);
             Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.rest_day));
-            v.setBackgroundColor(getActivity().getResources().getColor(R.color.basewhite));
+            v.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.basewhite));
         }else{
             dates.add(datestr);
             Log.d(TAG, "Added day " + datestr + " to weekly gym days");
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.gym_day));
-            v.setBackgroundColor(getActivity().getResources().getColor(R.color.lightgreen));
+            v.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lightgreen));
         }
         Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
         _adapter.updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));

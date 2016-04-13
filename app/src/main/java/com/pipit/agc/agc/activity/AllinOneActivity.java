@@ -36,13 +36,13 @@ import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.agc.receiver.GeoFenceTransitionsIntentReceiver;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
-import com.pipit.agc.agc.service.GeofenceTransitionsIntentService;
 import com.pipit.agc.agc.util.GeofenceUtils;
 import com.pipit.agc.agc.model.Gym;
 import com.pipit.agc.agc.fragment.LocationListFragment;
 import com.pipit.agc.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
+import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.Util;
@@ -55,8 +55,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status>,
         LocationListFragment.OnListFragmentInteractionListener {
@@ -64,7 +62,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     private AlarmManagerBroadcastReceiver _alarm;
-    ViewPager mViewPager;
+    private ViewPager mViewPager;
 
     protected ArrayList<Geofence> mGeofenceList;
     protected HashMap<Integer, Geofence> mGeofenceMap;
@@ -97,10 +95,17 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         }
 
         /*Launch Intro Activity*/
-        if (SharedPrefUtil.getIsFirstTime(this)){
+        if (true || SharedPrefUtil.getIsFirstTime(this)){
             Intent intent = new Intent(this, IntroductionActivity.class);
+            //intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
             startActivity(intent);
             SharedPrefUtil.setFirstTime(this, false);
+            Message f = new Message();
+            f.setReason(Message.WELCOME);
+            //f.setHeader("Welcome!");
+            f.setHeader("In the future you will abusive messages here when you miss gym days");
+            f.setBody("");
+            ReminderOracle.leaveMessage(f);
         }
 
         /*Paging for landing screen*/
@@ -119,8 +124,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         mTabLayout.addTab(mTabLayout.newTab().setText("Inbox"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Days"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Gyms"));
-        //tabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.setupWithViewPager(mViewPager);
 
 
         Log.d(TAG, "remaking _alarmmanager " + _alarm);
@@ -156,15 +161,18 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
             startActivityForResult(i, 0);
             return true;
         }
-        else if (id == R.id.action_showcalendar){
-            Intent i = new Intent(this, IndividualSettingActivity.class);
-            i.putExtra("fragment", "DayPickerFragment");
-            startActivityForResult(i, 1);
-        }
-        else if (id == R.id.action_showgymstatus){
+        else if (id == R.id.action_forget){
+            /* This action forgets the key sharedpreferences except for gyms */
             SharedPreferences prefs = getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
             prefs.edit().putBoolean("showGymStatus", true).commit();
             SharedPrefUtil.setFirstTime(this, true);
+            Util.putListToSharedPref(this, Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
+        }
+        else if (id == R.id.action_remove_messages){
+            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            datasource.deleteAllMessages();
+            datasource.closeDatabase();
         }
         else if (id == R.id.action_remove_geofences){
             removeAllGeofences();
@@ -178,6 +186,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+        String[] title = {"Stats", "Inbox", "Days", "Gyms"};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -219,6 +228,12 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
 
         public Fragment getRegisteredFragment(int position) {
             return registeredFragments.get(position);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            // return your title there
+            return title[position];
         }
     }
 
@@ -305,7 +320,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         }
     }
 
-    public void addGeofenceFromListposition(Gym gym){
+    public void addGeofenceFromListposition(Gym gym) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         Log.d(TAG, "addGeoFenceFromListPosition n=" + gym.proxid);
         if (mGeofenceList==null){
@@ -334,6 +349,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         mGeofenceMap.put(gym.proxid, g);
         GeofenceUtils.addGeofenceToSharedPrefs(this, gym);
     }
+
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {

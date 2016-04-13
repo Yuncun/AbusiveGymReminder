@@ -63,18 +63,23 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                 //Construct notification message and show
                 switch (m.getReason()){
                     case Message.MISSED_YESTERDAY:
-                        header = "You missed a gym day yesterday";
-                        body = "New Message";
+                        body = "You missed the gym yesterday";
+                        header = m.getHeader();
                         msgid = m.getId();
                         reason = Message.MISSED_YESTERDAY;
                         break;
                     case Message.HIT_YESTERDAY:
                     case Message.HIT_TODAY:
+                        body = "Gym visit registered";
+                        header = m.getHeader();
+                        reason = Message.HIT_TODAY;
+                        msgid = m.getId();
+                        break;
                     case Message.NO_RECORD:
                     default:
                         header = "New Message from Abusive Gym Reminder";
                         msgid = m.getId();
-                        body = "";
+                        body = m.getBody();
                         reason = Message.HIT_TODAY;
                 }
                 ReminderOracle.showNotification(context, header, body, msgid, reason);

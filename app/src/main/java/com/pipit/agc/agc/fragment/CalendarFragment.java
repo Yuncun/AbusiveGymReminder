@@ -2,6 +2,7 @@ package com.pipit.agc.agc.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,16 +62,16 @@ public class CalendarFragment extends Fragment {
         _calendar.setFirstDayOfWeek(2);
 
         //The background color for the selected week.
-        _calendar.setSelectedWeekBackgroundColor(getResources().getColor(R.color.green));
+        _calendar.setSelectedWeekBackgroundColor(ContextCompat.getColor(getContext(), R.color.darkgreen));
 
         //sets the color for the dates of an unfocused month.
-        _calendar.setUnfocusedMonthDateColor(getResources().getColor(R.color.transparent));
+        _calendar.setUnfocusedMonthDateColor(ContextCompat.getColor(getContext(), R.color.transparent));
 
         //sets the color for the separator line between weeks.
-        _calendar.setWeekSeparatorLineColor(getResources().getColor(R.color.transparent));
+        _calendar.setWeekSeparatorLineColor(ContextCompat.getColor(getContext(), R.color.transparent));
 
         //sets the color for the vertical bar shown at the beginning and at the end of the selected date.
-        _calendar.setSelectedDateVerticalBar(R.color.darkgreen);
+        _calendar.setSelectedDateVerticalBar(ContextCompat.getColor(getContext(), R.color.darkgreen));
 
         //sets the listener to be notified upon selected date change.
        _calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {

@@ -3,10 +3,13 @@ package com.pipit.agc.agc.fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
@@ -49,11 +52,11 @@ public class MessageBodyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_message_body, container, false);
-        View background = rootView.findViewById(R.id.msgbackground);
+        RelativeLayout background = (RelativeLayout) rootView.findViewById(R.id.msgbackground);
         TextView header = (TextView) rootView.findViewById(R.id.header);
         TextView body = (TextView) rootView.findViewById(R.id.body);
+        TextView date = (TextView) rootView.findViewById(R.id.date);
         TextView reason = (TextView) rootView.findViewById(R.id.reason);
-
         if (_id==null){
             return rootView;
         }
@@ -72,9 +75,30 @@ public class MessageBodyFragment extends Fragment {
         body.setText(_msg.getBody());
         body.setTypeface(null, Typeface.BOLD);;
         body.setTextSize(36);
-        reason.setText(_msg.getIntelligentDateString());
+        date.setText(_msg.getIntelligentDateString());
 
-        header.setTextColor(getResources().getColor(R.color.schemeone_mediumblue, getActivity().getTheme()));
+        if (_msg.getReason()== Message.HIT_YESTERDAY) {
+            reason.setText(getContext().getResources().getString(R.string.reason_hit_gym_yesterday));
+        }
+        if (_msg.getReason()== Message.MISSED_YESTERDAY) {
+            reason.setText(getContext().getResources().getString(R.string.reason_missed_gym));
+        }
+        if (_msg.getReason()== Message.HIT_TODAY) {
+            reason.setText(getContext().getResources().getString(R.string.reason_hit_gym));
+        }
+        if (_msg.getReason()==Message.WELCOME){
+            reason.setText("Welcome");
+        }
+
+        background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
+
+
+        header.setTextColor(ContextCompat.getColor(getContext(), R.color.schemeone_mediumblue));
         //background.setBackgroundColor(getResources().getColor(R.color.schemeone_tan_two, getActivity().getTheme()));
         //body.setTextColor(getResources().getColor(R.color.basewhite, getActivity().getTheme()));
 

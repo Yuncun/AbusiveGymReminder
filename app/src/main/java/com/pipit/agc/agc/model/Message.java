@@ -27,6 +27,7 @@ public class Message {
     public final static int MISSED_YESTERDAY = 0;
     public final static int HIT_YESTERDAY = 1;
     public final static int HIT_TODAY = 2;
+    public final static int WELCOME = 3;
 
     public Message(){
         timeCreated =  Calendar.getInstance();
@@ -97,7 +98,7 @@ public class Message {
             return "Today"; //Today
             //return getTimeFormat_HHmm();
         }
-        DateFormat dateFormat = new SimpleDateFormat("M/dd");
+        DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
         return dateFormat.format(date);
     }
 

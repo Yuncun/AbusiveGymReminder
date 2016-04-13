@@ -53,7 +53,7 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
-        // Test that the reported transition was of interest.
+        /* GYM DAY REGISTERED */
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL)
         {
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
@@ -64,7 +64,7 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             );
 
             // Send notification and log the transition details.
-            sendNotification(geofenceTransitionDetails, context);
+            //sendNotification(geofenceTransitionDetails, context);
             Log.i(TAG, geofenceTransitionDetails);
             //Update logs
             SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
@@ -78,7 +78,11 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             updateLastDayRecord();
             rememberGymHabits(context);
             ReminderOracle.doLeaveOnGymArrivalMessage(context, true);
-            sendNotification("GEO FENCE FROM SERVICE", context);
+            //sendNotification("GEO FENCE FROM SERVICE", context);
+
+            //Update last visited time
+            long time= System.currentTimeMillis();
+            SharedPrefUtil.updateLastVisitTime(context, time);
         } else {
             Log.e(TAG, "geofenceTransition error");
         }

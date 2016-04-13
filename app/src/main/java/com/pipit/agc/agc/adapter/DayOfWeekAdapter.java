@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -85,11 +86,11 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         final String gymDay = context.getResources().getString(R.string.gym_day);
         final String restDay = context.getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(position)){
-            holder.cv.setBackgroundColor(context.getResources().getColor(R.color.lightgreen));
+            holder.cv.setBackgroundColor(ContextCompat.getColor(context, R.color.lightgreen));
             holder.gymstatetxt.setText(gymDay);
             holder.switchView.setChecked(true);
         } else{
-            holder.cv.setBackgroundColor(context.getResources().getColor(R.color.basewhite));
+            holder.cv.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));;
             holder.gymstatetxt.setText(restDay);
             holder.switchView.setChecked(false);
         }
@@ -117,7 +118,7 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
                     Log.d(TAG, "Added day " + datestr + " to weekly gym days");
                     holder.gymstatetxt.setText(gymDay);
                     holder.switchView.setChecked(true);
-                    holder.cv.setBackgroundColor(context.getResources().getColor(R.color.lightgreen, context.getTheme()));
+                    holder.cv.setBackgroundColor(ContextCompat.getColor(context, R.color.lightgreen));
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
                         mFrag.toggleCurrentGymDayData(true);
                     }

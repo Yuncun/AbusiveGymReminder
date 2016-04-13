@@ -13,12 +13,13 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 public class MessageRepoDBHelper extends SQLiteAssetHelper {
     public static final String DATABASE_NAME = "messagerepo.db";
     public static final String TABLE_MESSAGES = "Messages";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 6;
 
     //Table Names
     public static final String COLUMN_ANGER = "Anger";
     public static final String COLUMN_TYPE = "Type";
     public static final String COLUMN_ID = "ID";
+    public static final String COLUMN_UNIQUE = "Unique";
 
     public MessageRepoDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

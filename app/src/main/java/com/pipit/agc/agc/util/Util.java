@@ -35,6 +35,12 @@ public class Util {
         return putListToSharedPref(prefs.edit(), key, strs);
     }
 
+
+    public static boolean putListToSharedPref(Context context, final String key, final List<String> list) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        return putListToSharedPref(prefs.edit(), key, list);
+    }
+
     public static boolean putListToSharedPref(final SharedPreferences.Editor edit, final String key, final List<String> list){
         try{
             JSONArray mJSONArray = new JSONArray(list);

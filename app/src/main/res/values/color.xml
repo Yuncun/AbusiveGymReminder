@@ -12,7 +12,7 @@
     <item name="neon_green" type="color">#69F0AE</item>
     <item name="neon_red" type="color">#FF5252</item>
     <item name="light_red" type="color">#FF8A80</item>
-    <item name="pinkish" type="color">#FFB9B5</item>
+    <item name="pinkish" type="color">#FDA2A4</item>
     <item name="lightish_green" type="color">#91C494</item>
 
     <!--Experimental colors for msg background-->
@@ -21,4 +21,10 @@
     <item name="schemeone_tan" type="color">#FFDEB7</item>
     <item name="schemeone_tan_two" type="color">#E7DED1</item>
 
+    <item name="nice_purple" type="color">#A4478D</item>
+    <item name="nice_blue" type="color">#03A9F4</item>
+    <item name="nice_green" type="color">#4CAF50</item>
+    <item name="lime" type="color">#B6D45B</item>
+    <item name="nice_purple2" type="color">#7F4394</item>
+    <item name="lime2" type="color">#D4DC5F</item>
 </resources>
