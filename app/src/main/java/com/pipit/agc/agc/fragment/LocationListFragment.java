@@ -49,6 +49,10 @@ public class LocationListFragment extends Fragment {
     public LocationListFragment() {
     }
 
+    public interface UpdateNoGymsSelected{
+        void showGymListEmpty(boolean isGymDay);
+    }
+
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static LocationListFragment newInstance(int columnCount) {
@@ -82,15 +86,14 @@ public class LocationListFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
-
+        List<Gym> gymlocations = getGymLocations(getContext());
+        mRecyclerView.setAdapter(new LocationListAdapter(gymlocations, mListener, this));
         return view;
     }
 
-    public List<Gym> getGymLocations(){
+    public static List<Gym> getGymLocations(Context context){
         Log.d(TAG, "getGymLocations()");
-        SharedPreferences prefs = getActivity().getApplicationContext()
-                .getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<Gym> gymlocations = new ArrayList<Gym>();
         for (int i=1; i<Constants.GYM_LIMIT; i++){
             double lat = SharedPrefUtil.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
@@ -102,7 +105,7 @@ public class LocationListFragment extends Fragment {
             if (lat==Constants.DEFAULT_COORDINATE && lng==Constants.DEFAULT_COORDINATE){
                 gym.isEmpty=true;
             }
-            gym.address = prefs.getString("address" + i, getContext().getResources().getString(R.string.no_address_default));
+            gym.address = prefs.getString("address" + i, context.getResources().getString(R.string.no_address_default));
             gym.proxid =  prefs.getInt("proxalert" + i, 0);
             gym.name = prefs.getString("name"+i, "No name");
             gymlocations.add(gym);
@@ -187,7 +190,7 @@ public class LocationListFragment extends Fragment {
 
                 ((AllinOneActivity) getActivity()).addGeofenceFromListposition(gym);
                 mListener.onListFragmentInteraction();
-                mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(), mListener, this));
+                mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(getContext()), mListener, this));
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);
 
@@ -198,5 +201,13 @@ public class LocationListFragment extends Fragment {
         }
     }
 
+    private void executeUpdateCallback(boolean showNotificationNoGyms) {
+        Log.d(TAG, "Execute callback, showgymnotification = " + showNotificationNoGyms);
+        Fragment registeredFrag = ((AllinOneActivity) getActivity()).getFragmentByKey(Constants.NEWSFEED_FRAG);
+        if (registeredFrag!=null){
+            UpdateNoGymsSelected update = (UpdateNoGymsSelected) registeredFrag;
+            update.showGymListEmpty(showNotificationNoGyms);
+        }
+    }
 
 }

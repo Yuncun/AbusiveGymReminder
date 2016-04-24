@@ -81,17 +81,21 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 //daily stat card;
                 DayViewHolder dv = ((DayViewHolder) holder);
                 holder.mTitleView.setText("Today");
-                DayRecord today = mStats.getToday(false);
+                DayRecord today = mStats.getToday(true);
                 if (today.isGymDay()){
                     dv.gymstate_circle.setText("GYM\nDAY");
+                    setTextCircleColor(dv.gymstate_circle, mFrag.getContext(), R.color.schemethree_red);
+                    dv.gymstate_circle.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                 }else{
+                    setTextCircleColor(dv.gymstate_circle, mFrag.getContext(), R.color.schemethree_teal);
+                    dv.gymstate_circle.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                     dv.gymstate_circle.setText("REST\nDAY");
                 }
                 if (today.beenToGym()){
                     SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
                     String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), sdf);
                     String prefix = "Gym visit recorded today at ";
-                    if (s==null || s==""){
+                    if (s==null || s.equals("")){
                         dv.gymstate_text.setText("Gym visit recorded today");
                     }else{
                         dv.gymstate_text.setText(prefix + s);
@@ -114,18 +118,16 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
                 /* Text */
                 wv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get()+"");
-                wv.stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get()+"");
-                wv.stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get()+"");
+                wv.stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get() + "");
+                wv.stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get() + "");
 
                 /* Colors */
-                /*
-                setTextCircleColor(wv.stat_circle_1, mFrag.getContext(), R.color.green);
+                setTextCircleColor(wv.stat_circle_1, mFrag.getContext(), R.color.schemethree_teal);
                 wv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                setTextCircleColor(wv.stat_circle_2, mFrag.getContext(), R.color.neon_green);
+                setTextCircleColor(wv.stat_circle_2, mFrag.getContext(), R.color.schemethree_red);
                 wv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                //setTextCircleColor(wv.stat_circle_3, mFrag.getContext(), R.color.flat_red);
-                wv.stat_circle_3.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
-                */
+                setTextCircleColor(wv.stat_circle_3, mFrag.getContext(), R.color.schemefour_yellow);
+                wv.stat_circle_3.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
 
                 wv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
                 wv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
@@ -145,9 +147,12 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 mv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).details);
                 mv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
 
-                mv.stat_card_1.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.lightgreen));
-                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.basewhite);
-                //mv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                //mv.stat_card_1.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.lightgreen));
+                mv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.schemefour_yellow);
+                mv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                setTextCircleColor(mv.stat_circle_2, mFrag.getContext(), R.color.schemefour_teal);
+
                 break;
             default:
                 holder.mTitleView.setText("Default");
@@ -241,5 +246,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
     public static void setTextCircleColor(TextView tv, Context context, int my_color){
         tv.getBackground().setColorFilter(ContextCompat.getColor(context, my_color), PorterDuff.Mode.SRC_ATOP);
+    }
+
+    public static void setStrokeColor(TextView tv, Context context, int my_color){
+        GradientDrawable drawable = (GradientDrawable) tv.getBackground();
+        drawable.setStroke(6, ContextCompat.getColor(context, my_color)); // set stroke width and stroke color
     }
 }

@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.adapter.NewsfeedAdapter;
+import com.pipit.agc.agc.model.Gym;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.DayRecord;
@@ -29,7 +31,7 @@ import java.util.List;
 /**
  * Created by Eric on 1/21/2016.
  */
-public class NewsfeedFragment extends android.support.v4.app.Fragment implements DayOfWeekPickerFragment.UpdateGymDayToday{
+public class NewsfeedFragment extends android.support.v4.app.Fragment {
     private DBRecordsSource datasource;
     private List<Message> _allMessages;
     private List<DayRecord> _allDayRecords;
@@ -41,6 +43,8 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
     private CardView _gymstatus_cv;
     private TextView _gymstatus_header;
     private TextView _gymstatus_body;
+
+    private static final String TAG = "NewsfeedFragment";
 
     public static NewsfeedFragment newInstance() {
         NewsfeedFragment fragment = new NewsfeedFragment();
@@ -61,15 +65,9 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.newsfeed, container, false);
+        //TODO: Note that the gym status bar is currently not active. Code is here but wont do anythig right now
+        //TODO: until I make the design decision.
         _gymstatusLayout = (LinearLayout) rootView.findViewById(R.id.gymstatus_layout);
-        _gymstatusLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-                prefs.edit().putBoolean("showGymStatus", false).commit();
-                _gymstatusLayout.setVisibility(View.GONE);
-            }
-        });
         _gymstatus_cv = (CardView) rootView.findViewById(R.id.gymstatus_cv);
         _gymstatus_cv.setBackgroundColor(fetchAccentColor());
 
@@ -91,7 +89,6 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
             DBRecordsSource.getInstance().closeDatabase();
         }
 
-
         mAdapter = new NewsfeedAdapter(_allMessages, _allDayRecords, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -101,33 +98,28 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-
-        //Logic for showing Gym Status card
-        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        boolean showStatus=prefs.getBoolean("showGymStatus", true);
-        if (showStatus && _gymstatus_header != null && _gymstatus_body!=null){
-            _gymstatus_header.setText(getGymDay());
-            _gymstatus_body.setText(getDayComments());
+        //Todo: Decide if I want to add the notification bar when user has no gyms
+        /*
+        List<Gym> gymlocations = LocationListFragment.getGymLocations(getContext());
+        boolean hasNoGym = true;
+        for (Gym g : gymlocations){
+            if (!g.isEmpty){
+                hasNoGym=true;
+                break;
+            }
+        }
+        if (hasNoGym){
+            _gymstatus_header.setText("No Gyms Selected");
+            _gymstatus_body.setText("Click on GYMS tab to find your gym");
             _gymstatusLayout.setVisibility(View.VISIBLE);
         }else{
             _gymstatusLayout.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override
     public void onPause() {
         super.onPause();
-    }
-    @Override
-    public void todayIsGymDay(boolean isGymDay){
-
-        if (_allDayRecords==null) return;
-        _allDayRecords.get(_allDayRecords.size()-1).setIsGymDay(isGymDay);
-        if (isGymDay){
-            _gymstatus_header.setText("GYM DAY");
-        }else{
-            _gymstatus_header.setText("REST DAY");
-        }
     }
 
     private String getDayComments(){
@@ -165,7 +157,4 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment implements
         return color;
     }
 
-    public void updateGymStatusVisibile(){
-        _gymstatusLayout.setVisibility(View.VISIBLE);
-    }
 }

@@ -112,13 +112,18 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
         return cal;
     }
 
+    //This was originally written to show some sort of notice in newsfeed if no days are selected
+    //TODO: Currently commented out
+    //TODO: Decide if necessary from a design standpoint
     private void executeUpdateCallback(boolean isGymDay) {
+        /*
         Log.d("Eric", "Execute callback");
         Fragment registeredFrag = ((AllinOneActivity) getActivity()).getFragmentByKey(Constants.NEWSFEED_FRAG);
         if (registeredFrag!=null){
             UpdateGymDayToday update = (UpdateGymDayToday) registeredFrag;
             update.todayIsGymDay(isGymDay);
         }
+        */
     }
 
     public void toggleCurrentGymDayData(boolean gymDay){

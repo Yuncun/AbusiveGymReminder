@@ -95,7 +95,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         }
 
         /*Launch Intro Activity*/
-        if (true || SharedPrefUtil.getIsFirstTime(this)){
+        if (SharedPrefUtil.getIsFirstTime(this)){
             Intent intent = new Intent(this, IntroductionActivity.class);
             //intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
             startActivity(intent);
@@ -164,7 +164,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         else if (id == R.id.action_forget){
             /* This action forgets the key sharedpreferences except for gyms */
             SharedPreferences prefs = getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-            prefs.edit().putBoolean("showGymStatus", true).commit();
+            //prefs.edit().putBoolean("showGymStatus", true).commit();
             SharedPrefUtil.setFirstTime(this, true);
             Util.putListToSharedPref(this, Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
         }

@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,14 +85,8 @@ public class TestDBFragmentMessages extends ListFragment {
         _addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Message f = new Message();
-                f.setBody("Stop missing the gym");
-                f.setHeader("You fucking faggot");
-                ReminderOracle.leaveMessage(f);
-
-                if (f.getRepoId()>0){
-                    Util.putStringIntoListIntoSharedPrefs(getContext(), Constants.TAKEN_MESSAGE_IDS, Long.toString(f.getRepoId()));
-                }
+                Log.d(TAG, "doDayLogging from test button");
+                AlarmManagerBroadcastReceiver.doDayLogging(getContext());
             }
         });
         _deleteButton = (Button) view.findViewById(R.id.delete);

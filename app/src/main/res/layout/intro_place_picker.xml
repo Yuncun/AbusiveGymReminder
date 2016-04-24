@@ -25,6 +25,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/placepicker_card"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:text="Touch to Choose"
+                    android:elevation="2dp"
+                    />
+
+                <!--
                 <TextView
                     android:id="@+id/placepicker_card"
                     android:textSize="30sp"
@@ -36,6 +46,7 @@
                     android:padding="4dp"
                     android:background="@drawable/circle"
                     />
+                    -->
             </LinearLayout>
     </LinearLayout>
     <LinearLayout

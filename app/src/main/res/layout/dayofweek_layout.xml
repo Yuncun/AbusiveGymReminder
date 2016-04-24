@@ -7,15 +7,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
         card_view:cardUseCompatPadding="true"
         android:elevation="2dp"
         android:id="@+id/cv"
         >
         <LinearLayout
+            android:id="@+id/cvlayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
             <LinearLayout
                 android:layout_width="0dp"
@@ -24,26 +23,30 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
                 <TextView
-                    android:id="@+id/txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
-                <Switch
-                    android:id="@+id/switch1"
-                    android:focusable="false"
-                    android:clickable="false"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:id="@+id/stat_circle"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:text="REST DAY"
+                    android:textSize="15dp"
+                    android:textColor="@color/basewhite"
+                    android:textStyle="bold"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:elevation="4dp"
+                    android:visibility="invisible"
+                    android:background="@drawable/circle"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_weight="6"
+                android:layout_weight="5"
                 android:orientation="horizontal">
                 <TextView
                     android:id="@+id/comment"
                     android:text="MONDAY"
+                    android:textStyle="bold"
                     android:textSize="28sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

@@ -42,6 +42,7 @@
                         android:textSize="36sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
+                        android:elevation="10dp"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:background="@drawable/circle"/>

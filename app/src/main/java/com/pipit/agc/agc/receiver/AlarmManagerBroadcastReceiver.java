@@ -19,6 +19,7 @@ import com.pipit.agc.agc.data.MySQLiteHelper;
 import com.pipit.agc.agc.util.Util;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ import java.util.List;
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 {
     Context _context;
-    String TAG = "AlarmManagerBroadcastReceiver";
+    private static final String TAG = "AlarmManagerBroadcastReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -56,33 +57,36 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                 if (m.getRepoId()>0){
                     Util.putStringIntoListIntoSharedPrefs(context, Constants.TAKEN_MESSAGE_IDS, Long.toString(m.getRepoId()));
                 }
-                String header = "";
-                String body = "";
+                String messageheader = "";
+                String notificationheader = "";
+                String messageBody = "";
                 long msgid = -1;
                 int reason = Message.NO_RECORD;
                 //Construct notification message and show
                 switch (m.getReason()){
                     case Message.MISSED_YESTERDAY:
-                        body = "You missed the gym yesterday";
-                        header = m.getHeader();
+                        notificationheader = "You missed the gym yesterday";
+                        messageheader = m.getHeader();
+                        messageBody = m.getBody();
                         msgid = m.getId();
                         reason = Message.MISSED_YESTERDAY;
                         break;
                     case Message.HIT_YESTERDAY:
                     case Message.HIT_TODAY:
-                        body = "Gym visit registered";
-                        header = m.getHeader();
+                        notificationheader = "Gym visit registered";
+                        messageheader = m.getHeader();
+                        messageBody = m.getBody();
                         reason = Message.HIT_TODAY;
                         msgid = m.getId();
                         break;
                     case Message.NO_RECORD:
                     default:
-                        header = "New Message from Abusive Gym Reminder";
+                        messageheader = "New Message from Abusive Gym Reminder";
                         msgid = m.getId();
-                        body = m.getBody();
+                        notificationheader = m.getBody();
                         reason = Message.HIT_TODAY;
                 }
-                ReminderOracle.showNotification(context, header, body, msgid, reason);
+                ReminderOracle.showNotification(context,notificationheader, messageheader,messageBody, msgid, reason);
                 break;
             default:
                 break;
@@ -103,12 +107,14 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
     /**
      * Executed by Alarm Manager at midnight to add a new day into database
      */
-    private void doDayLogging(Context context){
+    public static void doDayLogging(Context context){
         //Logging
         Log.d(TAG, "Starting dayLogging");
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
-        String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        String mLastUpdateTime = dateFormat.format(cal.getTime());
         String logUpdate = prefs.getString("locationlist", "none") + "\n" + "Alarm Manager Update at " + mLastUpdateTime;
         editor.putString("locationlist", logUpdate);
         editor.commit();

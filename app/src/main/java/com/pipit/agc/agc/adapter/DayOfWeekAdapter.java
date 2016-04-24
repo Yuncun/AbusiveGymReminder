@@ -3,6 +3,7 @@ package com.pipit.agc.agc.adapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -21,6 +22,8 @@ import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
 import com.pipit.agc.agc.model.DayRecord;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,15 +44,15 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView comment;
-        TextView gymstatetxt;
-        Switch switchView;
+        TextView statuscircle;
+        LinearLayout cvlayout;
 
         CardViewHolder(View itemView) {
             super(itemView);
             comment = (TextView) itemView.findViewById(R.id.comment);
             cv = (CardView)  itemView.findViewById(R.id.cv);
-            gymstatetxt = (TextView) itemView.findViewById(R.id.txt);
-            switchView = (Switch) itemView.findViewById(R.id.switch1);
+            statuscircle = (TextView) itemView.findViewById(R.id.stat_circle);
+            cvlayout = (LinearLayout) itemView.findViewById(R.id.cvlayout);
         }
     }
 
@@ -86,13 +89,15 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         final String gymDay = context.getResources().getString(R.string.gym_day);
         final String restDay = context.getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(position)){
-            holder.cv.setBackgroundColor(ContextCompat.getColor(context, R.color.lightgreen));
-            holder.gymstatetxt.setText(gymDay);
-            holder.switchView.setChecked(true);
+            holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
+            holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
+            //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+            holder.statuscircle.setText(gymDay);
         } else{
-            holder.cv.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));;
-            holder.gymstatetxt.setText(restDay);
-            holder.switchView.setChecked(false);
+            holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));
+            holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
+            //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
+            holder.statuscircle.setText(restDay);
         }
 
         holder.cv.setOnClickListener(new View.OnClickListener() {
@@ -107,21 +112,24 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
                     //The clicked date was previously a Gym Day, and we need to toggle it off
                     dates.remove(datestr);
                     Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
-                    holder.gymstatetxt.setText(restDay);
-                    holder.switchView.setChecked(false);
-                    holder.cv.setBackgroundColor(context.getResources().getColor(R.color.basewhite, context.getTheme()));
+                    holder.statuscircle.setText(restDay);
+                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));
+                    holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
+                    //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
                         mFrag.toggleCurrentGymDayData(false);
                     }
                 } else {
                     dates.add(datestr);
                     Log.d(TAG, "Added day " + datestr + " to weekly gym days");
-                    holder.gymstatetxt.setText(gymDay);
-                    holder.switchView.setChecked(true);
-                    holder.cv.setBackgroundColor(ContextCompat.getColor(context, R.color.lightgreen));
+                    holder.statuscircle.setText(gymDay);
+                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
+                    holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
+                    //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
                         mFrag.toggleCurrentGymDayData(true);
                     }
+
                 }
                 Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
                 updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));

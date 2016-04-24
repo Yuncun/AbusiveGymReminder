@@ -101,7 +101,8 @@ public class WeekCalendarView extends LinearLayout {
             if (_allDayRecords.get(k+i).beenToGym()){
                 /*HIT DAY*/
                 tv.setText(r.getString(R.string.hit));
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.green), PorterDuff.Mode.SRC_ATOP);
+                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+                tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
             }
             else{
                 /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
@@ -115,8 +116,8 @@ public class WeekCalendarView extends LinearLayout {
                     else{
                         /*MISSED A GYM DAY STATE */
                         tv.setText(r.getString(R.string.miss));
-                        tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.pinkish), PorterDuff.Mode.SRC_ATOP);
-                        //tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
+                        tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
+                        tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
                     }
                 }else{
                     /* REST DAY STATE */

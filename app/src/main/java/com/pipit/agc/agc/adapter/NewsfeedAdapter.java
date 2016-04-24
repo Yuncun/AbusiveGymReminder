@@ -83,13 +83,13 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         holder.timestamp.setTextColor(ContextCompat.getColor(_context, R.color.black));
         if (m.getReason()== Message.HIT_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_hit_gym_yesterday));
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.lightgreen), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
         }
         if (m.getReason()== Message.MISSED_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_missed_gym));
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.pinkish), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
         }
@@ -98,10 +98,10 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             //holder.reason.setTextColor(ContextCompat.getColor(_context, R.color.darkgreen));
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.lightgreen), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
         }
         if (m.getReason() == Message.WELCOME) {
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.yellow), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setText(r.getText(R.string.welcome));
         }
         //holder.iconwrapper.setLayoutParams(new RelativeLayout.LayoutParams(holder.iconwrapper.getMeasuredHeight(), holder.iconwrapper.getMeasuredHeight()));

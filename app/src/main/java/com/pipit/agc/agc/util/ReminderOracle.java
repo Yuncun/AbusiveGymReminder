@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
@@ -50,8 +51,8 @@ public class ReminderOracle {
         messagerepo.open();
         Message msg = null;
         if (yesterday==null){
+            //First day
             //msg = new Message();
-
         }
         else if (testmode){
             int type = 0;
@@ -78,18 +79,42 @@ public class ReminderOracle {
                 }
             } catch (Exception e){
                 Log.d(TAG, e.toString());
+                Toast.makeText(context, "New Message failed",
+                        Toast.LENGTH_LONG).show();
             }
         }
-        else if (yesterday.beenToGym()) {
-            // Todo: Figure out if we want to leave a message here or not - am exploring the idea of leaving message immediately
-            // Todo: when user goes to the gym, which would make this redundant.
-        }
-        else if (!yesterday.beenToGym()) {
-            //long testid = findANewMessageId(context, 2);
-            //Log.d(TAG, "RANDOM GENERATED ID " + testid);
-            msg = messagerepo.getRandomMessageWithParams(MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY,
-                    MessageRepositoryStructure.KINDA_ANNOYED);
-            msg.setReason(Message.MISSED_YESTERDAY);
+        /*Not test mode - Same code as above, but we do nothing for yesterday.beenToGym case, and does the waiting*/
+        else{
+            if (yesterday.beenToGym()) {
+                //Currently do nohting
+                // Todo: Figure out if we want to leave a message here or not - am exploring the idea of leaving message immediately
+                // Todo: when user goes to the gym, which would make this redundant.
+            }
+            else if (!yesterday.beenToGym() && yesterday.isGymDay()) {
+                int type = MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY;
+                int reason = Message.MISSED_YESTERDAY;
+                msg = messagerepo.getRandomMessageWithParams(MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY,
+                        MessageRepositoryStructure.KINDA_ANNOYED);
+                msg.setReason(Message.MISSED_YESTERDAY);
+                try{
+                    Log.d(TAG, "Attempting to get a new message");
+                    long id = findANewMessageId(context, type);
+                    if (!messagerepo.isOpen()) { messagerepo.open(); }
+                    if (id < 1){
+                        Log.d(TAG, "No id's found, getting random message");
+                        msg = messagerepo.getRandomMessageWithParams(type,
+                                MessageRepositoryStructure.KINDA_ANNOYED);
+                        msg.setReason(reason);
+                    }else{
+                        msg = messagerepo.getMessageById(id);
+                        msg.setReason(reason);
+                    }
+                } catch (Exception e){
+                    Log.d(TAG, e.toString());
+                    Toast.makeText(context, "New Message failed",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
         }
         messagerepo.close();
         /*Calculate time*/
@@ -189,28 +214,26 @@ public class ReminderOracle {
      * Posts a notification in the notification bar when a transition is detected.
      * If the user clicks the notification, control goes to the MainActivity.
      */
-    public static void showNotification(Context context, String header, String body, long messageID, int reason){
+    public static void showNotification(Context context, String header, String body, String body2, long messageID, int reason){
         Intent notificationIntent = new Intent(context, AllinOneActivity.class);
         if (messageID>0){
             notificationIntent = new Intent(context, AllinOneActivity.class);
             notificationIntent.putExtra(Constants.MESSAGE_ID, messageID);
         }
 
-        // Construct a task stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-
-        // Add the main Activity to the task stack as the parent.
         stackBuilder.addParentStack(AllinOneActivity.class);
-
-        // Push the content Intent onto the stack.
         stackBuilder.addNextIntent(notificationIntent);
 
-        // Get a PendingIntent containing the entire back stack.
         PendingIntent notificationPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        // Get a notification builder that's compatible with platform versions >= 4
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+
+        if (!body2.isEmpty()){
+            body+="...";
+        }
+
         if (reason==Message.MISSED_YESTERDAY){
             builder.setSmallIcon(R.drawable.notification_icon)
                 // In a real app, you may want to use a library like Volley
@@ -218,19 +241,22 @@ public class ReminderOracle {
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.drawable.notification_icon))
                 .setColor(Color.RED)
+                .setContentIntent(notificationPendingIntent)
                 .setContentTitle(header)
-                .setContentText(body)
-                .setContentIntent(notificationPendingIntent);
+                //.setStyle(new NotificationCompat.BigTextStyle().bigText(body));
+                .setContentText(body);
         }
         else{
             builder.setSmallIcon(R.drawable.notification_icon)
-            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.notification_icon))
-            .setColor(Color.GREEN)
-            .setContentTitle(header)
-            .setContentText(body)
-            .setContentIntent(notificationPendingIntent);
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.notification_icon))
+                .setColor(Color.GREEN)
+                .setContentTitle(header)
+                //.setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setContentText(body)
+                .setContentIntent(notificationPendingIntent);
         }
+
         // Dismiss notification once the user touches it.
         builder.setAutoCancel(true);
         NotificationManager mNotificationManager =

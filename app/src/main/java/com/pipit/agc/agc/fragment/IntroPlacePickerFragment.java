@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -29,15 +32,16 @@ import com.pipit.agc.agc.activity.IntroductionActivity;
 import com.pipit.agc.agc.model.Gym;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.GeofenceUtils;
+import com.pipit.agc.agc.util.TextDrawable;
 
 /**
  * Created by Eric on 4/11/2016.
  */
 public class IntroPlacePickerFragment extends Fragment {
-    public final static String TAG = "IntroPlacePickerFragment";
+    public final static String TAG = "IntroPlacePickerFrag";
     private TextView _finishButton;
     private TextView _instructions_tv;
-    private TextView _launchcircle;
+    private FloatingActionButton _launchcircle;
     private LinearLayout _gobuttonlayout;
 
     @Override
@@ -47,16 +51,16 @@ public class IntroPlacePickerFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.intro_place_picker,
                 container, false);
-        _launchcircle = (TextView) view.findViewById(R.id.placepicker_card);
+        _launchcircle = (FloatingActionButton) view.findViewById(R.id.placepicker_card);
         _launchcircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startPlacePicker();
             }
         });
-        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.lime), PorterDuff.Mode.SRC_ATOP);
-        _launchcircle.setTextColor(ContextCompat.getColor(getContext(), R.color.basewhite));
-
+        //_launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.lime), PorterDuff.Mode.SRC_ATOP);
+        _launchcircle.setImageDrawable(new TextDrawable(getContext(), "Touch to choose", ColorStateList.valueOf(Color.WHITE),
+                30, TextDrawable.VerticalAlignment.BASELINE));
         _finishButton = (TextView) view.findViewById(R.id.placepicker_done);
         _gobuttonlayout = (LinearLayout) view.findViewById(R.id.continue_layout);
 
@@ -148,8 +152,8 @@ public class IntroPlacePickerFragment extends Fragment {
                 if (k=="" || k.isEmpty()){
                     k+=location.toString();
                 }
-                _launchcircle.setTextSize(20);
-                _launchcircle.setText(k);
+                _launchcircle.setImageDrawable(new TextDrawable(getContext(), k, ColorStateList.valueOf(Color.WHITE),
+                        30, TextDrawable.VerticalAlignment.BASELINE));
                 getView();
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);

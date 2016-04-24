@@ -4,13 +4,17 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="windowActionBar">false</item>
+        <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
         <item name="windowNoTitle">true</item>
         <item name="android:textAppearanceLarge">@style/largetext</item>
+        <item name="android:windowBackground">@color/grey</item>
     </style>
 
+    <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+    </style>
 
     <style name="AppTheme.LightBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">#FFFFFF</item>
+        <!--<item name="android:background">#FFFFFF</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -18,12 +22,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColor">@color/basewhite</item>
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="largetext" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
 </resources>
