@@ -90,7 +90,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                 datasource.closeDatabase();
                 Intent intent = new Intent(this, MessageBodyActivity.class);
                 intent.putExtra(Constants.MESSAGE_ID, index);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         }
 
@@ -507,7 +507,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
 
     public Fragment getFragmentByKey(String key){
         switch (key){
-            case Constants.DAYPICKER_FRAG:
+            case Constants.STATS_FRAGMENT:
                 return mSectionsPagerAdapter.getRegisteredFragment(0);
             case Constants.LOCATION_FRAG:
                 return mSectionsPagerAdapter.getRegisteredFragment(3);
@@ -611,5 +611,15 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 0) {
+            Fragment f = mSectionsPagerAdapter.getRegisteredFragment(0);
+            if (f instanceof StatisticsFragment){
+                ((StatisticsFragment) f).update();
+            }
+        }
+    }
 }
 

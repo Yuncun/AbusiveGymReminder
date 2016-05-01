@@ -2,6 +2,7 @@ package com.pipit.agc.agc.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,11 +61,12 @@ public class IntroViewPagerFragment extends Fragment {
                 title = "";
         }
         View view = getActivity().getLayoutInflater().inflate(layoutResId, container, false);
-
         view.setTag(mPage);
         TextView titletv = (TextView) view.findViewById(R.id.title);
         titletv.setText(title);
-
+        if (mPage==1){
+            titletv.setTextColor(ContextCompat.getColor(getContext(), R.color.basewhite));
+        }
         return view;
     }
 

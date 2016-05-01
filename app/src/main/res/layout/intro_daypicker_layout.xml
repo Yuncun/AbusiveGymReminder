@@ -3,54 +3,36 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/bodylayout"
         android:layout_weight="7"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/schemethree_teal"
+        android:background="@color/schemefour_yellow"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/placepicker_instructions"
+            android:id="@+id/daypicker_instructions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Second screen"
             android:gravity="center"
-            android:textColor="@android:color/white"
             android:layout_gravity="top|center"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginTop="32dp"
+            android:layout_margin="32dp"
             android:textSize="28sp"/>
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:gravity="center">
+
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center">
+                android:id="@+id/rv"
+            />
 
-                <!--
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/placepicker_card"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
-                    android:text="Touch to Choose"
-                    android:background="@color/schemefour_yellow"
-                    android:elevation="2dp"
-                    />
-                -->
-
-                <TextView
-                    android:id="@+id/placepicker_card"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
-                    android:gravity="center"
-                    android:text="Touch to Choose"
-                    android:elevation="4dp"
-                    android:padding="4dp"
-                    android:background="@drawable/circle"
-                    />
-
-            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/continue_layout"
@@ -58,6 +40,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
+        android:background="@color/schemefour_yellow"
         android:orientation="vertical">
         <TextView
             android:id="@+id/placepicker_done"
@@ -68,3 +51,5 @@
             android:text="Continue" />
     </LinearLayout>
 </LinearLayout>
+
+

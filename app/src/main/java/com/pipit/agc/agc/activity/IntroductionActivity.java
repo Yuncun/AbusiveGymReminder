@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
+import com.pipit.agc.agc.fragment.IntroDayPickerFragment;
 import com.pipit.agc.agc.fragment.IntroFragment;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.fragment.IntroGoalsFragment;
@@ -55,6 +56,8 @@ public class IntroductionActivity extends FragmentActivity {
             case 2:
                 fr = IntroGoalsFragment.newInstance();
                 break;
+            case 3:
+                fr = IntroDayPickerFragment.newInstance();
             default:
                 //nothing
         }

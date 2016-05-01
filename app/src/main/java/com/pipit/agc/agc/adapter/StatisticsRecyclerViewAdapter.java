@@ -122,12 +122,12 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 wv.stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get() + "");
 
                 /* Colors */
-                setTextCircleColor(wv.stat_circle_1, mFrag.getContext(), R.color.schemethree_teal);
-                wv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                setTextCircleColor(wv.stat_circle_2, mFrag.getContext(), R.color.schemethree_red);
-                wv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                setTextCircleColor(wv.stat_circle_3, mFrag.getContext(), R.color.schemefour_yellow);
-                wv.stat_circle_3.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                setTextCircleColor(wv.stat_circle_1, mFrag.getContext(), R.color.grey);
+                wv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
+                setTextCircleColor(wv.stat_circle_2, mFrag.getContext(), R.color.grey);
+                wv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
+                setTextCircleColor(wv.stat_circle_3, mFrag.getContext(), R.color.grey);
+                wv.stat_circle_3.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
 
                 wv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
                 wv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
@@ -149,7 +149,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
                 //mv.stat_card_1.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.lightgreen));
                 mv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.schemefour_yellow);
+                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.schemefour_teal);
                 mv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                 setTextCircleColor(mv.stat_circle_2, mFrag.getContext(), R.color.schemefour_teal);
 

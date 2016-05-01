@@ -81,7 +81,8 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new DayOfWeekAdapter( new HashSet<Integer>(plannedDOW), this);
+        int totalheight = Math.round(Util.getScreenHeightMinusStatusBar(getContext()));
+        mAdapter = new DayOfWeekAdapter( new HashSet<Integer>(plannedDOW), this, totalheight );
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

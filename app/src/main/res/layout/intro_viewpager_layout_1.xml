@@ -14,7 +14,6 @@
             android:layout_height="wrap_content"
             android:text="Enter your gym"
             android:gravity="center"
-            android:textColor="@android:color/white"
             android:layout_gravity="top|center"
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"

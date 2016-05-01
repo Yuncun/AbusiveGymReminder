@@ -83,7 +83,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/comment"
                     android:textSize="@dimen/textMedium"
-                    android:singleLine="true"
                     android:ellipsize="end"
                     android:text="comment"
                     />

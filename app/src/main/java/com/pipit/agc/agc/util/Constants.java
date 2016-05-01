@@ -37,6 +37,7 @@ public class Constants {
     public static final String LOCATION_FRAG = "location_fragment";
     public static final String LOGS_FRAG = "logs_fragment";
     public static final String PLACEPICKER_FRAG = "placepicker_fragment";
+    public static final String STATS_FRAGMENT = "stats_fragment";
 
     /*Permissions requestcodes*/
     public static final int GRANTED_LOCATION_PERMISSIONS = 1;

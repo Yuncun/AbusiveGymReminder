@@ -35,9 +35,9 @@ import java.util.List;
  */
 public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.CardViewHolder>{
     private final Context context;
-    private final DayOfWeekPickerFragment mFrag;
+    private final Fragment mFrag;
     public int count = 7;
-    private static int _screenheight;
+    private int _screenheight;
     public static String TAG = "DayPickerAdapter";
     private HashSet<Integer> weeklySchedule; //Contains 0-7 days that are gym days
 
@@ -56,10 +56,10 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         }
     }
 
-    public DayOfWeekAdapter( HashSet<Integer> weeklySchedule, Fragment frag) {
-        this.mFrag = (DayOfWeekPickerFragment) frag;
+    public DayOfWeekAdapter( HashSet<Integer> weeklySchedule, Fragment frag, int sizeToFill) {
+        this.mFrag = frag;
         this.context = frag.getContext();
-        this._screenheight=-1;
+        this._screenheight=sizeToFill;
         this.weeklySchedule = weeklySchedule;
     }
 
@@ -90,7 +90,7 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         final String restDay = context.getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(position)){
             holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
-            holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
+            holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
             //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
             holder.statuscircle.setText(gymDay);
         } else{
@@ -117,7 +117,9 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
                     holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
                     //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                        mFrag.toggleCurrentGymDayData(false);
+                        if (mFrag instanceof DayOfWeekPickerFragment){
+                            ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(false);
+                        }
                     }
                 } else {
                     dates.add(datestr);
@@ -127,7 +129,9 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
                     holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
                     //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                        mFrag.toggleCurrentGymDayData(true);
+                        if (mFrag instanceof DayOfWeekPickerFragment) {
+                            ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(true);
+                        }
                     }
 
                 }

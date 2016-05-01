@@ -28,6 +28,7 @@
                 android:id="@+id/stat_card_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp">
                 <TextView
@@ -61,21 +62,12 @@
                 android:id="@+id/stat_card_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp">
                 <TextView
-                    android:id="@+id/stat_text_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="Stat One"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:textSize="24sp"
-                    />
-                <TextView
                     android:id="@+id/stat_circle_2"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
                     android:layout_marginBottom="6dp"
                     android:layout_marginTop="6dp"
                     android:gravity="center"
@@ -86,6 +78,18 @@
                     android:layout_height="100dp"
                     android:elevation="4dp"
                     android:background="@drawable/circle"/>
+
+                <TextView
+                    android:id="@+id/stat_text_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Stat One"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:textSize="24sp"
+                    />
+
             </RelativeLayout>
 
 

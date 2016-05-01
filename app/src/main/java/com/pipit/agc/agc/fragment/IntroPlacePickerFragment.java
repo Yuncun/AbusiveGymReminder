@@ -41,7 +41,7 @@ public class IntroPlacePickerFragment extends Fragment {
     public final static String TAG = "IntroPlacePickerFrag";
     private TextView _finishButton;
     private TextView _instructions_tv;
-    private FloatingActionButton _launchcircle;
+    private TextView _launchcircle;
     private LinearLayout _gobuttonlayout;
 
     @Override
@@ -51,16 +51,16 @@ public class IntroPlacePickerFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.intro_place_picker,
                 container, false);
-        _launchcircle = (FloatingActionButton) view.findViewById(R.id.placepicker_card);
+        _launchcircle = (TextView) view.findViewById(R.id.placepicker_card);
         _launchcircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startPlacePicker();
             }
         });
-        //_launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.lime), PorterDuff.Mode.SRC_ATOP);
-        _launchcircle.setImageDrawable(new TextDrawable(getContext(), "Touch to choose", ColorStateList.valueOf(Color.WHITE),
-                30, TextDrawable.VerticalAlignment.BASELINE));
+        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+        /*_launchcircle.setImageDrawable(new TextDrawable(getContext(), "Touch to ", ColorStateList.valueOf(Color.WHITE),
+                30, TextDrawable.VerticalAlignment.BASELINE));*/
         _finishButton = (TextView) view.findViewById(R.id.placepicker_done);
         _gobuttonlayout = (LinearLayout) view.findViewById(R.id.continue_layout);
 
@@ -70,15 +70,14 @@ public class IntroPlacePickerFragment extends Fragment {
         _finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //((IntroductionActivity) getActivity()).selectFrag(2);
-                getActivity().finish();
+                ((IntroductionActivity) getActivity()).selectFrag(3);
             }
         });
 
         /*Set the "Continue" area to default mode when no gym is selected */
         _finishButton.setText("Skip for now");
         _finishButton.setTextColor((ContextCompat.getColor(getContext(), R.color.basewhite)));
-        _gobuttonlayout.setBackgroundColor((ContextCompat.getColor(getContext(), R.color.nice_purple)));
+        _gobuttonlayout.setBackgroundColor((ContextCompat.getColor(getContext(), R.color.schemethree_teal)));
         _finishButton.setTextSize(16);
 
         return view;
@@ -138,7 +137,7 @@ public class IntroPlacePickerFragment extends Fragment {
                 addGeofenceFromListposition(gym);
 
                 /*Set the "Continue" area to default mode when no gym is selected */
-                _finishButton.setText("Finish");
+                _finishButton.setText("Next");
                 _finishButton.setTextSize(30);
                 _finishButton.setTextColor(getResources().getColor(android.R.color.primary_text_light));
                 _gobuttonlayout.setBackgroundColor((ContextCompat.getColor(getContext(), R.color.basewhite)));
@@ -152,8 +151,9 @@ public class IntroPlacePickerFragment extends Fragment {
                 if (k=="" || k.isEmpty()){
                     k+=location.toString();
                 }
-                _launchcircle.setImageDrawable(new TextDrawable(getContext(), k, ColorStateList.valueOf(Color.WHITE),
-                        30, TextDrawable.VerticalAlignment.BASELINE));
+                /*_launchcircle.setImageDrawable(new TextDrawable(getContext(), k, ColorStateList.valueOf(Color.WHITE),
+                        30, TextDrawable.VerticalAlignment.BASELINE));*/
+                _launchcircle.setText(k);
                 getView();
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);
