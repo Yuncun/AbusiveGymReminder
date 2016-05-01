@@ -19,10 +19,12 @@
             android:layout_width="wrap_content">
             -->
             <LinearLayout
+                android:id="@+id/sevendays"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal">
+
                 <include layout="@layout/week_calendar_item"
                     android:id="@+id/day_1" />
                 <include layout="@layout/week_calendar_item"

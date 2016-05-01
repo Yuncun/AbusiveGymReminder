@@ -23,6 +23,7 @@ import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
 import com.pipit.agc.agc.widget.WeekCalendarView;
+import com.pipit.agc.agc.widget.WeekViewSwipeable;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -133,9 +134,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 wv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
                 wv.stat_text_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).details);
 
-                wv.calendar.setDayOfWeekEnd(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
-                wv.calendar.showLastDayMarker();
-                wv.calendar.styleFromDayrecordsData(mFrag.getContext(), mStats.getAllDayRecords(false));
+                //vw.calendar.setDayOfWeekText(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                //wv.calendar.showLastDayMarker();
+                //wv.calendar.styleFromDayrecordsData(mFrag.getContext(), mStats.getAllDayRecords(false));
                 break;
             case 2:
                 holder.mTitleView.setText("Streaks");
@@ -186,7 +187,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         public final TextView stat_circle_3;
         public final TextView stat_text_3;
 
-        public final WeekCalendarView calendar;
+        public final WeekViewSwipeable calendar;
 
         public WeeklyViewHolder(View view){
             super(view);
@@ -198,7 +199,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             stat_text_2 = (TextView) view.findViewById(R.id.stat_name_2);
             stat_text_3 = (TextView) view.findViewById(R.id.stat_name_3);
 
-            calendar = (WeekCalendarView) view.findViewById(R.id.calendar_component);
+            calendar = (WeekViewSwipeable) view.findViewById(R.id.calendar_component);
         }
     }
 

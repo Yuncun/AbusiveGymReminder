@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -16,6 +15,7 @@ import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -28,14 +28,13 @@ public class WeekCalendarView extends LinearLayout {
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.WeekCalendarView, 0, 0);
-        //String titleText = a.getString(R.styleable.ColorOptionsView_titleText);
-        //int valueColor = a.getColor(R.styleable.ColorOptionsView_valueColor,
-        //        android.R.color.holo_blue_light);
+
         a.recycle();
 
         setOrientation(LinearLayout.HORIZONTAL);
         //setGravity(Gravity.CENTER_VERTICAL);
 
+        setDayOfWeekEnd(0);
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.week_calendar, this, true);
@@ -76,56 +75,8 @@ public class WeekCalendarView extends LinearLayout {
         }
     }
 
-    /**
-     * Used to populate and style the WeekCalendarView that shows attendance over last seven days
-     * @return
-     */
-    public void styleFromDayrecordsData(Context context, List<DayRecord> _allDayRecords){
-        ArrayList<String> hitlist = new ArrayList<String>();
-        Resources r = context.getResources();
-        String name = this.getContext().getPackageName();
-        int k = _allDayRecords.size()-7; //Dayrecord of seven days past;
-        for (int i= 0 ; i < 7 ; i++){
-            /*Get identifier*/
-            int j = i+1; //I'm as confused as you are
-            int viewid = r.getIdentifier("day_" + j, "id", name);
-            View weekitem = findViewById(viewid);
-            TextView tv = (TextView) weekitem.findViewById(R.id.calendar_day_info);
-            if (k+i<0) {
-                /* NO INFO STATE */
-                /* HIDE VISIBILITY */
-                tv.setText(r.getString(R.string.noinfo));
-                weekitem.setVisibility(View.GONE);
-                continue;
-            }
-            if (_allDayRecords.get(k+i).beenToGym()){
-                /*HIT DAY*/
-                tv.setText(r.getString(R.string.hit));
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
-                tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
-            }
-            else{
-                /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
-                    and "REST" if it was a rest day. */
-                if (_allDayRecords.get(k+i).isGymDay()){
-                    if (i==6){
-                        /* CURRENT DAY STATE */
-                        //The message for today; don't say "missed"
-                        tv.setText("?");
-                    }
-                    else{
-                        /*MISSED A GYM DAY STATE */
-                        tv.setText(r.getString(R.string.miss));
-                        tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
-                        tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
-                    }
-                }else{
-                    /* REST DAY STATE */
-                    tv.setText(r.getString(R.string.rest));
-                }
-            }
-        }
-    }
+
+
 
     public View getDayViewFromPosition(int pos){
         if (pos<1 || pos>7){ return null; }
@@ -137,7 +88,7 @@ public class WeekCalendarView extends LinearLayout {
     }
 
     public void showLastDayMarker(){
-        findViewById(R.id.day_7).findViewById(R.id.todaymarker).setVisibility(VISIBLE);
+        findViewById(R.id.day_7).findViewById(R.id.record_for_day).setVisibility(VISIBLE);
     }
 
     public void showLastDayMarker(int color){

@@ -4,19 +4,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <TextView
-        android:id="@+id/todaymarker"
-        android:layout_width="wrap_content"
+        android:id="@+id/calendar_day_name"
+        android:text="Mon"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:singleLine="true"
-        android:textSize="@dimen/textSmall"
-        android:visibility="invisible"
-        android:text="(Today)"/>
+        android:gravity="center" />
     <TextView
         android:id="@+id/calendar_day_info"
         android:gravity="center"
-        android:text="MISS"
-        android:textSize="12sp"
+        android:text="25"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginTop="2dp"
         android:layout_margin="4dp"
@@ -24,10 +21,14 @@
         android:layout_height="40dp"
         android:background="@drawable/circle"/>
     <TextView
-        android:id="@+id/calendar_day_name"
-        android:text="Mon"
-        android:layout_width="match_parent"
+        android:id="@+id/record_for_day"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center" />
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true"
+        android:textSize="@dimen/textSmall"
+        android:visibility="invisible"
+        android:text="(Today)"/>
+
 
 </LinearLayout>

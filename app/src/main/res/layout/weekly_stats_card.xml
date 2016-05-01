@@ -24,13 +24,21 @@
                 android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
+<!--
             <com.pipit.agc.agc.widget.WeekCalendarView
                 android:id="@+id/calendar_component"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/title_name"
                 />
+-->
+            <com.pipit.agc.agc.widget.WeekViewSwipeable
+                android:id="@+id/calendar_component"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title_name"
+                />
+
 <!--
             <include layout="@layout/week_calendar"
                 android:id="@+id/calendar_component"

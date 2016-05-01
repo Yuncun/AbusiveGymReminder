@@ -104,7 +104,6 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
 
             String primaryText = getDayMessage(dayOfWeek, cal.getTime(), rowView);
             commentTV.setText(primaryText);
-
         }
 
         /*Set listview height to show 7 days*/
@@ -171,7 +170,6 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
         }
         return null;
     }
-
     /*
         Also styles the rowview
      */

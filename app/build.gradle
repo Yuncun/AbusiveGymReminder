@@ -28,4 +28,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'noman.weekcalendar:weekcalendar:1.0.6'
 }
