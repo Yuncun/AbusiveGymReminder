@@ -49,10 +49,10 @@
                     android:layout_marginTop="6dp"
                     android:gravity="center"
                     android:text="10"
-                    android:textSize="65dp"
+                    android:textSize="60dp"
                     android:textStyle="bold"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:elevation="4dp"
                     android:background="@drawable/circle"/>
             </RelativeLayout>
@@ -72,10 +72,10 @@
                     android:layout_marginTop="6dp"
                     android:gravity="center"
                     android:text="10"
-                    android:textSize="65dp"
+                    android:textSize="60dp"
                     android:textStyle="bold"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:elevation="4dp"
                     android:background="@drawable/circle"/>
 

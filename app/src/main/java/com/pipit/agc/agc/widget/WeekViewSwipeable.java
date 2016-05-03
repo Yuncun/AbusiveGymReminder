@@ -88,66 +88,6 @@ public class WeekViewSwipeable extends LinearLayout {
         }
     }
 
-    /**
-     * Used to populate and style the WeekCalendarView that shows attendance over last seven days
-     * @return
-     */
-    public void styleFromDayrecordsData(Context context, List<DayRecord> _allDayRecords){
-        ArrayList<String> hitlist = new ArrayList<String>();
-        Resources r = context.getResources();
-        String name = this.getContext().getPackageName();
-        int k = _allDayRecords.size()-7; //Dayrecord of seven days past;
-        for (int i= 0 ; i < 7 ; i++){
-            /*Get identifier*/
-            int j = i+1; //I'm as confused as you are
-            int viewid = r.getIdentifier("day_" + j, "id", name);
-            View weekitem = findViewById(viewid);
-            TextView tv = (TextView) weekitem.findViewById(R.id.calendar_day_info);
-            if (k+i<0) {
-                /* NO INFO STATE */
-                /* HIDE VISIBILITY */
-                tv.setText(r.getString(R.string.noinfo));
-                weekitem.setVisibility(View.GONE);
-                continue;
-            }
-            if (_allDayRecords.get(k+i).beenToGym()){
-                /*HIT DAY*/
-                tv.setText(r.getString(R.string.hit));
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
-                tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
-            }
-            else{
-                /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
-                    and "REST" if it was a rest day. */
-                if (_allDayRecords.get(k+i).isGymDay()){
-                    if (i==6){
-                        /* CURRENT DAY STATE */
-                        //The message for today; don't say "missed"
-                        tv.setText("?");
-                    }
-                    else{
-                        /*MISSED A GYM DAY STATE */
-                        tv.setText(r.getString(R.string.miss));
-                        tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
-                        tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
-                    }
-                }else{
-                    /* REST DAY STATE */
-                    tv.setText(r.getString(R.string.rest));
-                }
-            }
-        }
-    }
-
-    public View getDayViewFromPosition(int pos){
-        if (pos<1 || pos>7){ return null; }
-        Resources r = getResources();
-        String name = this.getContext().getPackageName();
-        int viewid = r.getIdentifier("day_" + pos, "id", name);
-        View weekitem = findViewById(viewid);
-        return weekitem;
-    }
-
     public void showLastDayMarker(){
         findViewById(R.id.day_7).findViewById(R.id.record_for_day).setVisibility(VISIBLE);
     }

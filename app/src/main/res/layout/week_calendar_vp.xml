@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:textSize="@dimen/textMedium"
+        android:visibility="gone"
         android:text="Some text"/>
 
     <com.pipit.agc.agc.widget.AgcViewPager

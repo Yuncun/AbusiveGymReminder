@@ -3,6 +3,7 @@
     <item name="transparent" type="color">#00FFFFFF</item>
     <item name="backgroundgray" type="color">#fff3f3f3</item>
     <item name="grey" type="color">#E3E3E3</item>
+    <item name="grey_lighter" type="color">#EEEEEE</item>
     <item name="grey_darker" type="color">#D4D4D4</item>525353
     <item name="grey_verydark" type="color">#525353</item>
     <item name="green" type="color">#71B275</item>

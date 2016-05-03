@@ -115,11 +115,20 @@ public class WeekViewAdapter extends PagerAdapter {
      * and last days inclusive?
      */
     public static int getNumberOfWeeks(List<DayRecord> dayrecords){
-        if (dayrecords == null){
+        if (dayrecords == null || dayrecords.size() == 0){
             return 1;
         }
+        int n = dayrecords.size() / 7;
+        n++;
+        int rem = dayrecords.size() % 7;
+
+        Calendar c = Calendar.getInstance();
+        if (c.get(Calendar.DAY_OF_WEEK) < rem){
+            n++;
+        }
+
         //This always gives us an "extra" week - so seven days starting on Sunday may give us two weeks
-        return (dayrecords.size() / 7) + 2;
+        return n;
     }
 
     /**
@@ -141,7 +150,7 @@ public class WeekViewAdapter extends PagerAdapter {
             int index = i + a - dowOfFirstDay;
 
             //The indexed day versus today's date
-            int offset = index - _allDayRecords.size();
+            int offset = index - _allDayRecords.size() + 1;
             Calendar indexedDay = Calendar.getInstance();
             indexedDay.add(Calendar.DATE, offset);
             int dow = indexedDay.get(Calendar.DAY_OF_WEEK);
@@ -157,10 +166,12 @@ public class WeekViewAdapter extends PagerAdapter {
             tv.setText(Integer.toString(date));
 
             if (index >= _allDayRecords.size()){
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.basewhite), PorterDuff.Mode.SRC_ATOP);
+                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
+                //tv.getBackground().setAlpha(128);
                 continue;
             }else if (index < 0){
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.basewhite), PorterDuff.Mode.SRC_ATOP);
+                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
+                //tv.getBackground().setAlpha(128);
                 continue;
             }
             rfd.setVisibility(View.VISIBLE);
@@ -191,6 +202,7 @@ public class WeekViewAdapter extends PagerAdapter {
                 }
             }
             if (index==_allDayRecords.size()-1){
+                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
                 rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
                 rfd.setText("Today");
             }
