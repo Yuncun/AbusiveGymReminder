@@ -1,6 +1,7 @@
 package com.pipit.agc.agc.util;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -228,11 +229,12 @@ public class ReminderOracle {
         PendingIntent notificationPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        Notification.Builder builder = new Notification.Builder(context);
 
         if (!body2.isEmpty()){
             body+="...";
         }
+
 
         if (reason==Message.MISSED_YESTERDAY){
             builder.setSmallIcon(R.drawable.notification_icon)
@@ -243,17 +245,20 @@ public class ReminderOracle {
                 .setColor(Color.RED)
                 .setContentIntent(notificationPendingIntent)
                 .setContentTitle(header)
-                //.setStyle(new NotificationCompat.BigTextStyle().bigText(body));
+                .setStyle(new Notification.BigTextStyle()
+                        .bigText(body + "\n" + body2))
                 .setContentText(body);
         }
         else{
             builder.setSmallIcon(R.drawable.notification_icon)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.notification_icon))
-                .setColor(Color.GREEN)
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                            R.drawable.notification_icon))
+                    .setColor(Color.GREEN)
                 .setContentTitle(header)
                 //.setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setContentText(body)
+                    .setStyle(new Notification.BigTextStyle()
+                            .bigText(body + "\n" + body2))
                 .setContentIntent(notificationPendingIntent);
         }
 
