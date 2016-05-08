@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,31 +14,40 @@ import android.widget.TextView;
 
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.SharedPrefUtil;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by Eric on 12/8/2015.
  */
-public class LandingFragment extends Fragment {
+public class LogFragment extends Fragment {
 
+    private static final String TAG = "LogFragment";
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static TextView _lastLocationTxt;
+    private TextView _lastLocationTxt;
     private Button _resetCountButton;
-    private Button _updateLocationButton;
     private Context _context;
+    private TextView _infoOneKey;
+    private TextView _infoTwoKey;
+    private TextView _infoOneVal;
+    private TextView _infoTwoVal;
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static LandingFragment newInstance(int sectionNumber) {
-        LandingFragment fragment = new LandingFragment();
+    public static LogFragment newInstance(int sectionNumber) {
+        LogFragment fragment = new LogFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public LandingFragment() {
+    public LogFragment() {
     }
 
     @Override
@@ -56,7 +66,6 @@ public class LandingFragment extends Fragment {
         _lastLocationTxt = (TextView) rootView.findViewById(R.id.lastLocation);
         _lastLocationTxt.setText(lastLocation);
         _resetCountButton = (Button) rootView.findViewById(R.id.button);
-        _updateLocationButton = (Button) rootView.findViewById(R.id.updatelocationbutton);
 
         _resetCountButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,15 +74,38 @@ public class LandingFragment extends Fragment {
                 editor.putInt("trackcount", 0);
                 editor.putString("locationlist", "");
                 editor.commit();
-                updateLastLocation("");
             }
         });
 
-        _updateLocationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+        _infoOneKey = (TextView) rootView.findViewById(R.id.info_one_key);
+        _infoTwoKey = (TextView) rootView.findViewById(R.id.info_two_key);
+
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+
+        /*Last gym time*/
+        _infoOneKey.setText("Last gym time");
+        _infoOneVal = (TextView) rootView.findViewById(R.id.info_one_val);
+        Calendar cal = Calendar.getInstance();
+        long lastvisit = SharedPrefUtil.getLong(getContext(), "lastgymtime", -1);
+        cal.setTimeInMillis(lastvisit);
+        if (lastvisit > 0){
+            _infoOneVal.setText(dateFormat.format(cal.getTime()));
+        }else{
+            _infoOneVal.setText("No Record");
+        }
+
+        /*Next notification time*/
+        _infoTwoVal = (TextView) rootView.findViewById(R.id.info_two_val);
+        _infoTwoKey.setText("Next notification time");
+        cal = Calendar.getInstance();
+        long nextnotif = SharedPrefUtil.getLong(getContext(), "nextnotificationtime", -1);
+        cal.setTimeInMillis(nextnotif);
+        if (nextnotif > 0){
+            _infoTwoVal.setText(dateFormat.format(cal.getTime()));
+        }else{
+            _infoTwoVal.setText("No Record");
+        }
+
         return rootView;
     }
 

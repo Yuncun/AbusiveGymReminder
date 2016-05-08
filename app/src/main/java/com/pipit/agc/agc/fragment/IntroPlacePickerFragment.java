@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -56,6 +57,26 @@ public class IntroPlacePickerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startPlacePicker();
+            }
+        });
+        _launchcircle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                switch (arg1.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow_sel), PorterDuff.Mode.SRC_ATOP);
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:
+                        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+                        _launchcircle.performClick();
+                        break;
+                    case MotionEvent.ACTION_CANCEL: {
+                        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+                        break;
+                    }
+                }
+                return true;
             }
         });
         _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);

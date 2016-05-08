@@ -14,11 +14,35 @@ import java.util.HashSet;
  * Created by Eric on 2/6/2016.
  */
 public class SharedPrefUtil {
+
+    public static void updateMainLog(Context context, String s){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        String mLastUpdateTime = dateFormat.format(cal.getTime());
+        String logUpdate = prefs.getString("locationlist", "none") + "\n" + mLastUpdateTime + ": " + s ;
+        editor.putString("locationlist", logUpdate);
+        editor.commit();
+
+    }
     public static void putString(Context context, String key, String val){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, val);
         editor.commit();
+    }
+
+    public static void putInt(Context context, String key, int val){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, val);
+        editor.commit();
+    }
+
+    public static int getInt(Context context, String key, int defaultValue){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        return prefs.getInt(key, defaultValue);
     }
 
     public static SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {

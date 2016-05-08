@@ -24,6 +24,8 @@ import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +39,9 @@ import java.util.Random;
 public class ReminderOracle {
     public static final int POST_TIME_NOISE_HOURS = 2;
     public static final int POST_TIME_NOISE_MINTUES = 60;
+    public static final int MORNING_OFFSET = 9;
+    public static final int AFTERNOON_OFFSET = 16;
+    public static final int EVENING_OFFSET = 20;
     private static final String TAG = "ReminderOracle";
 
     /**
@@ -118,23 +123,61 @@ public class ReminderOracle {
             }
         }
         messagerepo.close();
-        /*Calculate time*/
+
+        /*Calculate Noise*/
         Random rand = new Random();
         int hr_noise = rand.nextInt(POST_TIME_NOISE_HOURS);
         int min_noise = rand.nextInt(POST_TIME_NOISE_MINTUES);
-        long time_ms = SharedPrefUtil.getLong(context, "lastgymtime", -1);
+        if (rand.nextBoolean()){
+            hr_noise*=-1;
+            min_noise*=-1;
+        }
 
+        //Init Calendars
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
-        if (time_ms>0){
-            cal.setTimeInMillis(time_ms);
-            cal.add(Calendar.MINUTE, min_noise);
+
+        //Find a time to display message depending on the notification preferences of the user
+        int notifpref =  SharedPrefUtil.getInt(context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_AFTERNOON);
+        Log.d(TAG, "Preferred notification time is " + notifpref);
+
+        switch (notifpref){
+            case Constants.NOTIFTIME_MORNING:
+                cal.add(Calendar.HOUR, MORNING_OFFSET);
+                break;
+            case Constants.NOTIFTIME_AFTERNOON:
+                cal.add(Calendar.HOUR, AFTERNOON_OFFSET);
+                break;
+            case Constants.NOTIFTIME_EVENING:
+                cal.add(Calendar.HOUR, EVENING_OFFSET);
+                break;
+            case Constants.NOTIFTIME_YOLO:
+                long time_ms = SharedPrefUtil.getLong(context, "lastgymtime", -1);
+
+                if (time_ms>0){
+                    Calendar c2 = Calendar.getInstance();
+                    c2.setTimeInMillis(time_ms);
+                    cal.set(Calendar.HOUR, c2.get(Calendar.HOUR));
+                    cal.set(Calendar.MINUTE, c2.get(Calendar.MINUTE));
+                    cal.add(Calendar.MINUTE, min_noise);
+                    cal.add(Calendar.HOUR, hr_noise);
+                }
+                else{
+                    cal.add(Calendar.HOUR, AFTERNOON_OFFSET); //16 hours, a default (arbitrary) time to wait before showing message
+                }
+                break;
+            default:
+                cal.add(Calendar.HOUR, AFTERNOON_OFFSET);
+                break;
         }
-        else{
-            cal.add(Calendar.HOUR, 16); //16 hours, a default (arbitrary) time to wait before showing message
-        }
+
         int hour = cal.get(Calendar.HOUR);
         int minutes = cal.get(Calendar.MINUTE);
+
+        SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dateFormat.format(cal.getTime()));
+        SharedPrefUtil.putLong(context, "nextnotificationtime", cal.getTimeInMillis());
         Log.d(TAG, "hours"+hour + " min"+minutes + " from hour_noise"+hr_noise + " and min_noise"+min_noise);
+
         if (testmode && msg!=null){
             setLeaveMessageAlarm(context, msg, 0, 0);
         }
@@ -169,9 +212,11 @@ public class ReminderOracle {
         i.putExtra("message", m.toJson());
         PendingIntent pi = PendingIntent.getBroadcast(context, 3, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+        String settime = dateFormat.format(calendar.getTime());
         am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
         Log.d(TAG, "setLeaveMessageAlarm " + System.currentTimeMillis()
-                + " alarm set for " + calendar.getTimeInMillis() + " message " + m.toJson());
+                + " alarm set for " + settime + " message " + m.getBody());
     }
 
     /**
@@ -242,7 +287,7 @@ public class ReminderOracle {
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.drawable.notification_icon))
-                .setColor(Color.RED)
+                //.setColor(Color.RED)
                 .setContentIntent(notificationPendingIntent)
                 .setContentTitle(header)
                 .setStyle(new Notification.BigTextStyle()
@@ -253,7 +298,7 @@ public class ReminderOracle {
             builder.setSmallIcon(R.drawable.notification_icon)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.notification_icon))
-                    .setColor(Color.GREEN)
+                    //.setColor(Color.GREEN)
                 .setContentTitle(header)
                 //.setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setContentText(body)

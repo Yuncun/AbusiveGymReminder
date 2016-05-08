@@ -37,6 +37,7 @@
     <item name="schemethree_darkerteal" type="color">#2796B2</item>
 
     <item name="schemefour_yellow" type="color">#FFDB8A</item>
+    <item name="schemefour_yellow_sel" type="color">#FFF2D5</item>
     <item name="schemefour_red" type="color">#FF988A</item>
     <item name="schemefour_teal" type="color">#71BACC</item>
     <item name="schemefour_darkerred" type="color">#FF7A68</item>

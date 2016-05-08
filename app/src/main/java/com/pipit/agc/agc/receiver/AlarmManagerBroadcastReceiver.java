@@ -16,6 +16,7 @@ import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.data.MySQLiteHelper;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 
 import java.text.DateFormat;
@@ -31,7 +32,7 @@ import java.util.List;
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 {
     Context _context;
-    private static final String TAG = "AlarmManagerBroadcastReceiver";
+    private static final String TAG = "AlarmManagerBrdcstRcvr";
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -110,14 +111,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
     public static void doDayLogging(Context context){
         //Logging
         Log.d(TAG, "Starting dayLogging");
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        SharedPreferences.Editor editor = prefs.edit();
-        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
-        Calendar cal = Calendar.getInstance();
-        String mLastUpdateTime = dateFormat.format(cal.getTime());
-        String logUpdate = prefs.getString("locationlist", "none") + "\n" + "Alarm Manager Update at " + mLastUpdateTime;
-        editor.putString("locationlist", logUpdate);
-        editor.commit();
+        SharedPrefUtil.updateMainLog(context, "Alarm Manager Update");
 
         //Progress the day
         DBRecordsSource datasource;
@@ -132,12 +126,10 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         day.setDate(new Date());
         day.setHasBeenToGym(false);
         day.setIsGymDay(isTheNewDayAGymDay(context));
-        DayRecord dayRecord = datasource.createDayRecord(day);
+        datasource.createDayRecord(day);
         datasource.closeDatabase();
         Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
 
-        //Show gym message
-        editor.putBoolean("showGymStatus", true);
         ReminderOracle.doLeaveMessageBasedOnPerformance(context, false);
     }
 

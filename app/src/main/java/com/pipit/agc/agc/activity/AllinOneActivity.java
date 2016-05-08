@@ -267,6 +267,8 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                             day.setComment(getResources().getString(R.string.no_record));
                             day.setIsGymDay(false);
                             datasource.createDayRecord(day);
+                            SharedPrefUtil.updateMainLog(this, "Updated day from onStart");
+
                             Log.d(TAG, "Incremented a day, lastDate is now" + lastDate.getDateString()
                                     + "and today's date is " + todaysDate.getDateString());
                         }

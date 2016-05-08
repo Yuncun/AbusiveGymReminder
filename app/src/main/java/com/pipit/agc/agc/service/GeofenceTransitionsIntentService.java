@@ -80,12 +80,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
             sendNotification(geofenceTransitionDetails);
             Log.i(TAG, geofenceTransitionDetails);
             //Update logs
-            SharedPreferences prefs = this.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-            SharedPreferences.Editor editor = prefs.edit();
-            String lastLocation = prefs.getString("locationlist", "none");
-            String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-            String body = lastLocation+"\n" + geofenceTransitionDetails + " " + mLastUpdateTime;
-            editor.putString("locationlist", body).commit();
+            SharedPrefUtil.updateMainLog(this, geofenceTransitionDetails);
 
             //Update gym status today
             updateLastDayRecord();

@@ -7,8 +7,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.pipit.agc.agc.fragment.DayPickerFragment;
-import com.pipit.agc.agc.fragment.LandingFragment;
+import com.pipit.agc.agc.fragment.LogFragment;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.fragment.PreferencesFragment;
 import com.pipit.agc.agc.fragment.TestDBFragmentDays;
 import com.pipit.agc.agc.fragment.TestDBFragmentMessages;
 
@@ -35,14 +36,14 @@ public class IndividualSettingActivity extends AppCompatActivity  {
             }
             Fragment frag = new Fragment();
             switch (fragname) {
-                case "LandingFragment":
-                    frag = LandingFragment.newInstance(0);
+                case "LogFragment":
+                    frag = LogFragment.newInstance(0);
                     break;
                 case "TestDBFragmentMessages":
                     frag = TestDBFragmentMessages.newInstance(1);
                     break;
-                case "TestDBFragmentDays":
-                    frag = TestDBFragmentDays.newInstance(2);
+                case "PreferencesFragment":
+                    frag = PreferencesFragment.newInstance();
                     break;
                 case "DayPickerFragment":
                     frag = DayPickerFragment.newInstance(3);

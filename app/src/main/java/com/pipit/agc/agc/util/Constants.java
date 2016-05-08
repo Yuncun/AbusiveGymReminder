@@ -28,6 +28,8 @@ public class Constants {
     public static final String DEST_LNG = "lng";
     public static final String GEOFENCES_ADDED_KEY= "geofenceadded";
     public static final String TAKEN_MESSAGE_IDS = "taken_message_ids"; //repoids of messages we have received
+    public static final String PREF_NOTIF_TIME = "prefnotificationtime";
+    //Todo: I kind of stopped doing this halfway through there may be others out there
 
 
     /*Fragment Names*/
@@ -42,4 +44,9 @@ public class Constants {
     /*Permissions requestcodes*/
     public static final int GRANTED_LOCATION_PERMISSIONS = 1;
 
+    /*Some enums*/
+    public static final int NOTIFTIME_MORNING = 0;
+    public static final int NOTIFTIME_AFTERNOON = 1;
+    public static final int NOTIFTIME_EVENING = 2;
+    public static final int NOTIFTIME_YOLO = 3;
 }

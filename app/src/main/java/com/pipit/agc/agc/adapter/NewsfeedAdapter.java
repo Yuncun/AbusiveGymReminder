@@ -109,8 +109,11 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         //holder.timestamp.setTextSize(12);
 
         if (!m.getRead()){
-        //Todo: Add "read" field to databaseace(null, Typeface.BOLD);
+            //Todo: Add "read" field to databaseace(null, Typeface.BOLD);
+            holder.reason.setTextColor(ContextCompat.getColor(_context, R.color.black));
             holder.reason.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
+            holder.timestamp.setTextColor(ContextCompat.getColor(_context, R.color.black));
+            holder.timestamp.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
             //holder.header.setTypeface(holder.comment.getTypeface(), Typeface.BOLD);
             //holder.timestamp.setTypeface(holder.timestamp.getTypeface(), Typeface.BOLD);
         }
@@ -148,7 +151,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         screenheight*=GYM_STATUS_HEIGHT_RATIO;
         return (int) screenheight;
     }
-
 
     public void updateDayrecords(List<DayRecord> newSet){
         _days=newSet;

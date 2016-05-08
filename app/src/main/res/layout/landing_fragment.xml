@@ -5,24 +5,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <Button
-        android:id="@+id/button"
-        android:text="Restart counter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="300dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:orientation="vertical">
         <TextView
-            android:id="@+id/lastLocation"
+            android:id="@+id/info_one_key"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="key"/>
+        <TextView
+            android:id="@+id/info_two_key"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/info_one_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="key"/>
+        <TextView
+            android:id="@+id/info_one_val"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="val"/>
+        <TextView
+            android:id="@+id/info_two_val"
+            android:layout_below="@id/info_one_val"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="val"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/lastLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+        <Button
+            android:id="@+id/button"
+            android:text="Restart counter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    </ScrollView>
-    <Button
-        android:id="@+id/updatelocationbutton"
-        android:text="Update Location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+
 
 
 </LinearLayout>
