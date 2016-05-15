@@ -48,6 +48,13 @@
             android:text="Test Add Day"
             android:onClick="onClick"/>
 
+        <Button
+            android:id="@+id/startVisit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toggle Visit"
+            android:onClick="onClick" />
+
     </LinearLayout>
 
     <ListView

@@ -75,9 +75,6 @@ public class WeekCalendarView extends LinearLayout {
         }
     }
 
-
-
-
     public View getDayViewFromPosition(int pos){
         if (pos<1 || pos>7){ return null; }
         Resources r = getResources();

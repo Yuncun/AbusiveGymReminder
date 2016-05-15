@@ -1,7 +1,5 @@
 package com.pipit.agc.agc.fragment;
 
-import android.app.AlarmManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -19,15 +17,15 @@ import com.pipit.agc.agc.data.MySQLiteHelper;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
-import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.ReminderOracle;
-import com.pipit.agc.agc.util.Util;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 
-import java.text.DateFormat;
+import org.joda.time.LocalDateTime;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Eric on 1/23/2016.
@@ -40,10 +38,11 @@ public class TestDBFragmentMessages extends ListFragment {
     private DBRecordsSource datasource;
     private TextView currentTime;
     private TextView resetTime;
-    private Button _addButton;
+    private Button _simulateMidnight;
     private Button _testReceiverAddButton;
     private Button _deleteButton;
     private Button _addDay;
+    private Button _startGymVisit;
 
     private Button _upgradeDbButton;
 
@@ -81,8 +80,8 @@ public class TestDBFragmentMessages extends ListFragment {
 
 
     public void setButtons(View view) {
-        _addButton = (Button) view.findViewById(R.id.add);
-        _addButton.setOnClickListener(new View.OnClickListener() {
+        _simulateMidnight = (Button) view.findViewById(R.id.add);
+        _simulateMidnight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "doDayLogging from test button");
@@ -126,10 +125,54 @@ public class TestDBFragmentMessages extends ListFragment {
                 day.setComment("You have not been to the gym");
                 day.setDate(new Date());
                 day.setHasBeenToGym(false);
-                day.setIsGymDay(false);
+                Calendar cal = Calendar.getInstance();
+                day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(getContext(), cal.get(Calendar.DAY_OF_WEEK)));
                 DayRecord dayRecord = datasource.createDayRecord(day);
                 datasource.closeDatabase();
                 Toast.makeText(getActivity(), "new day added!", Toast.LENGTH_LONG);
+            }
+        });
+
+        final String gymVisitStart = "Start";
+        final String gymVisitEnd = "End";
+        _startGymVisit = (Button) view.findViewById(R.id.startVisit);
+
+        DBRecordsSource datasource;
+        datasource = DBRecordsSource.getInstance();
+        datasource.openDatabase();
+        DayRecord today = datasource.getLastDayRecord();
+        datasource.closeDatabase();
+
+        if (today.isCurrentlyVisiting()){
+            _startGymVisit.setText(gymVisitEnd);
+        }
+        else{
+            _startGymVisit.setText(gymVisitStart);
+        }
+        _startGymVisit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DBRecordsSource datasource;
+                datasource = DBRecordsSource.getInstance();
+                datasource.openDatabase();
+                DayRecord today = datasource.getLastDayRecord();
+
+                //Click to end
+                if (today.isCurrentlyVisiting()){
+                    if (today.endCurrentVisit()){
+                        datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
+                        _startGymVisit.setText(gymVisitStart);
+                    }
+                }
+                //Click to start
+                else{
+                    today.startCurrentVisit();
+                    datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
+                    _startGymVisit.setText(gymVisitEnd);
+
+                }
+                datasource.closeDatabase();
+                Log.d(TAG, "Today's visits" + today.printVisits());
             }
         });
     }

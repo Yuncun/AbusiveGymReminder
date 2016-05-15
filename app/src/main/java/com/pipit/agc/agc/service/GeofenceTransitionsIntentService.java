@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
@@ -87,7 +88,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
             rememberGymHabits(getApplicationContext());
             ReminderOracle.doLeaveOnGymArrivalMessage(getApplicationContext(), true);
             sendNotification("GEO FENCE FROM SERVICE");
-        } else {
+
+        }
+        else {
             Log.e(TAG, "geofenceTransition error");
         }
     }

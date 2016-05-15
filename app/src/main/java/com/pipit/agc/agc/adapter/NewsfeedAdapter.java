@@ -74,7 +74,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder holder, int position) {
+    public void onBindViewHolder(final CardViewHolder holder, int position) {
         Message m = _messages.get(position);
         Resources r = _context.getResources();
         holder.header.setText(m.getHeader());
@@ -131,6 +131,10 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 datasource.markMessageRead(_messages.get(mpos).getId(), true);
                 datasource.closeDatabase();
                 notifyDataSetChanged();
+                holder.reason.setTextColor(ContextCompat.getColor(_context, android.R.color.primary_text_light));
+                holder.reason.setTypeface(holder.reason.getTypeface(), Typeface.NORMAL);
+                holder.timestamp.setTextColor(ContextCompat.getColor(_context, android.R.color.primary_text_dark));
+                holder.timestamp.setTypeface(holder.reason.getTypeface(), Typeface.NORMAL);
            }
         });
     }

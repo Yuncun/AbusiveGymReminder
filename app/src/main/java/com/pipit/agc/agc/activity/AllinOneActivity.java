@@ -265,7 +265,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                             lastDate.setDate(cal.getTime());
                             DayRecord day = new DayRecord();
                             day.setComment(getResources().getString(R.string.no_record));
-                            day.setIsGymDay(false);
+                            day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(this, cal.get(Calendar.DAY_OF_WEEK)));
                             datasource.createDayRecord(day);
                             SharedPrefUtil.updateMainLog(this, "Updated day from onStart");
 
@@ -343,7 +343,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setLoiteringDelay(1000 * 60 * 1)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT)
                         //.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         //        Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();

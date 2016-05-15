@@ -44,6 +44,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
         String purpose = intent.getStringExtra("purpose");
         Log.d(TAG, "Received broadcast for " + purpose);
+        SharedPrefUtil.updateMainLog(context, "Alarm woken with a broadcast for " + purpose);
         switch(purpose){
             case "daylogging" :
                 doDayLogging(context);
@@ -111,9 +112,9 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
     public static void doDayLogging(Context context){
         //Logging
         Log.d(TAG, "Starting dayLogging");
-        SharedPrefUtil.updateMainLog(context, "Alarm Manager Update");
+        SharedPrefUtil.updateMainLog(context, "Doing day logging, adding a day");
 
-        //Progress the day
+        //Progress current day - open db
         DBRecordsSource datasource;
         datasource = DBRecordsSource.getInstance();
         if (datasource==null){
@@ -121,6 +122,18 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
             datasource = DBRecordsSource.getInstance();
         }
         datasource.openDatabase();
+
+        //Finish the current day
+        boolean  flagStartNewVisit = false;
+        DayRecord yesterday = datasource.getLastDayRecord();
+        if (yesterday.isCurrentlyVisiting()){
+            datasource.closeDatabase();
+            yesterday.endCurrentVisit();
+            datasource.openDatabase();
+            flagStartNewVisit = true;
+        }
+
+        //Add the new day
         DayRecord day = new DayRecord();
         day.setComment("You have not been to the gym");
         day.setDate(new Date());
@@ -128,8 +141,9 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         day.setIsGymDay(isTheNewDayAGymDay(context));
         datasource.createDayRecord(day);
         datasource.closeDatabase();
-        Toast.makeText(context, "new day added!", Toast.LENGTH_LONG);
-
+        if (flagStartNewVisit){
+            day.startCurrentVisit();
+        }
         ReminderOracle.doLeaveMessageBasedOnPerformance(context, false);
     }
 

@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
@@ -83,7 +84,25 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             //Update last visited time
             long time= System.currentTimeMillis();
             SharedPrefUtil.updateLastVisitTime(context, time);
-        } else {
+
+            //Open a visiting counter on this day
+            DBRecordsSource datasource;
+            datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            DayRecord today = datasource.getLastDayRecord();
+            datasource.closeDatabase();
+            today.startCurrentVisit();
+        }
+        else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL){
+            //Open a visiting counter on this day
+            DBRecordsSource datasource;
+            datasource = DBRecordsSource.getInstance();
+            datasource.openDatabase();
+            DayRecord today = datasource.getLastDayRecord();
+            datasource.closeDatabase();
+            today.endCurrentVisit();
+        }
+        else {
             Log.e(TAG, "geofenceTransition error");
         }
     }

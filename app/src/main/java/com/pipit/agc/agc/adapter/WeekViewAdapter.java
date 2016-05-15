@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.Calendar;
@@ -29,7 +31,6 @@ public class WeekViewAdapter extends PagerAdapter {
         public boolean present;
         public DayRecord dayrecord;
         public Calendar date;
-
     }
 
     public WeekViewAdapter(Context context) {
@@ -135,22 +136,31 @@ public class WeekViewAdapter extends PagerAdapter {
     * Used to populate and style the WeekCalendarView that shows attendance over last seven days
     * @return
     */
-    public void styleFromDayrecordsData(Context context, List<DayRecord> _allDayRecords, int page, View root){
+    public void styleFromDayrecordsData(final Context context, final List<DayRecord> _allDayRecords, int page, View root){
         Resources r = root.getContext().getResources();
         String name = context.getPackageName();
         int a = 7*page;
 
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, -1*_allDayRecords.size());
+        c.add(Calendar.DATE, -1*(_allDayRecords.size()-1));
         int dowOfFirstDay = c.get(Calendar.DAY_OF_WEEK);
-       // dowOfFirstDay; //AT this point, if the first day was a Sunday, dowOfFirstDay==0. Monday, 1, etc.
+        //We use this calculate the buffer; if Sunday is first day, we can use the first element. But if
+        //Wed is the first day, we need to wait 3 elements before using the first dayRecord.
+        //Now, DOWofFirstDAY is in Calendar format, i.e. 1-7, we need to decrement here.
+        dowOfFirstDay--;
 
         for (int i = 0 ; i < 7 ; i++){
 
-            int index = i + a - dowOfFirstDay;
+            //i == which card we are on
+            //a == offset from the page.
+            //dowOfFirstDay == 0-6 where 0 is Sunday.
+            //Index is the index of the dayRecord that corresponds to the given i card.
+            //If it negative, then we have no record for it.
+            final int index = i + a - dowOfFirstDay;
 
             //The indexed day versus today's date
-            int offset = index - _allDayRecords.size() + 1;
+            //The first card should be today's date, minus
+            int offset = index - (_allDayRecords.size()-1);
             Calendar indexedDay = Calendar.getInstance();
             indexedDay.add(Calendar.DATE, offset);
             int dow = indexedDay.get(Calendar.DAY_OF_WEEK);
@@ -165,6 +175,7 @@ public class WeekViewAdapter extends PagerAdapter {
             TextView rfd = (TextView) weekitem.findViewById(R.id.record_for_day);
             tv.setText(Integer.toString(date));
 
+            //Check if it is a day for which we have records
             if (index >= _allDayRecords.size()){
                 tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
                 //tv.getBackground().setAlpha(128);
@@ -174,7 +185,26 @@ public class WeekViewAdapter extends PagerAdapter {
                 //tv.getBackground().setAlpha(128);
                 continue;
             }
+
+
             rfd.setVisibility(View.VISIBLE);
+            weekitem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Get latset since this isn't commonly called
+                    DBRecordsSource datasource;
+                    datasource = DBRecordsSource.getInstance();
+                    datasource.openDatabase();
+                    DayRecord today = datasource.getLastDayRecord();
+                    datasource.closeDatabase();
+
+                    MaterialDialog dialog = new MaterialDialog.Builder(context)
+                            .title(today.getDateString())
+                            .content("Visits: \n" + _allDayRecords.get(index).printVisits())
+                            .show();
+                }
+            });
+
             if (_allDayRecords.get(index).beenToGym()){
                 /*HIT DAY*/
                 rfd.setText(r.getString(R.string.hit));

@@ -17,15 +17,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_ISGYMDAY = "isgymday";
     public static final String COLUMN_BEENTOGYM = "beentogym";
+    public static final String COLUMN_VISITS = "visits";
     private static final String DATABASE_NAME = "dayrecords.db";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 16;
 
     private static final String CREATE_TABLE_DAYRECORDS = "create table "
             + TABLE_DAYRECORDS + "(" + COLUMN_ID + " integer primary key autoincrement, "
             + COLUMN_DAYRECORDS + " text not null, "
             + COLUMN_DATE + " text default 0, "
             + COLUMN_ISGYMDAY + " integer default 0, "
-            + COLUMN_BEENTOGYM + " integer default 0 "
+            + COLUMN_BEENTOGYM + " integer default 0, "
+            + COLUMN_VISITS + " text default null "
             + ");";
 
     /**Message Table**/

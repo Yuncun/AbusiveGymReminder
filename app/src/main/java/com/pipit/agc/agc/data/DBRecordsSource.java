@@ -2,6 +2,7 @@ package com.pipit.agc.agc.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -9,10 +10,15 @@ import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 
+import java.io.ByteArrayInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * This singleton holds the database and allows threadsafe access to it
@@ -36,7 +42,8 @@ public class DBRecordsSource {
             MySQLiteHelper.COLUMN_DAYRECORDS,
             MySQLiteHelper.COLUMN_DATE,
             MySQLiteHelper.COLUMN_ISGYMDAY,
-            MySQLiteHelper.COLUMN_BEENTOGYM};
+            MySQLiteHelper.COLUMN_BEENTOGYM,
+            MySQLiteHelper.COLUMN_VISITS};
 
     private String[] allColumnsMessages = {
             MySQLiteHelper.COLUMN_ID,
@@ -83,6 +90,7 @@ public class DBRecordsSource {
         Date date = day.getDate();
         boolean isGymDay = day.isGymDay();
         boolean beenToGym = day.beenToGym();
+        String servis = day.getSerializedVisitsList();
 
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_DAYRECORDS, comment);
@@ -90,6 +98,12 @@ public class DBRecordsSource {
         values.put(MySQLiteHelper.COLUMN_BEENTOGYM, (beenToGym) ? 1 : 0);
         values.put(MySQLiteHelper.COLUMN_ISGYMDAY, (isGymDay) ? 1 : 0);
 
+        if (servis==null){
+            values.putNull(MySQLiteHelper.COLUMN_VISITS);
+        }else{
+
+            values.put(MySQLiteHelper.COLUMN_VISITS, servis);
+        }
         long insertId = mDatabase.insert(MySQLiteHelper.TABLE_DAYRECORDS, null,
                 values);
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS,
@@ -106,6 +120,15 @@ public class DBRecordsSource {
         System.out.println("Comment deleted with id: " + id);
         mDatabase.delete(MySQLiteHelper.TABLE_DAYRECORDS, MySQLiteHelper.COLUMN_ID
                 + " = " + id, null);
+    }
+
+    public void updateLatestDayRecordVisits(String s){
+
+        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_VISITS + " = "
+                + "?" + " WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+                + ")";
+
+        mDatabase.execSQL(query, new String[]{ s });
     }
 
     public void updateLatestDayRecordComment(String comment){
@@ -152,7 +175,7 @@ public class DBRecordsSource {
     public DayRecord getLastDayRecord(){
         DayRecord lastDayRecord = new DayRecord();
         Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS, allColumnsDayRecords, null, null, null, null,
-                MySQLiteHelper.COLUMN_ID +" DESC", "1");
+                MySQLiteHelper.COLUMN_ID + " DESC", "1");
         if(cursor!=null && cursor.getCount()>0) {
             cursor.moveToFirst();
             lastDayRecord = cursorToDayRecord(cursor);
@@ -171,6 +194,10 @@ public class DBRecordsSource {
         dayRecord.setDate(Util.stringToDate(cursor.getString(2)));
         dayRecord.setIsGymDay(cursor.getInt(3) > 0);
         dayRecord.setHasBeenToGym(cursor.getInt(4) > 0);
+        String s = cursor.getString(5);
+        if (s != null && !s.isEmpty()){
+            dayRecord.setVisitsFromString(s);
+        }
         return dayRecord;
     }
 

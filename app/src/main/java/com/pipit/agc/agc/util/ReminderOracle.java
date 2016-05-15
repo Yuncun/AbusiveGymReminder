@@ -50,6 +50,7 @@ public class ReminderOracle {
      */
     public static void doLeaveMessageBasedOnPerformance(Context context, boolean testmode){
         Log.d(TAG, "doLeaveMessageBasedOnPerformance");
+        SharedPrefUtil.updateMainLog(context, "doLeaveMessageBasedOnPerformance");
 
         DayRecord yesterday = StatsContent.getInstance().getYesterday(true);
         DayRecord today = StatsContent.getInstance().getToday(false);
@@ -85,6 +86,8 @@ public class ReminderOracle {
                 }
             } catch (Exception e){
                 Log.d(TAG, e.toString());
+                SharedPrefUtil.updateMainLog(context, "Failed to add new message:\n" +
+                        "    " + e.toString());
                 Toast.makeText(context, "New Message failed",
                         Toast.LENGTH_LONG).show();
             }
@@ -92,6 +95,7 @@ public class ReminderOracle {
         /*Not test mode - Same code as above, but we do nothing for yesterday.beenToGym case, and does the waiting*/
         else{
             if (yesterday.beenToGym()) {
+                SharedPrefUtil.updateMainLog(context, "You went to the gym yesterday, so no notification will be shown");
                 //Currently do nohting
                 // Todo: Figure out if we want to leave a message here or not - am exploring the idea of leaving message immediately
                 // Todo: when user goes to the gym, which would make this redundant.
@@ -117,6 +121,8 @@ public class ReminderOracle {
                     }
                 } catch (Exception e){
                     Log.d(TAG, e.toString());
+                    SharedPrefUtil.updateMainLog(context, "Failed to add new message:\n" +
+                            "    " + e.toString());
                     Toast.makeText(context, "New Message failed",
                             Toast.LENGTH_LONG).show();
                 }
@@ -174,15 +180,14 @@ public class ReminderOracle {
         int hour = cal.get(Calendar.HOUR);
         int minutes = cal.get(Calendar.MINUTE);
 
-        SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dateFormat.format(cal.getTime()));
-        SharedPrefUtil.putLong(context, "nextnotificationtime", cal.getTimeInMillis());
-        Log.d(TAG, "hours"+hour + " min"+minutes + " from hour_noise"+hr_noise + " and min_noise"+min_noise);
-
         if (testmode && msg!=null){
-            setLeaveMessageAlarm(context, msg, 0, 0);
+            setLeaveMessageAlarm(context, msg, 0, 3);
         }
         else
         if (msg!=null){
+            SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dateFormat.format(cal.getTime()));
+            SharedPrefUtil.putLong(context, "nextnotificationtime", cal.getTimeInMillis());
+            Log.d(TAG, "hours"+hour + " min"+minutes + " from hour_noise"+hr_noise + " and min_noise"+min_noise);
             setLeaveMessageAlarm(context, msg, hour, minutes);
         }
     }
@@ -226,7 +231,6 @@ public class ReminderOracle {
      */
     private static void setLeaveMessageAlarm(Context context, Message m, int hours, int minutes){
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.HOUR, hours);
         calendar.add(Calendar.MINUTE, minutes);
         calendar.add(Calendar.SECOND, 10);

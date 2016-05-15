@@ -2,13 +2,18 @@ package com.pipit.agc.agc.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Eric on 2/6/2016.
@@ -105,4 +110,23 @@ public class SharedPrefUtil {
         editor.putLong("last_visit_time", time);
         editor.commit();
     }
+
+    /**
+     *
+     * @param pos : DAY_OF_WEEK: 1 for Sunday and 7 for Saturday
+     * @return True is that day is a gym day
+     */
+    public static boolean getGymStatusFromDayOfWeek(Context context, int pos){
+        pos--; //Because the list of stored days is corresponds to 0-6 index and Calendar.DAY_OF_WEEK is 1-7
+        String datestr = (Integer.toString(pos));
+
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        List<String> dates = (Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
+        if (dates.contains(datestr)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
