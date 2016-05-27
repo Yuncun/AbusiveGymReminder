@@ -67,13 +67,7 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             // Send notification and log the transition details.
             //sendNotification(geofenceTransitionDetails, context);
             Log.i(TAG, geofenceTransitionDetails);
-            //Update logs
-            SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-            SharedPreferences.Editor editor = prefs.edit();
-            String lastLocation = prefs.getString("locationlist", "none");
-            String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-            String body = lastLocation+"\n" + geofenceTransitionDetails + " " + mLastUpdateTime;
-            editor.putString("locationlist", body).commit();
+            SharedPrefUtil.updateMainLog(context, "Geofence dwell");
 
             //Update gym status today
             updateLastDayRecord();
@@ -90,17 +84,20 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             datasource = DBRecordsSource.getInstance();
             datasource.openDatabase();
             DayRecord today = datasource.getLastDayRecord();
-            datasource.closeDatabase();
             today.startCurrentVisit();
+            datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
+            datasource.closeDatabase();
         }
-        else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL){
+        else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             //Open a visiting counter on this day
             DBRecordsSource datasource;
             datasource = DBRecordsSource.getInstance();
             datasource.openDatabase();
             DayRecord today = datasource.getLastDayRecord();
-            datasource.closeDatabase();
             today.endCurrentVisit();
+            datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
+            datasource.closeDatabase();
+            SharedPrefUtil.updateMainLog(context, "Geofence exit");
         }
         else {
             Log.e(TAG, "geofenceTransition error");

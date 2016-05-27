@@ -4,17 +4,23 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.data.DBRecordsSource;
+
+import java.util.ArrayList;
 
 /**
  * Displays message
@@ -25,6 +31,12 @@ public class MessageBodyFragment extends Fragment {
     private static final String ARG_PARAM1 = "id";
     private DBRecordsSource datasource;
     private Message _msg;
+
+    private static final int SWIPE_MIN_DISTANCE = 5;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 300;
+
+    private GestureDetector mGestureDetector;
+    private int mActiveFeature = 0;
 
     private String _id;
 
@@ -53,10 +65,64 @@ public class MessageBodyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_message_body, container, false);
         RelativeLayout background = (RelativeLayout) rootView.findViewById(R.id.msgbackground);
+        LinearLayout background_container = (LinearLayout) rootView.findViewById(R.id.message_layout);
         TextView header = (TextView) rootView.findViewById(R.id.header);
         TextView body = (TextView) rootView.findViewById(R.id.body);
         TextView date = (TextView) rootView.findViewById(R.id.date);
         TextView reason = (TextView) rootView.findViewById(R.id.reason);
+        LinearLayout drawer = (LinearLayout) rootView.findViewById(R.id.bottomdrawer);
+        final ScrollView scrolly = (ScrollView) rootView.findViewById(R.id.scrolly);
+
+        //Set Heights
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int statusbarheight = 25; //TODO: Get this dynamically
+        int messageHeight = metrics.heightPixels-statusbarheight;
+        LinearLayout.LayoutParams rel_btn = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, messageHeight);
+        background_container.setLayoutParams(rel_btn);
+        final int drawerHeight = messageHeight/6;
+        LinearLayout.LayoutParams drawer_h = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, drawerHeight);
+        drawer.setLayoutParams(drawer_h);
+
+        Log.d(TAG, "msgHeight " + messageHeight + " drawerHeight " + drawerHeight + " featureHeight " + scrolly.getMeasuredHeight());
+        scrolly.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //If the user swipes
+                if (mGestureDetector != null && mGestureDetector.onTouchEvent(event)) {
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    int scrollY = scrolly.getScrollY();
+                    Log.d(TAG, "ActionUP ScrollY " + scrollY);
+                    int featureHeight = v.getMeasuredHeight();
+                    //mActiveFeature = ((scrollY + (featureHeight / 2)) / featureHeight);
+                    //int scrollTo = mActiveFeature * featureHeight;
+                    int scrollTo = 0;
+                    if (scrollY > drawerHeight / 2){
+                        scrollTo = featureHeight;
+                    }
+                    else if (scrollTo < drawerHeight / 2){
+                       scrollTo = 0;
+                    }
+                    scrolly.smoothScrollTo(0, scrollTo);
+                    Log.d(TAG, "scrollTo " + scrollTo);
+
+                    return true;
+                }
+                else if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    int scrollY = scrolly.getScrollY();
+                    Log.d(TAG, "ActionDown ScrollY " + scrollY);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        });
+
         if (_id==null){
             return rootView;
         }
@@ -70,12 +136,16 @@ public class MessageBodyFragment extends Fragment {
         }
         header.setText(_msg.getHeader());
         //Typeface type = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Roboto-Black.ttf");
-        header.setTypeface(null, Typeface.BOLD);;
+        //header.setTypeface(null, Typeface.BOLD);;
         header.setTextSize(48);
         body.setText(_msg.getBody());
-        body.setTypeface(null, Typeface.BOLD);;
+        //body.setTypeface(null, Typeface.BOLD);;
         body.setTextSize(36);
         date.setText(_msg.getIntelligentDateString());
+        header.setTextColor(ContextCompat.getColor(getContext(), R.color.schemeone_mediumblue));
+        background_container.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.basewhite));
+        //background.setBackgroundColor(getResources().getColor(R.color.schemeone_tan_two, getActivity().getTheme()));
+        //body.setTextColor(getResources().getColor(R.color.basewhite, getActivity().getTheme()));
 
         if (_msg.getReason()== Message.HIT_YESTERDAY) {
             reason.setText(getContext().getResources().getString(R.string.reason_hit_gym_yesterday));
@@ -90,17 +160,13 @@ public class MessageBodyFragment extends Fragment {
             reason.setText("Welcome");
         }
 
+        drawer.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.schemefour_teal));
         background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().finish();
             }
         });
-
-
-        header.setTextColor(ContextCompat.getColor(getContext(), R.color.schemeone_mediumblue));
-        //background.setBackgroundColor(getResources().getColor(R.color.schemeone_tan_two, getActivity().getTheme()));
-        //body.setTextColor(getResources().getColor(R.color.basewhite, getActivity().getTheme()));
 
         /*Mark as read*/
         if (!_msg.getRead()){

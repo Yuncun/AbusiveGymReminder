@@ -1,43 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/msgbackground"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:clickable="true"
-    android:layout_margin="8dp"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/reason"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:layout_alignParentTop="true"
-        android:text="Reason"
-        />
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="date"
-        />
+    android:orientation="vertical"
+    >
+    <ScrollView
+        android:id="@+id/scrolly"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@android:style/TextAppearance.DeviceDefault.Large"
-        android:text="Hello World"
-        android:layout_above="@+id/body"
-        />
-    <TextView
-        android:id="@+id/body"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@android:style/TextAppearance.DeviceDefault.Large"
-        android:text="BODY"
-        android:layout_alignParentBottom="true"
-        />
+            <LinearLayout
+                android:id="@+id/message_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="4dp">
 
-</RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/msgbackground"
+                    android:layout_width="match_parent"
+                    android:clickable="true"
+                    android:layout_margin="12dp"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/reason"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@android:style/TextAppearance.DeviceDefault.Medium"
+                        android:layout_alignParentTop="true"
+                        android:text="Reason"
+                        />
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@android:style/TextAppearance.DeviceDefault.Medium"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:text="date"
+                        />
+
+                    <TextView
+                        android:id="@+id/header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@android:style/TextAppearance.DeviceDefault.Large"
+                        android:text="Hello World"
+                        android:layout_above="@+id/body"
+                        />
+                    <TextView
+                        android:id="@+id/body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@android:style/TextAppearance.DeviceDefault.Large"
+                        android:text="BODY"
+                        android:layout_alignParentBottom="true"
+                        android:paddingBottom="8dp"
+                        />
+
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bottomdrawer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="TEST"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/textLarge"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

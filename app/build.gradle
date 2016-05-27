@@ -22,7 +22,8 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:23.2.0'
-    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.google.android.gms:play-services-location:9.0.0'
+    compile 'com.google.android.gms:play-services-maps:9.0.0'
     compile 'com.android.support:cardview-v7:23.2.0'
     compile 'com.android.support:recyclerview-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
@@ -32,4 +33,7 @@ dependencies {
     compile 'noman.weekcalendar:weekcalendar:1.0.6'
     compile 'joda-time:joda-time:2.9.2' // for joda
     compile 'com.afollestad.material-dialogs:core:0.8.5.9'
+    compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+    compile 'com.robinhood.spark:spark:1.1.0'
 }

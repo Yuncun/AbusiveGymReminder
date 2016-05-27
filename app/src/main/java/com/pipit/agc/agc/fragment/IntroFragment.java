@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.pipit.agc.agc.adapter.IntroPageTransformer;
 import com.pipit.agc.agc.model.Gym;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.GeofenceUtils;
+import com.viewpagerindicator.CirclePageIndicator;
 
 /**
  * Created by Eric on 12/13/2015.
@@ -38,6 +40,7 @@ public class IntroFragment extends Fragment {
     public static final String TAG = "IntroFragment";
     private TextView _finishButton;
     private ViewPager mViewPager;
+    private CirclePageIndicator _indicator;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -54,6 +57,11 @@ public class IntroFragment extends Fragment {
 
         // Set a PageTransformer
         mViewPager.setPageTransformer(false, new IntroPageTransformer());
+
+        _indicator  = (CirclePageIndicator) view.findViewById(R.id.titles);
+        _indicator.setViewPager(mViewPager);
+       // _indicator.setStrokeColor(ContextCompat.getColor(getContext(), R.color.schemefour_yellow));
+       //         _indicator.setPageColor(ContextCompat.getColor(getContext(), R.color.schemefour_teal));
 
         _finishButton = (TextView) view.findViewById(R.id.finishbutton);
         _finishButton.setText("Get Started!");
