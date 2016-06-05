@@ -5,26 +5,32 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.adapter.MySparkAdapter;
 import com.pipit.agc.agc.adapter.WeekViewAdapter;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by Eric on 3/12/2016.
  */
 public class WeekViewSwipeable extends LinearLayout {
+    private static String TAG = "WeekViewSwipeable";
 
     public AgcViewPager viewPager;
+    public MySparkAdapter sparkAdapter;
 
     public WeekViewSwipeable(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -46,8 +52,24 @@ public class WeekViewSwipeable extends LinearLayout {
         DBRecordsSource.getInstance().closeDatabase();
 
         viewPager = (AgcViewPager) root.findViewById(R.id.weekvp);
-        viewPager.setAdapter(new WeekViewAdapter(context, _allPreviousDays));
-        viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays)-1);
+        viewPager.setAdapter(new WeekViewAdapter(context, _allPreviousDays, this));
+        viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays) - 1);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                updateSparkLineData(((WeekViewAdapter) viewPager.getAdapter()).getDaysForFocusedWeek(position));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         //viewPager.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.max(height, 1)));
 
@@ -87,6 +109,33 @@ public class WeekViewSwipeable extends LinearLayout {
             tv.setText(txt.get(i - 1));
         }
     }
+
+    public void updateSparkLineData(List<DayRecord> days){
+        if (sparkAdapter==null) return;
+
+        float[] times = new float[days.size()];
+        for (int i = 0 ; i < days.size(); i++){
+            if (days.get(i) == null || days.get(i).calculateTotalVisitTime() <= 0){
+                times[i] = 0;
+            }
+            else{
+                times[i] = (float) days.get(i).calculateTotalVisitTime();
+            }
+        }
+
+
+        sparkAdapter.update(times);
+        Log.d(TAG, "updating sparkline " + Arrays.toString(times));
+    }
+
+    public void attachSparklineAdapter(MySparkAdapter sparky){
+        sparkAdapter = sparky;
+    }
+
+    public void unattachSparklineAdapter(){
+        sparkAdapter=null;
+    }
+
 
     public void showLastDayMarker(){
         findViewById(R.id.day_7).findViewById(R.id.record_for_day).setVisibility(VISIBLE);

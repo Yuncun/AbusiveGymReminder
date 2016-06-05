@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="WeekCalendarView">
-        <attr name="titleText" format="string" localization="suggested" />
-        <attr name="valueColor" format="color" />
+        <attr name="wvTitleText" format="string" localization="suggested" />
+        <attr name="wvValueColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name = "cardStyle">
+        <attr name="cardStyle" format="reference" />
     </declare-styleable>
 </resources>

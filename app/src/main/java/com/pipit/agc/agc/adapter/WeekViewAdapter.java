@@ -14,7 +14,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.widget.WeekViewSwipeable;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class WeekViewAdapter extends PagerAdapter {
 
     private Context mContext;
     private List<DayRecord> _allDayRecords;
+    private WeekViewSwipeable mlayout;
 
     public class DayInfo{
         public boolean future;
@@ -37,7 +40,8 @@ public class WeekViewAdapter extends PagerAdapter {
         mContext = context;
     }
 
-    public WeekViewAdapter(Context context, List<DayRecord> allDayRecords){
+    public WeekViewAdapter(Context context, List<DayRecord> allDayRecords, WeekViewSwipeable layout){
+        mlayout = layout;
         mContext = context;
         _allDayRecords = allDayRecords;
     }
@@ -47,6 +51,7 @@ public class WeekViewAdapter extends PagerAdapter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(R.layout.week_calendar, null, true);
         styleFromDayrecordsData(mContext, _allDayRecords, position, v);
+        //mlayout.updateSparkLineData(getDaysForFocusedWeek(position));
         setDayOfWeekText(0, v);
         collection.addView(v);
 
@@ -133,6 +138,49 @@ public class WeekViewAdapter extends PagerAdapter {
     }
 
     /**
+     *
+     * @param page
+     * @return Days of the week, including NULL if we have no info on that day
+     */
+    public List<DayRecord> getDaysForFocusedWeek(int page){
+        int a = 7*page;
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -1*(_allDayRecords.size()-1));
+        int dowOfFirstDay = c.get(Calendar.DAY_OF_WEEK);
+        //We use this calculate the buffer; if Sunday is first day, we can use the first element. But if
+        //Wed is the first day, we need to wait 3 elements before using the first dayRecord.
+        //Now, DOWofFirstDAY is in Calendar format, i.e. 1-7, we need to decrement here.
+        dowOfFirstDay--;
+
+        List<DayRecord> week = new ArrayList<DayRecord>();
+        int indexStart = 0 + a - dowOfFirstDay;
+        int indexEnd = 7 + a - dowOfFirstDay;
+
+        while (indexStart < 0){
+            indexStart++;
+            week.add(null);
+        }
+
+        int k = 0;
+        while(indexEnd > _allDayRecords.size()){
+            k++;
+            indexEnd--;
+        }
+
+        for (int i = indexStart; i < indexEnd; i++){
+            week.add(_allDayRecords.get(i));
+        }
+
+        while(k>0){
+            k--;
+            week.add(null);
+        }
+
+        return week;
+    }
+
+    /**
     * Used to populate and style the WeekCalendarView that shows attendance over last seven days
     * @return
     */
@@ -148,6 +196,7 @@ public class WeekViewAdapter extends PagerAdapter {
         //Wed is the first day, we need to wait 3 elements before using the first dayRecord.
         //Now, DOWofFirstDAY is in Calendar format, i.e. 1-7, we need to decrement here.
         dowOfFirstDay--;
+
 
         for (int i = 0 ; i < 7 ; i++){
 

@@ -55,4 +55,7 @@
     <item name="lime" type="color">#B6D45B</item>
     <item name="nice_purple2" type="color">#7F4394</item>
     <item name="lime2" type="color">#D4DC5F</item>
+
+    <item name="robinhood_green" type="color">#21CE99</item>
+    <item name="robinhood_gray" type="color">#303032</item>
 </resources>

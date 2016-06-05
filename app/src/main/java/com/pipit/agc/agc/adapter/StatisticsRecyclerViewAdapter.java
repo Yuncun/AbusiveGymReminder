@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.data.MySQLiteHelper;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
 import com.pipit.agc.agc.fragment.StatisticsFragment.OnListFragmentInteractionListener;
 import com.pipit.agc.agc.model.DayRecord;
@@ -24,6 +26,7 @@ import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
 import com.pipit.agc.agc.widget.WeekCalendarView;
 import com.pipit.agc.agc.widget.WeekViewSwipeable;
+import com.robinhood.spark.SparkView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,6 +41,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     private final int TODAY_STATS_VIEWTYPE = 0;
     private final int WEEK__STATS_VIEWTYPE = 1;
     private final int MONTH_STATS_VIEWTYPE = 2;
+    boolean d1 = true;
 
     private final StatsContent mStats;
     private StatisticsFragment mFrag;
@@ -115,10 +119,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             case 1:
                 //weekly_stats_card;
                 holder.mTitleView.setText("Last seven days");
-                WeeklyViewHolder wv = (WeeklyViewHolder) holder;
+                final WeeklyViewHolder wv = (WeeklyViewHolder) holder;
 
                 /* Text */
-                wv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get()+"");
+                wv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get() + "");
                 wv.stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get() + "");
                 wv.stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get() + "");
 
@@ -133,6 +137,30 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 wv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
                 wv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
                 wv.stat_text_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).details);
+
+                float[] data = {};
+
+                wv.sparkgraph.setAdapter(new MySparkAdapter(data));
+                wv.sparkgraph.setAnimateChanges(true);
+                wv.sparkgraph.setScrubEnabled(true);
+                wv.sparkgraph.setCornerRadius(10.0f);
+                wv.sparkgraph.setLineColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
+                wv.sparkgraph.setScrubListener(new SparkView.OnScrubListener() {
+                    @Override
+                    public void onScrubbed(Object value) {
+                        /*)
+                        if (d1 == true) {
+                            ((MySparkAdapter) wv.sparkgraph.getAdapter()).update(data2);
+                            d1 = false;
+                        } else {
+                            ((MySparkAdapter) wv.sparkgraph.getAdapter()).update(data);
+                            d1 = true;
+                        }
+                        */
+                    }
+                });
+                wv.calendar.attachSparklineAdapter((MySparkAdapter) wv.sparkgraph.getAdapter());
+                wv.calendar.updateSparkLineData(((WeekViewAdapter) wv.calendar.viewPager.getAdapter()).getDaysForFocusedWeek(wv.calendar.viewPager.getAdapter().getCount() - 1));
 
                 //vw.calendar.setDayOfWeekText(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
                 //wv.calendar.showLastDayMarker();
@@ -186,6 +214,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         public final TextView stat_text_2;
         public final TextView stat_circle_3;
         public final TextView stat_text_3;
+        public final SparkView sparkgraph;
 
         public final WeekViewSwipeable calendar;
 
@@ -200,6 +229,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             stat_text_3 = (TextView) view.findViewById(R.id.stat_name_3);
 
             calendar = (WeekViewSwipeable) view.findViewById(R.id.calendar_component);
+            sparkgraph = (SparkView) view.findViewById(R.id.sparkview);
+
         }
     }
 

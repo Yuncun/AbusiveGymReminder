@@ -12,6 +12,7 @@ import com.pipit.agc.agc.util.Util;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
+import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -38,6 +39,11 @@ public class DayRecord {
         public Visit(LocalDateTime in, LocalDateTime out){
             this.in = in;
             this.out = out;
+        }
+
+        public int getVisitTimeMinutes(){
+            if (in == null || out == null) return 0;
+            return Minutes.minutesBetween(in, out).getMinutes();
         }
     }
 
@@ -246,6 +252,14 @@ public class DayRecord {
             ret += "\n";
         }
         return ret;
+    }
+
+    public int calculateTotalVisitTime(){
+        int minutes = 0;
+        for (Visit v : visits){
+            minutes += v.getVisitTimeMinutes();
+        }
+        return minutes;
     }
 
 }

@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    >
+    xmlns:app="http://schemas.android.com/tools"
+    android:orientation="horizontal">
     <android.support.v7.widget.CardView
         android:id="@+id/location_cv"
         android:layout_width="match_parent"
@@ -24,30 +24,30 @@
                 android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-<!--
-            <com.pipit.agc.agc.widget.WeekCalendarView
-                android:id="@+id/calendar_component"
+
+            <com.robinhood.spark.SparkView
+                android:id="@+id/sparkview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="150dp"
                 android:layout_below="@id/title_name"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="40dp"
+                app:spark_scrubEnabled="true"
+                app:spark_lineWidth="6dp"
                 />
--->
+
             <com.pipit.agc.agc.widget.WeekViewSwipeable
                 android:id="@+id/calendar_component"
                 android:layout_width="match_parent"
+                android:layout_below="@id/sparkview"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/title_name"
+                android:layout_marginBottom="16dp"
                 />
 
-<!--
-            <include layout="@layout/week_calendar"
-                android:id="@+id/calendar_component"
-                android:layout_below="@id/title_name"
-                android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:layout_width="match_parent"
-                />
--->
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,25 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
+
+                    <com.pipit.agc.agc.widget.CircleView
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:titleText="title"
+                        app:subtitleText="subtitle"
+                        app:titleSize="12dp"
+                        app:subtitleSize="9dp"
+                        app:titleColor="@color/basewhite"
+                        app:subtitleColor="@color/basewhite"
+                        app:strokeColorValue="@color/robinhood_green"
+                        app:backgroundColorValue="@color/robinhood_gray"
+                        app:fillColor="@color/robinhood_green"
+                        app:fillRadius="0.9"
+                        app:strokeWidthSize="5"/>
+
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/stat_circle_1"
                         android:layout_marginBottom="10dp"
                         android:gravity="center"
@@ -71,6 +89,7 @@
                         android:layout_height="80dp"
                         android:elevation="4dp"
                         android:background="@drawable/circle"/>
+
                     <TextView
                         android:id="@+id/stat_name_1"
                         android:text="days gone to gym"
