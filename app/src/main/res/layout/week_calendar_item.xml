@@ -3,23 +3,33 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
+
     <TextView
         android:id="@+id/calendar_day_name"
         android:text="Mon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center" />
-    <TextView
+
+    <com.pipit.agc.agc.widget.CircleView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/calendar_day_info"
-        android:gravity="center"
-        android:text="25"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginTop="2dp"
-        android:layout_margin="4dp"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/circle"/>
+        app:titleText="title"
+        android:layout_marginTop="2dp"
+        android:layout_margin="4dp"
+        app:titleSize="16dp"
+        app:subtitleSize="9dp"
+        app:titleColor="@color/basewhite"
+        app:subtitleColor="@color/basewhite"
+        app:strokeColorValue="@color/grey_darker"
+        app:backgroundColorValue="@color/grey"
+        app:fillColor="@color/grey_darker"
+        app:fillRadius="0.9"
+        app:strokeWidthSize="5"/>
+
+
     <TextView
         android:id="@+id/record_for_day"
         android:layout_width="wrap_content"

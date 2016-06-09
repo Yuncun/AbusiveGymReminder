@@ -1,17 +1,23 @@
 package com.pipit.agc.agc.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -121,25 +127,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 holder.mTitleView.setText("Last seven days");
                 final WeeklyViewHolder wv = (WeeklyViewHolder) holder;
 
-                /* Text */
-                wv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).get() + "");
-                wv.stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).get() + "");
-                wv.stat_circle_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).get() + "");
-
-                /* Colors */
-                setTextCircleColor(wv.stat_circle_1, mFrag.getContext(), R.color.grey);
-                wv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
-                setTextCircleColor(wv.stat_circle_2, mFrag.getContext(), R.color.grey);
-                wv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
-                setTextCircleColor(wv.stat_circle_3, mFrag.getContext(), R.color.grey);
-                wv.stat_circle_3.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
-
-                wv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.DAYS_PLANNED_WEEK).details);
-                wv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.MISSED_GYMDAYS_WEEK).details);
-                wv.stat_text_3.setText(mStats.STAT_MAP.get(StatsContent.DAYS_HIT_WEEK).details);
-
                 float[] data = {};
-
                 wv.sparkgraph.setAdapter(new MySparkAdapter(data));
                 wv.sparkgraph.setAnimateChanges(true);
                 wv.sparkgraph.setScrubEnabled(true);
@@ -159,8 +147,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                         */
                     }
                 });
+                Paint baseLinePaint = wv.sparkgraph.getBaseLinePaint();
+                DashPathEffect dashPathEffect = new DashPathEffect(new float[] {10 , 20}, 0);
+                baseLinePaint.setPathEffect(dashPathEffect);
+
                 wv.calendar.attachSparklineAdapter((MySparkAdapter) wv.sparkgraph.getAdapter());
-                wv.calendar.updateSparkLineData(((WeekViewAdapter) wv.calendar.viewPager.getAdapter()).getDaysForFocusedWeek(wv.calendar.viewPager.getAdapter().getCount() - 1));
+                List<DayRecord> daysForWeek = ((WeekViewAdapter) wv.calendar.viewPager.getAdapter()).getDaysForFocusedWeek(wv.calendar.viewPager.getAdapter().getCount() - 1);
+                wv.calendar.updateSparkLineData(daysForWeek);
 
                 //vw.calendar.setDayOfWeekText(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
                 //wv.calendar.showLastDayMarker();
@@ -208,28 +201,16 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     }
 
     public class WeeklyViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
-        public final TextView stat_circle_1;
-        public final TextView stat_text_1;
-        public final TextView stat_circle_2;
-        public final TextView stat_text_2;
-        public final TextView stat_circle_3;
-        public final TextView stat_text_3;
+
         public final SparkView sparkgraph;
 
         public final WeekViewSwipeable calendar;
 
         public WeeklyViewHolder(View view){
             super(view);
-            stat_circle_1 = (TextView) view.findViewById(R.id.stat_circle_1);
-            stat_circle_2 = (TextView) view.findViewById(R.id.stat_circle_2);
-            stat_circle_3 = (TextView) view.findViewById(R.id.stat_circle_3);
-
-            stat_text_1 = (TextView) view.findViewById(R.id.stat_name_1);
-            stat_text_2 = (TextView) view.findViewById(R.id.stat_name_2);
-            stat_text_3 = (TextView) view.findViewById(R.id.stat_name_3);
-
             calendar = (WeekViewSwipeable) view.findViewById(R.id.calendar_component);
             sparkgraph = (SparkView) view.findViewById(R.id.sparkview);
+
 
         }
     }

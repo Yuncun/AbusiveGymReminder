@@ -3,6 +3,8 @@ package com.pipit.agc.agc.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -62,7 +64,9 @@ public class WeekViewSwipeable extends LinearLayout {
 
             @Override
             public void onPageSelected(int position) {
-                updateSparkLineData(((WeekViewAdapter) viewPager.getAdapter()).getDaysForFocusedWeek(position));
+                List<DayRecord> daysForWeek = ((WeekViewAdapter) viewPager.getAdapter()).getDaysForFocusedWeek(position);
+                updateSparkLineData(daysForWeek);
+
             }
 
             @Override
@@ -70,9 +74,6 @@ public class WeekViewSwipeable extends LinearLayout {
 
             }
         });
-
-        //viewPager.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.max(height, 1)));
-
     }
 
     public WeekViewSwipeable(Context context) {

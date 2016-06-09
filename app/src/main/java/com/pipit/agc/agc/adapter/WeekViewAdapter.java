@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.widget.CircleView;
 import com.pipit.agc.agc.widget.WeekViewSwipeable;
 
 import java.util.ArrayList;
@@ -174,7 +176,7 @@ public class WeekViewAdapter extends PagerAdapter {
 
         while(k>0){
             k--;
-            week.add(null);
+            //week.add(null);
         }
 
         return week;
@@ -220,17 +222,24 @@ public class WeekViewAdapter extends PagerAdapter {
             int j = i+1; //I'm as confused as you are
             int viewid = r.getIdentifier("day_" + j, "id", name);
             View weekitem = root.findViewById(viewid);
-            TextView tv = (TextView) weekitem.findViewById(R.id.calendar_day_info);
+            CircleView tv = (CircleView) weekitem.findViewById(R.id.calendar_day_info);
+            //tv.getLayoutParams().height = tv.getMeasuredWidth();
+
+            tv.setShowSubtitle(false);
             TextView rfd = (TextView) weekitem.findViewById(R.id.record_for_day);
-            tv.setText(Integer.toString(date));
+            tv.setTitleText(Integer.toString(date));
 
             //Check if it is a day for which we have records
             if (index >= _allDayRecords.size()){
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
+                tv.setFillColor(ContextCompat.getColor(context, R.color.grey_lighter));
+                tv.setTitleColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
                 //tv.getBackground().setAlpha(128);
                 continue;
             }else if (index < 0){
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
+                tv.setFillColor(ContextCompat.getColor(context, R.color.grey_lighter));
+                tv.setTitleColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
                 //tv.getBackground().setAlpha(128);
                 continue;
             }
@@ -257,8 +266,9 @@ public class WeekViewAdapter extends PagerAdapter {
             if (_allDayRecords.get(index).beenToGym()){
                 /*HIT DAY*/
                 rfd.setText(r.getString(R.string.hit));
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
-                tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
+                tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_teal));
+                //tv.setBa().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+                tv.setTitleColor(ContextCompat.getColor(context, R.color.basewhite));
             }
             else{
                 /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
@@ -272,8 +282,9 @@ public class WeekViewAdapter extends PagerAdapter {
                     else{
                         /*MISSED A GYM DAY STATE */
                         rfd.setText(r.getString(R.string.miss));
-                        tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
-                        tv.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
+                        tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
+                        //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
+                        tv.setTitleColor(ContextCompat.getColor(context, R.color.basewhite));
                     }
                 }else{
                     /* REST DAY STATE */
@@ -281,7 +292,8 @@ public class WeekViewAdapter extends PagerAdapter {
                 }
             }
             if (index==_allDayRecords.size()-1){
-                tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+                tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
+                //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
                 rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
                 rfd.setText("Today");
             }

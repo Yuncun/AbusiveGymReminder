@@ -6,6 +6,8 @@ import android.util.Log;
 import com.pipit.agc.agc.model.DayRecord;
 import com.robinhood.spark.SparkAdapter;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,7 +24,9 @@ public class MySparkAdapter  extends SparkAdapter {
 
     public void update(float[] data){
         this.yData = data;
+
         notifyDataSetChanged();
+
     }
 
     @Override
@@ -42,9 +46,20 @@ public class MySparkAdapter  extends SparkAdapter {
 
     @Override
     public RectF getDataBounds() {
+        float max = 0.0f;
+        for (int i = 0 ; i < yData.length; i++){
+            if (yData[i]>max){
+                max=yData[i];
+            }
+        }
+        if (max<maxY){
+            max = maxY;
+        }
+
         RectF rectum = super.getDataBounds();
         Log.d(TAG, "getDataBounds top:" + rectum.top + " bottom:" + rectum.bottom + " left:" + rectum.left + " right:" + rectum.right );
-        rectum.bottom = maxY;
+        rectum.bottom = max;
+        rectum.right = 6.0f;
         return rectum;
     }
 
