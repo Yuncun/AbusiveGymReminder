@@ -31,4 +31,6 @@ public class GeofenceUtils {
         editor.commit();
     }
 
+
+
 }

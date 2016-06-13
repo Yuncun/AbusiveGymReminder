@@ -45,9 +45,8 @@ public class DayRecord {
             if (in == null) return 0;
 
             if (out == null){
-                out = LocalDateTime.now();
+                return Minutes.minutesBetween(in, LocalDateTime.now()).getMinutes();
             }
-
             return Minutes.minutesBetween(in, out).getMinutes();
         }
     }

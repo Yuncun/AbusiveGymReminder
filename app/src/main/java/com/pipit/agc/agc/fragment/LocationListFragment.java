@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,12 +23,11 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.pipit.agc.agc.controller.GeofenceController;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.adapter.LocationListAdapter;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.SharedPrefUtil;
-import com.pipit.agc.agc.util.Util;
-import com.pipit.agc.agc.activity.AllinOneActivity;
 import com.pipit.agc.agc.model.Gym;
 
 import java.util.ArrayList;
@@ -45,21 +43,30 @@ public class LocationListFragment extends Fragment {
     private int mColumnCount = 1;
     public int mFlag;
     private RecyclerView mRecyclerView;
-    private OnListFragmentInteractionListener mListener;
+
+    private GeofenceController.GeofenceControllerListener mListener  = new GeofenceController.GeofenceControllerListener() {
+        @Override
+        public void onGeofencesUpdated() {
+            Log.d(TAG, "updating layout in onGeofenceUpdated");
+            refresh();
+        }
+
+        @Override
+        public void onError() {
+            Toast.makeText(getContext(), "Error adding geofence", Toast.LENGTH_SHORT);
+        }
+    };
+
     public LocationListFragment() {
     }
 
-    public interface UpdateNoGymsSelected{
-        void showGymListEmpty(boolean isGymDay);
-    }
-
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static LocationListFragment newInstance(int columnCount) {
         LocationListFragment fragment = new LocationListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -67,7 +74,6 @@ public class LocationListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFlag=0;
-        mListener = (OnListFragmentInteractionListener) getActivity();
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -113,26 +119,10 @@ public class LocationListFragment extends Fragment {
         return gymlocations;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction();
     }
 
     public void startPlacePicker(int i){
@@ -188,12 +178,9 @@ public class LocationListFragment extends Fragment {
                 gym.name = "" + place.getName();
                 gym.proxid = id;
 
-                ((AllinOneActivity) getActivity()).addGeofenceFromListposition(gym);
-                mListener.onListFragmentInteraction();
-                mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(getContext()), mListener, this));
+                GeofenceController.getInstance().addGeofenceByGym(gym, mListener);
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);
-
             }
 
         } else {
@@ -201,13 +188,7 @@ public class LocationListFragment extends Fragment {
         }
     }
 
-    private void executeUpdateCallback(boolean showNotificationNoGyms) {
-        Log.d(TAG, "Execute callback, showgymnotification = " + showNotificationNoGyms);
-        Fragment registeredFrag = ((AllinOneActivity) getActivity()).getFragmentByKey(Constants.NEWSFEED_FRAG);
-        if (registeredFrag!=null){
-            UpdateNoGymsSelected update = (UpdateNoGymsSelected) registeredFrag;
-            update.showGymListEmpty(showNotificationNoGyms);
-        }
+    private void refresh(){
+        mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(getContext()), mListener, this));
     }
-
 }

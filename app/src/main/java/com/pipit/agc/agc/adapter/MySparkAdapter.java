@@ -60,7 +60,7 @@ public class MySparkAdapter  extends SparkAdapter {
         }
 
         RectF rectum = super.getDataBounds();
-        Log.d(TAG, "getDataBounds top:" + rectum.top + " bottom:" + rectum.bottom + " left:" + rectum.left + " right:" + rectum.right );
+        //Log.d(TAG, "getDataBounds top:" + rectum.top + " bottom:" + rectum.bottom + " left:" + rectum.left + " right:" + rectum.right );
         rectum.bottom = max;
         rectum.right = totalPoints;
         return rectum;

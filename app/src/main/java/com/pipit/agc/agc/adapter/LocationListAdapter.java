@@ -11,9 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.controller.GeofenceController;
 import com.pipit.agc.agc.fragment.LocationListFragment;
-import com.pipit.agc.agc.fragment.LocationListFragment.OnListFragmentInteractionListener;
-import com.pipit.agc.agc.activity.AllinOneActivity;
 import com.pipit.agc.agc.model.Gym;
 
 import java.util.List;
@@ -25,10 +24,10 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
     private static final String TAG = "LocationListAdapter";
     private final List<Gym> mValues;
-    private final OnListFragmentInteractionListener mListener;
     private final LocationListFragment mFrag;
+    private GeofenceController.GeofenceControllerListener mListener;
 
-    public LocationListAdapter(List<Gym> gyms, OnListFragmentInteractionListener listener, LocationListFragment frag) {
+    public LocationListAdapter(List<Gym> gyms, GeofenceController.GeofenceControllerListener listener, LocationListFragment frag) {
         mFrag = frag;
         mValues = gyms;
         mListener = listener;
@@ -79,9 +78,9 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             @Override
             public void onClick(View v){
                 Log.d(TAG, "clicked removeButton");
-                ((AllinOneActivity) mFrag.getActivity()).removeGeofencesById(position + 1);
-                mValues.set(position, new Gym());
-                notifyDataSetChanged();
+                GeofenceController.getInstance().removeGeofencesById(position+1, mListener);
+                //((AllinOneActivity) mFrag.getActivity()).removeGeofencesById(position + 1);
+                //mValues.set(position, new Gym());
             }
 
         });

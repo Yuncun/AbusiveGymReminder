@@ -166,7 +166,7 @@ public class WeekViewSwipeable extends LinearLayout {
         }
         
         sparkAdapter.update(times);
-        Log.d(TAG, "updating sparkline " + Arrays.toString(times));
+        //Log.d(TAG, "updating sparkline " + Arrays.toString(times));
     }
 
     public void attachSparklineAdapter(MySparkAdapter sparky){

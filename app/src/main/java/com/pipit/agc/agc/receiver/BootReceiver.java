@@ -12,6 +12,8 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.pipit.agc.agc.activity.AllinOneActivity;
+import com.pipit.agc.agc.controller.GeofenceController;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -26,16 +28,13 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent i) {
         Log.d(TAG, "onReceive in BootReceiver");
+        SharedPrefUtil.updateMainLog(context, "BOOT RECEIVER");
 
-        scheduleAlarms(context);
-        Intent intent = new Intent(context, AllinOneActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //GeofenceController.getInstance().init(context);
         //context.startActivity(i);
     }
 
-    public void addGeofenceByID(Context context, int i){
 
-    }
     /*static void addProxAlert(Context context, int i){
         LocationManager lm=(LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
