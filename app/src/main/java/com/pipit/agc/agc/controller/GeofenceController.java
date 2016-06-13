@@ -58,10 +58,11 @@ public class GeofenceController {
 
     public void init(Context context) {
         this.context = context.getApplicationContext();
+
         mGeofenceList = new ArrayList<Geofence>();
         prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
 
-        removeAllGeofences(mRestartListsListener);
+        populategeofencelist();
     }
 
 
@@ -85,11 +86,15 @@ public class GeofenceController {
         mGeofenceList = new ArrayList<Geofence>();
         mGeofenceMap = new HashMap<Integer, Geofence>();
         for (int i = 1; i < Constants.GYM_LIMIT; i++) {
-            addGeofenceByGym(getGymLocation(context, i), null);
+            addGeofenceByGym(getGymLocation(context, i), null, false);
         }
+        executeAddGeofence();
     }
 
-    public void addGeofenceByGym(Gym gym, GeofenceControllerListener listener) {
+    public void executeAddGeofence(){
+        connectWithCallback(mAddConnectionCallback);
+    }
+    public void addGeofenceByGym(Gym gym, GeofenceControllerListener listener, boolean execute) {
         Log.d(TAG, "addGeoFenceFromListPosition n=" + gym.proxid + " : " + gym.name);
         if (mGeofenceList==null){
             this.mGeofenceList = new ArrayList<Geofence>();
@@ -120,7 +125,9 @@ public class GeofenceController {
         if (listener!=null){
             mListener = listener;
         }
-        connectWithCallback(mAddConnectionCallback);
+        if (execute){
+            connectWithCallback(mAddConnectionCallback);
+        }
     }
 
     private PendingIntent getGeofencePendingIntent() {
@@ -218,8 +225,7 @@ public class GeofenceController {
     private GeofencingRequest getGeofencingRequestForAdd() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        //builder.addGeofences(mGeofenceList);
-        builder.addGeofence(mNextGeofenceToAdd);
+        builder.addGeofences(mGeofenceList);
         return builder.build();
     }
 
@@ -227,10 +233,11 @@ public class GeofenceController {
         @Override
         public void onConnected(Bundle connectionHint) {
             Log.d(TAG, "mAddConnectionCallback Attempting");
+
             if (!mGoogleApiClient.isConnected()) {
-                updateGeofencesWhenReadyFlag = true; //GoogleApiClient takes a bit to initialize
-                return;
+                Log.d(TAG, "NOT CONNNECTED");
             }
+
             try {
                 LocationServices.GeofencingApi.addGeofences(
                         mGoogleApiClient,
@@ -241,8 +248,8 @@ public class GeofenceController {
                     public void onResult(Status status) {
                         if (status.isSuccess()) {
                             saveGeofence();
-                            //Log.d(TAG, "mAddConnectionCallback success " + mNextGeofenceToAdd.getRequestId());
-                            mNextGeofenceToAdd=null;
+                            Log.d(TAG, "mAddConnectionCallback success ");
+                            //mNextGeofenceToAdd=null;
                             //Toast.makeText(this, "Add/Removed Geofence", Toast.LENGTH_SHORT).show();
                         } else {
                             String errorMessage = "Some error in onResult";
@@ -253,6 +260,8 @@ public class GeofenceController {
                 });
             } catch (SecurityException securityException) {
                 logSecurityException(securityException);
+            } catch (Exception e){
+                Log.e(TAG, " **** " + e.toString());
             }
         }
 

@@ -178,7 +178,7 @@ public class LocationListFragment extends Fragment {
                 gym.name = "" + place.getName();
                 gym.proxid = id;
 
-                GeofenceController.getInstance().addGeofenceByGym(gym, mListener);
+                GeofenceController.getInstance().addGeofenceByGym(gym, mListener, true);
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);
             }

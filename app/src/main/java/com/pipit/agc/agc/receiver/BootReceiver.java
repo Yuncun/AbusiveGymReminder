@@ -29,7 +29,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent i) {
         Log.d(TAG, "onReceive in BootReceiver");
         SharedPrefUtil.updateMainLog(context, "BOOT RECEIVER");
-
+        GeofenceController.getInstance().init(context);
         //GeofenceController.getInstance().init(context);
         //context.startActivity(i);
     }

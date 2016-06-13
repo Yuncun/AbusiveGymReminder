@@ -160,7 +160,7 @@ public class AllinOneActivity extends AppCompatActivity {
             datasource.closeDatabase();
         }
         else if (id == R.id.action_remove_geofences){
-            GeofenceController.getInstance().removeAllGeofences(null);
+            //GeofenceController.getInstance().removeAllGeofences(null);
         }
         return super.onOptionsItemSelected(item);
     }
