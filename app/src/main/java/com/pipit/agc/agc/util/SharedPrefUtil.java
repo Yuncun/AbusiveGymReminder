@@ -90,7 +90,7 @@ public class SharedPrefUtil {
      */
     public static String getLastVisitString(Context context, SimpleDateFormat sdf){
         if (sdf==null){
-            sdf = new SimpleDateFormat("MMM dd HH:mm");
+            sdf = new SimpleDateFormat("MMM d h:mm a");
         }
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         Long timeinms =  prefs.getLong("last_visit_time", -1);

@@ -17,6 +17,7 @@ public class MySparkAdapter  extends SparkAdapter {
     private static String TAG = "SparkAdapter";
     public float maxY = 100.0f;
     private float[] yData;
+    private float totalPoints = 6;
 
     public MySparkAdapter(float[] yData) {
         this.yData = yData;
@@ -24,9 +25,11 @@ public class MySparkAdapter  extends SparkAdapter {
 
     public void update(float[] data){
         this.yData = data;
-
         notifyDataSetChanged();
+    }
 
+    public void setGraphWidth(float w){
+        totalPoints = w;
     }
 
     @Override
@@ -59,7 +62,7 @@ public class MySparkAdapter  extends SparkAdapter {
         RectF rectum = super.getDataBounds();
         Log.d(TAG, "getDataBounds top:" + rectum.top + " bottom:" + rectum.bottom + " left:" + rectum.left + " right:" + rectum.right );
         rectum.bottom = max;
-        rectum.right = 6.0f;
+        rectum.right = totalPoints;
         return rectum;
     }
 

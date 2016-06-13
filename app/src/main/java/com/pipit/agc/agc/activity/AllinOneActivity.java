@@ -55,7 +55,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class AllinOneActivity extends AppCompatActivity implements StatisticsFragment.OnListFragmentInteractionListener,
+public class AllinOneActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status>,
         LocationListFragment.OnListFragmentInteractionListener {
     private static String TAG = "AllinOneActivity";
@@ -141,6 +141,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
         buildGoogleApiClient();
         mGeofenceList = new ArrayList<Geofence>();
         populategeofencelist();
+        addGeofencesButtonHandler();
         // Initially set the PendingIntent used in addGeofences() and removeGeofences() to null.
         mGeofencePendingIntent = null;
         checkPermissions();
@@ -376,7 +377,6 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
             //mGoogleApiClient.connect();
             return;
         }
-
         try {
             LocationServices.GeofencingApi.addGeofences(
                     mGoogleApiClient,
@@ -531,7 +531,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
      */
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.i(TAG, "Connected to GoogleApiClient");
+        Log.i(TAG, "Connected to GoogleApiClient. Do we need to update geofences:" + updateGeofencesWhenReadyFlag);
         if (updateGeofencesWhenReadyFlag){
             addGeofencesButtonHandler();
             updateGeofencesWhenReadyFlag=false;
@@ -569,7 +569,7 @@ public class AllinOneActivity extends AppCompatActivity implements StatisticsFra
             SharedPreferences.Editor editor =  getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS).edit();
             editor.putBoolean(Constants.GEOFENCES_ADDED_KEY, mGeofencesAdded);
             editor.apply();
-            Toast.makeText(this, "Add/Removed Geofence", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Add/Removed Geofence", Toast.LENGTH_SHORT).show();
         } else {
             String errorMessage = "Some error in onResult";
             Log.e(TAG, errorMessage);

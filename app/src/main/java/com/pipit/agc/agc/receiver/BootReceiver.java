@@ -11,6 +11,8 @@ import android.location.Location;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.pipit.agc.agc.activity.AllinOneActivity;
+
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -24,12 +26,16 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent i) {
         Log.d(TAG, "onReceive in BootReceiver");
-        for (int n = 1; n < 4; n++){
-            //addProxAlert(context, n);
-        }
+
         scheduleAlarms(context);
+        Intent intent = new Intent(context, AllinOneActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //context.startActivity(i);
     }
 
+    public void addGeofenceByID(Context context, int i){
+
+    }
     /*static void addProxAlert(Context context, int i){
         LocationManager lm=(LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);

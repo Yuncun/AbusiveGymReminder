@@ -23,10 +23,6 @@ import java.util.List;
  */
 public class WeekCalendarView extends LinearLayout {
 
-    public interface updateFragment{
-        public void updateSparkline(List<DayRecord> week);
-    }
-
     public WeekCalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
 

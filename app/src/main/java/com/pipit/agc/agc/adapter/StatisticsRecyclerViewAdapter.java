@@ -1,61 +1,39 @@
 package com.pipit.agc.agc.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.data.MySQLiteHelper;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
-import com.pipit.agc.agc.fragment.StatisticsFragment.OnListFragmentInteractionListener;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
-import com.pipit.agc.agc.widget.WeekCalendarView;
+import com.pipit.agc.agc.widget.CircleView;
 import com.pipit.agc.agc.widget.WeekViewSwipeable;
 import com.robinhood.spark.SparkView;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link Stat} and makes a call to the
- * specified {@link StatisticsFragment.OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.ViewHolder> {
-    private final int TODAY_STATS_VIEWTYPE = 0;
-    private final int WEEK__STATS_VIEWTYPE = 1;
-    private final int MONTH_STATS_VIEWTYPE = 2;
-    boolean d1 = true;
-
     private final StatsContent mStats;
     private StatisticsFragment mFrag;
-    private final OnListFragmentInteractionListener mListener;
 
-    public StatisticsRecyclerViewAdapter(StatsContent stats, OnListFragmentInteractionListener listener, StatisticsFragment frag) {
+    public StatisticsRecyclerViewAdapter(StatsContent stats, StatisticsFragment frag) {
         mStats = stats;
-        mListener = listener;
         mFrag = frag;
     }
 
@@ -93,14 +71,15 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 DayViewHolder dv = ((DayViewHolder) holder);
                 holder.mTitleView.setText("Today");
                 DayRecord today = mStats.getToday(true);
+                dv.gymstate_circle.setShowSubtitle(false);
                 if (today.isGymDay()){
-                    dv.gymstate_circle.setText("GYM\nDAY");
-                    setTextCircleColor(dv.gymstate_circle, mFrag.getContext(), R.color.schemethree_red);
-                    dv.gymstate_circle.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                    dv.gymstate_circle.setTitleText("GYM\nDAY");
+                    dv.gymstate_circle.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red));
+                    //dv.gymstate_circle.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red));
                 }else{
-                    setTextCircleColor(dv.gymstate_circle, mFrag.getContext(), R.color.schemethree_teal);
-                    dv.gymstate_circle.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                    dv.gymstate_circle.setText("REST\nDAY");
+                    dv.gymstate_circle.setTitleText("REST\nDAY");
+                    dv.gymstate_circle.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
+                    //dv.gymstate_circle.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
                 }
                 if (today.beenToGym()){
                     SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
@@ -115,11 +94,15 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     dv.gymstate_text.setText("No gym visit recorded today");
                     String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), null);
                     if (s!=null){
-                        dv.lastvisit_text.setText("Last visit recorded at " + s);
+                        dv.lastvisit_text.setText("Last visit: " + s);
                         dv.lastvisit_text.setVisibility(View.VISIBLE);
                     }
                 }
                 dv.gymstate_text.setTextSize(30);
+
+                //TEST
+                //dv.rootlayout.setVisibility(View.GONE);
+
                 break;
 
             case 1:
@@ -131,7 +114,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 wv.sparkgraph.setAdapter(new MySparkAdapter(data));
                 wv.sparkgraph.setAnimateChanges(true);
                 wv.sparkgraph.setScrubEnabled(true);
-                wv.sparkgraph.setCornerRadius(10.0f);
+                wv.sparkgraph.setCornerRadius(5.0f);
                 wv.sparkgraph.setLineColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
                 wv.sparkgraph.setScrubListener(new SparkView.OnScrubListener() {
                     @Override
@@ -188,13 +171,15 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     }
 
     public class DayViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
-        public final TextView gymstate_circle;
+        public final CircleView gymstate_circle;
         public final TextView gymstate_text;
         public final TextView lastvisit_text;
+        public final CardView rootlayout;
 
         public DayViewHolder(View view){
             super(view);
-            gymstate_circle = (TextView) view.findViewById(R.id.gymstate_circle);
+            rootlayout = (CardView) view.findViewById(R.id.dailystatscard);
+            gymstate_circle = (CircleView) view.findViewById(R.id.gymstate_circle);
             gymstate_text = (TextView) view.findViewById(R.id.gymstate_text);
             lastvisit_text = (TextView) view.findViewById(R.id.last_visit_txt);
         }

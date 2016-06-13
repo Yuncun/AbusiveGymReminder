@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +35,8 @@ public class WeekViewSwipeable extends LinearLayout {
 
     public AgcViewPager viewPager;
     public MySparkAdapter sparkAdapter;
+    private ImageButton leftNav;
+    private ImageButton rightNav;
 
     public WeekViewSwipeable(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -74,6 +78,35 @@ public class WeekViewSwipeable extends LinearLayout {
 
             }
         });
+
+        leftNav = (ImageButton) root.findViewById(R.id.left_nav);
+        rightNav = (ImageButton) root.findViewById(R.id.right_nav);
+
+        leftNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int tab = viewPager.getCurrentItem();
+                if (tab > 0) {
+                    tab--;
+                    viewPager.setCurrentItem(tab);
+                } else if (tab == 0) {
+                    viewPager.setCurrentItem(tab);
+                }
+            }
+        });
+
+
+
+        // Images right navigatin
+        rightNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int tab = viewPager.getCurrentItem();
+                tab++;
+                viewPager.setCurrentItem(tab);
+            }
+        });
+
     }
 
     public WeekViewSwipeable(Context context) {
@@ -124,7 +157,14 @@ public class WeekViewSwipeable extends LinearLayout {
             }
         }
 
-
+        //I found that sparkline doesn't show line with only one value
+        if (times.length < 2){
+            times = new float[] {times[0], times[0]};
+            sparkAdapter.setGraphWidth(18.0f); //One data point should not appear too large
+        } else {
+            sparkAdapter.setGraphWidth(6.0f);
+        }
+        
         sparkAdapter.update(times);
         Log.d(TAG, "updating sparkline " + Arrays.toString(times));
     }

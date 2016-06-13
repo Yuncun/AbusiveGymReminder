@@ -42,7 +42,12 @@ public class DayRecord {
         }
 
         public int getVisitTimeMinutes(){
-            if (in == null || out == null) return 0;
+            if (in == null) return 0;
+
+            if (out == null){
+                out = LocalDateTime.now();
+            }
+
             return Minutes.minutesBetween(in, out).getMinutes();
         }
     }
