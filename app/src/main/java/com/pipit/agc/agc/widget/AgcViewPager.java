@@ -17,9 +17,9 @@ public class AgcViewPager extends ViewPager {
     public AgcViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         int height = 0;
         for(int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
@@ -29,7 +29,6 @@ public class AgcViewPager extends ViewPager {
         }
 
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 }

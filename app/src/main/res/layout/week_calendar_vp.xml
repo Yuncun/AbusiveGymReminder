@@ -33,7 +33,7 @@
             android:layout_width="24dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|left"
-            android:layout_marginLeft="8dp"
+            android:paddingLeft="8dp"
             android:background="@null"
             android:src="@drawable/ic_chevron_left_black_24dp" />
 
@@ -42,7 +42,7 @@
             android:layout_width="24dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="8dp"
+            android:paddingRight="8dp"
             android:background="@null"
             android:src="@drawable/ic_chevron_right_black_24dp" />
 

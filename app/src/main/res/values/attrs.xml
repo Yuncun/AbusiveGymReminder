@@ -3,6 +3,7 @@
     <declare-styleable name="WeekCalendarView">
         <attr name="wvTitleText" format="string" localization="suggested" />
         <attr name="wvValueColor" format="color" />
+        <attr name="paddingBetweenCircles" format="dimension" />
     </declare-styleable>
     <declare-styleable name = "cardStyle">
         <attr name="cardStyle" format="reference" />

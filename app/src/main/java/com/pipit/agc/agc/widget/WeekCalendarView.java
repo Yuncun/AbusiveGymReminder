@@ -6,11 +6,13 @@ import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.Circle;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.DayRecord;
 
@@ -20,19 +22,27 @@ import java.util.List;
 
 /**
  * Created by Eric on 3/12/2016.
+ * Deprecated
  */
 public class WeekCalendarView extends LinearLayout {
+    private static final String TAG = "WeekCalendarView";
+
+    private static final int circleMarginDefaultLeft = 4;
+    private static final int circleMarginDefaultRight = 4;
+    private static final int circleMarginDefaultTop = 2;
+    private static final int circleMarginDefaultBottom = 0;
+
+    private float circleMargin;
 
     public WeekCalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.WeekCalendarView, 0, 0);
-
+        circleMargin = a.getDimension(R.styleable.WeekCalendarView_paddingBetweenCircles, 4.0f);
         a.recycle();
 
         setOrientation(LinearLayout.HORIZONTAL);
-        //setGravity(Gravity.CENTER_VERTICAL);
 
         setDayOfWeekEnd(0);
         LayoutInflater inflater = (LayoutInflater) context
@@ -42,6 +52,23 @@ public class WeekCalendarView extends LinearLayout {
 
     public WeekCalendarView(Context context) {
         this(context, null);
+    }
+
+    @Override public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.d(TAG, " onMeasure ");
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        for (int i = 0; i<7; i++){
+            LinearLayout ll = getDayViewFromPosition(i);
+            CircleView cv = (CircleView) ll.findViewById(R.id.calendar_day_info);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(40, 40);
+
+            layoutParams.setMargins(circleMarginDefaultLeft, circleMarginDefaultTop, circleMarginDefaultRight, circleMarginDefaultBottom);
+            //cv.setLayoutParams(layoutParams);
+
+        }
+
     }
 
     /**
@@ -75,12 +102,18 @@ public class WeekCalendarView extends LinearLayout {
         }
     }
 
-    public View getDayViewFromPosition(int pos){
-        if (pos<1 || pos>7){ return null; }
+    /**
+     *
+     * @param pos from 1-7
+     * @return
+     */
+    public LinearLayout getDayViewFromPosition(int pos){
+        if (pos<0 || pos>6){ return null; }
+        pos++;
         Resources r = getResources();
         String name = this.getContext().getPackageName();
         int viewid = r.getIdentifier("day_" + pos, "id", name);
-        View weekitem = findViewById(viewid);
+        LinearLayout weekitem = (LinearLayout) findViewById(viewid);
         return weekitem;
     }
 

@@ -33,10 +33,21 @@ import java.util.List;
 public class WeekViewSwipeable extends LinearLayout {
     private static String TAG = "WeekViewSwipeable";
 
+    public static final int circleMarginDefaultLeft = 4;
+    public static final int circleMarginDefaultRight = 4;
+    public static final int circleMarginDefaultTop = 2;
+    public static final int circleMarginDefaultBottom = 0;
+
+    public int circleMargin;
+
+
     public AgcViewPager viewPager;
-    public MySparkAdapter sparkAdapter;
-    private ImageButton leftNav;
-    private ImageButton rightNav;
+    private MySparkAdapter sparkAdapter;
+    private WeekViewAdapter wvadapter;
+    public ImageButton leftNav;
+    public ImageButton rightNav;
+    private  List<DayRecord> _allPreviousDays;
+    private boolean listenForLayoutUpdate;
 
     public WeekViewSwipeable(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -44,6 +55,7 @@ public class WeekViewSwipeable extends LinearLayout {
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.WeekCalendarView, 0, 0);
 
+        circleMargin = (int) a.getDimension(R.styleable.WeekCalendarView_paddingBetweenCircles, 4.0f);
         a.recycle();
 
         setOrientation(LinearLayout.HORIZONTAL);
@@ -54,28 +66,27 @@ public class WeekViewSwipeable extends LinearLayout {
 
         DBRecordsSource datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
-        List<DayRecord> _allPreviousDays = datasource.getAllDayRecords();
+        _allPreviousDays = datasource.getAllDayRecords();
         DBRecordsSource.getInstance().closeDatabase();
 
+        listenForLayoutUpdate = true;
         viewPager = (AgcViewPager) root.findViewById(R.id.weekvp);
-        viewPager.setAdapter(new WeekViewAdapter(context, _allPreviousDays, this));
+        wvadapter = new WeekViewAdapter(context, _allPreviousDays, this);
+        viewPager.setAdapter(wvadapter);
         viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays) - 1);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
                 List<DayRecord> daysForWeek = ((WeekViewAdapter) viewPager.getAdapter()).getDaysForFocusedWeek(position);
                 updateSparkLineData(daysForWeek);
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 
@@ -94,8 +105,6 @@ public class WeekViewSwipeable extends LinearLayout {
                 }
             }
         });
-
-
 
         // Images right navigatin
         rightNav.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +133,7 @@ public class WeekViewSwipeable extends LinearLayout {
             int viewid = r.getIdentifier("day_" + i, "id", name);
             View weekitem = findViewById(viewid);
             TextView tv = (TextView) weekitem.findViewById(R.id.calendar_day_name);
-            tv.setText(getDayOfWeekText((i + offset) % 7));
+            tv.setText(WeekViewAdapter.getDayOfWeekText((i + offset) % 7));
         }
     }
 
@@ -169,6 +178,18 @@ public class WeekViewSwipeable extends LinearLayout {
         //Log.d(TAG, "updating sparkline " + Arrays.toString(times));
     }
 
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        Log.d("Eric", "WIDTH IS READY " + getWidth());
+        if (listenForLayoutUpdate){
+            wvadapter = new WeekViewAdapter(getContext(), _allPreviousDays, this);
+            viewPager.setAdapter(wvadapter);
+            listenForLayoutUpdate = false;
+        }
+    }
+
+
     public void attachSparklineAdapter(MySparkAdapter sparky){
         sparkAdapter = sparky;
     }
@@ -187,28 +208,6 @@ public class WeekViewSwipeable extends LinearLayout {
         showLastDayMarker();
     }
 
-    private static String getDayOfWeekText(int n){
-        switch(n){
-            case 0:
-                return "Sat";
-            case 1:
-                return "Sun";
-            case 2:
-                return "Mon";
-            case 3:
-                return "Tue";
-            case 4:
-                return "Wed";
-            case 5:
-                return "Thu";
-            case 6:
-                return "Fri";
-            case 7:
-                return "Sat";
-            default:
-                return Integer.toString(n);
-        }
-    }
 
 }
 

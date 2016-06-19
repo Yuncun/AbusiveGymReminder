@@ -14,8 +14,8 @@
     <com.pipit.agc.agc.widget.CircleView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/calendar_day_info"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         app:titleText="title"
         android:layout_marginTop="2dp"
         android:layout_margin="4dp"
@@ -26,7 +26,7 @@
         app:strokeColorValue="@color/grey_darker"
         app:backgroundColorValue="@color/grey"
         app:fillColor="@color/grey_darker"
-        app:fillRadius="0.9"
+        app:fillRadius=".9"
         app:strokeWidthSize="5"/>
 
 

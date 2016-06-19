@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.pipit.agc.agc.R;
@@ -189,7 +190,7 @@ public class CircleView extends View {
         canvas.drawArc(mInnerRectF, 0, 360, true, mBackgroundPaint);
 
         float radius = (mViewSize / 2) * mFillRadius;
-
+        //Log.d("Eric", "Radius " + radius + "mViewSize " + mViewSize + " mFillRadius" + mFillRadius + " strokeWidth" + mStrokePaint.getStrokeWidth());
         canvas.drawCircle(centerX, centerY, radius + 0.5f - mStrokePaint.getStrokeWidth(), mFillPaint);
 
         int xPos = (int) centerX;

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,17 +27,12 @@ import java.util.List;
  * Created by Eric on 5/1/2016.
  */
 public class WeekViewAdapter extends PagerAdapter {
+    private static final String TAG = "WeekViewAdapter";
 
     private Context mContext;
     private List<DayRecord> _allDayRecords;
     private WeekViewSwipeable mlayout;
-
-    public class DayInfo{
-        public boolean future;
-        public boolean present;
-        public DayRecord dayrecord;
-        public Calendar date;
-    }
+    public int targetWidth;
 
     public WeekViewAdapter(Context context) {
         mContext = context;
@@ -52,6 +48,7 @@ public class WeekViewAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup collection, int position) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(R.layout.week_calendar, null, true);
+        resizeToFit(v);
         styleFromDayrecordsData(mContext, _allDayRecords, position, v);
         //mlayout.updateSparkLineData(getDaysForFocusedWeek(position));
         setDayOfWeekText(0, v);
@@ -95,7 +92,7 @@ public class WeekViewAdapter extends PagerAdapter {
         }
     }
 
-    private static String getDayOfWeekText(int n){
+    public static String getDayOfWeekText(int n){
         switch(n){
             case 0:
                 return "Sat";
@@ -176,10 +173,46 @@ public class WeekViewAdapter extends PagerAdapter {
 
         while(k>0){
             k--;
-            //week.add(null);
         }
 
         return week;
+    }
+
+    /**
+     * Since our view is being instantiated in the ViewPager, it is necessary
+     * @param wv
+     */
+    public void resizeToFit(View wv){
+        if (wv==null || mlayout==null) return;
+        Resources r = wv.getResources();
+        String name = wv.getContext().getPackageName();
+        Log.d("Eric", "Layout width" + mlayout.getWidth() + " navWidth" + mlayout.rightNav.getWidth());
+        int totalwidth = mlayout.getWidth();
+
+        // Calculate the expected dimen of each circle
+        int cvwidth = (totalwidth -
+                mlayout.rightNav.getWidth() -
+                mlayout.leftNav.getWidth())/7 -
+                (WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight);
+
+        //cvwidth-=20; //Something is messed up with padding - this looks nicer.
+        Log.d("Eric", "cvwidth " + cvwidth);
+        if (cvwidth<=0) return;
+
+        for (int i = 1; i < 8; i++){
+            int viewid = r.getIdentifier("day_" + i, "id", name);
+            View weekitem = wv.findViewById(viewid);
+
+            CircleView cv = (CircleView) weekitem.findViewById(R.id.calendar_day_info);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(cvwidth, cvwidth);
+
+            layoutParams.setMargins(WeekViewSwipeable.circleMarginDefaultLeft,
+                    WeekViewSwipeable.circleMarginDefaultTop,
+                    WeekViewSwipeable.circleMarginDefaultRight,
+                    WeekViewSwipeable.circleMarginDefaultBottom);
+            cv.setLayoutParams(layoutParams);
+        }
     }
 
     /**
@@ -244,7 +277,6 @@ public class WeekViewAdapter extends PagerAdapter {
                 continue;
             }
 
-
             rfd.setVisibility(View.VISIBLE);
             weekitem.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -283,7 +315,6 @@ public class WeekViewAdapter extends PagerAdapter {
                         /*MISSED A GYM DAY STATE */
                         rfd.setText(r.getString(R.string.miss));
                         tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
-                        //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
                         tv.setTitleColor(ContextCompat.getColor(context, R.color.basewhite));
                     }
                 }else{
@@ -293,7 +324,6 @@ public class WeekViewAdapter extends PagerAdapter {
             }
             if (index==_allDayRecords.size()-1){
                 tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-                //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
                 rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
                 rfd.setText("Today");
             }
