@@ -146,18 +146,22 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 holder.mTitleView.setText("Streaks");
                 MiscStatsViewHolder mv = (MiscStatsViewHolder) holder;
                 /* Text */
-                mv.stat_circle_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).get()+"");
-                mv.stat_circle_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).get()+"");
+                mv.stat_circle_1.setTitleText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).get() + "");
+                mv.stat_circle_2.setTitleText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).get() + "");
 
                 mv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).details);
                 mv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
 
-                //mv.stat_card_1.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.lightgreen));
-                mv.stat_circle_1.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                setTextCircleColor(mv.stat_circle_1, mFrag.getContext(), R.color.schemefour_teal);
-                mv.stat_circle_2.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                setTextCircleColor(mv.stat_circle_2, mFrag.getContext(), R.color.schemefour_teal);
+                //Todo:Use dimens
+                mv.stat_circle_1.setTitleSize(80f);
+                mv.stat_circle_2.setTitleSize(80f);
+                mv.stat_circle_1.setShowSubtitle(false);
+                mv.stat_circle_2.setShowSubtitle(false);
 
+                mv.stat_circle_1.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemefour_teal));
+                mv.stat_circle_1.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                mv.stat_circle_2.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemefour_teal));
+                mv.stat_circle_2.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                 break;
             default:
                 holder.mTitleView.setText("Default");
@@ -201,9 +205,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     }
 
     public class MiscStatsViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder {
-        public final TextView stat_circle_1;
+        public final CircleView stat_circle_1;
+        public final CircleView stat_circle_2;
         public final TextView stat_text_1;
-        public final TextView stat_circle_2;
         public final TextView stat_text_2;
         public final RelativeLayout stat_card_1;
         public final RelativeLayout stat_card_2;
@@ -213,8 +217,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             stat_card_1 = (RelativeLayout) view.findViewById(R.id.stat_card_1);
             stat_card_2 = (RelativeLayout) view.findViewById(R.id.stat_card_2);
 
-            stat_circle_1 = (TextView) view.findViewById(R.id.stat_circle_1);
-            stat_circle_2 = (TextView) view.findViewById(R.id.stat_circle_2);
+            stat_circle_1 = (CircleView) view.findViewById(R.id.stat_circle_1);
+            stat_circle_2 = (CircleView) view.findViewById(R.id.stat_circle_2);
 
             stat_text_1 = (TextView) view.findViewById(R.id.stat_text_1);
             stat_text_2 = (TextView) view.findViewById(R.id.stat_text_2);
@@ -242,12 +246,4 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         return position;
     }
 
-    public static void setTextCircleColor(TextView tv, Context context, int my_color){
-        tv.getBackground().setColorFilter(ContextCompat.getColor(context, my_color), PorterDuff.Mode.SRC_ATOP);
-    }
-
-    public static void setStrokeColor(TextView tv, Context context, int my_color){
-        GradientDrawable drawable = (GradientDrawable) tv.getBackground();
-        drawable.setStroke(6, ContextCompat.getColor(context, my_color)); // set stroke width and stroke color
-    }
 }

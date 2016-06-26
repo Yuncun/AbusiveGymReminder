@@ -11,11 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialcab.MaterialCab;
+import com.pipit.agc.agc.activity.AllinOneActivity;
 import com.pipit.agc.agc.adapter.NewsfeedAdapter;
 import com.pipit.agc.agc.model.Gym;
 import com.pipit.agc.agc.util.Constants;
@@ -31,7 +35,7 @@ import java.util.List;
 /**
  * Created by Eric on 1/21/2016.
  */
-public class NewsfeedFragment extends android.support.v4.app.Fragment {
+public class NewsfeedFragment extends android.support.v4.app.Fragment{
     private DBRecordsSource datasource;
     private List<Message> _allMessages;
     private List<DayRecord> _allDayRecords;
@@ -43,6 +47,7 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment {
     private CardView _gymstatus_cv;
     private TextView _gymstatus_header;
     private TextView _gymstatus_body;
+    private MaterialCab cab;
 
     private static final String TAG = "NewsfeedFragment";
 
@@ -89,8 +94,10 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment {
             DBRecordsSource.getInstance().closeDatabase();
         }
 
-        mAdapter = new NewsfeedAdapter(_allMessages, _allDayRecords, getActivity());
+        mAdapter = new NewsfeedAdapter(_allMessages, _allDayRecords, this);
         mRecyclerView.setAdapter(mAdapter);
+
+        cab = ((AllinOneActivity) getActivity()).getCab();
 
         return rootView;
     }
@@ -120,8 +127,20 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("Eric", "ONPAUSE");
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d("Eric", "ONDESTROY");
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d("Eric", "ONSTOP");
+    }
     private String getDayComments(){
         if (_allDayRecords==null || _allDayRecords.size()<1){
             return "No available dayrecords";
@@ -156,5 +175,12 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment {
 
         return color;
     }
+
+    public MaterialCab getCab(){
+        return cab;
+    }
+
+
+
 
 }

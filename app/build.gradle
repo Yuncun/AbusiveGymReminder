@@ -35,4 +35,7 @@ dependencies {
     compile 'com.afollestad.material-dialogs:core:0.8.5.9'
     compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
     compile 'com.robinhood.spark:spark:1.1.0'
+    compile('com.afollestad:material-cab:0.1.11@aar') {
+        transitive = true
+    }
 }

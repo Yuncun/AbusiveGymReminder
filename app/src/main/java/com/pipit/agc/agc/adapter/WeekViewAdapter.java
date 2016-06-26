@@ -186,17 +186,19 @@ public class WeekViewAdapter extends PagerAdapter {
         if (wv==null || mlayout==null) return;
         Resources r = wv.getResources();
         String name = wv.getContext().getPackageName();
-        Log.d("Eric", "Layout width" + mlayout.getWidth() + " navWidth" + mlayout.rightNav.getWidth());
-        int totalwidth = mlayout.getWidth();
+
+        int width = mlayout.getSavedWidth();
+        int navwidth = mlayout.getSavedNavWidth();
+        if (width<=0) width = mlayout.getWidth();
+        if (navwidth<=0) navwidth = WeekViewSwipeable.nav_button_default_width;
 
         // Calculate the expected dimen of each circle
-        int cvwidth = (totalwidth -
-                mlayout.rightNav.getWidth() -
-                mlayout.leftNav.getWidth())/7 -
-                (WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight);
+        int cvwidth = (width -
+                navwidth*2)/7 -
+                (WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight) -
+                16;
 
         //cvwidth-=20; //Something is messed up with padding - this looks nicer.
-        Log.d("Eric", "cvwidth " + cvwidth);
         if (cvwidth<=0) return;
 
         for (int i = 1; i < 8; i++){

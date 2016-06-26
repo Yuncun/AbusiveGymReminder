@@ -22,6 +22,7 @@ import com.pipit.agc.agc.adapter.MySparkAdapter;
 import com.pipit.agc.agc.adapter.WeekViewAdapter;
 import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,16 +31,21 @@ import java.util.List;
 /**
  * Created by Eric on 3/12/2016.
  */
+    //TODO
+    //Right now circleviews are lokced with default margins - Accept the margin from the given params
+    //
 public class WeekViewSwipeable extends LinearLayout {
-    private static String TAG = "WeekViewSwipeable";
+    private static final String TAG = "WeekViewSwipeable";
+    public static final String PERSISTEDWIDTH = "weekviewwidth";
+    public static final String NAV_WIDTH = "navbuttonwidth";
 
     public static final int circleMarginDefaultLeft = 4;
     public static final int circleMarginDefaultRight = 4;
     public static final int circleMarginDefaultTop = 2;
     public static final int circleMarginDefaultBottom = 0;
+    public static final int nav_button_default_width = 36;
 
     public int circleMargin;
-
 
     public AgcViewPager viewPager;
     private MySparkAdapter sparkAdapter;
@@ -48,6 +54,8 @@ public class WeekViewSwipeable extends LinearLayout {
     public ImageButton rightNav;
     private  List<DayRecord> _allPreviousDays;
     private boolean listenForLayoutUpdate;
+    private int _width = 0;
+    private int _navwidth = nav_button_default_width;
 
     public WeekViewSwipeable(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -69,7 +77,20 @@ public class WeekViewSwipeable extends LinearLayout {
         _allPreviousDays = datasource.getAllDayRecords();
         DBRecordsSource.getInstance().closeDatabase();
 
-        listenForLayoutUpdate = true;
+        //Reason:
+        //Need to specify each child circle size
+        //To do this, we need total width
+        //Total width is not immediately available, so we have an observer on onLayout, that redraws
+        //and resets the adapter. This is ofc slow if this view is created/destroyed multiple times,
+        //so we cheat by saving the width of the first time we calculate.
+        _width = SharedPrefUtil.getInt(context, PERSISTEDWIDTH, 0);
+        Log.d("Eric", "_width " + _width);
+        if (_width>0){
+            listenForLayoutUpdate = false;
+        }else{
+            listenForLayoutUpdate = true;
+        }
+
         viewPager = (AgcViewPager) root.findViewById(R.id.weekvp);
         wvadapter = new WeekViewAdapter(context, _allPreviousDays, this);
         viewPager.setAdapter(wvadapter);
@@ -181,10 +202,15 @@ public class WeekViewSwipeable extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        Log.d("Eric", "WIDTH IS READY " + getWidth());
+
         if (listenForLayoutUpdate){
+            _width=getWidth();
+            _navwidth=leftNav.getWidth();
+            SharedPrefUtil.putInt(getContext(), PERSISTEDWIDTH, _width);
+            SharedPrefUtil.putInt(getContext(), NAV_WIDTH, _navwidth);
             wvadapter = new WeekViewAdapter(getContext(), _allPreviousDays, this);
             viewPager.setAdapter(wvadapter);
+            viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays) - 1);
             listenForLayoutUpdate = false;
         }
     }
@@ -208,6 +234,12 @@ public class WeekViewSwipeable extends LinearLayout {
         showLastDayMarker();
     }
 
+    public int getSavedWidth(){
+        return _width;
+    }
+    public int getSavedNavWidth(){
+        return _navwidth;
+    }
 
 }
 

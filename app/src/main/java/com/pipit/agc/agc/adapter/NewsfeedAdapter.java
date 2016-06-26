@@ -12,13 +12,17 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialcab.MaterialCab;
 import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.Util;
@@ -26,6 +30,9 @@ import com.pipit.agc.agc.activity.MessageBodyActivity;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -35,9 +42,16 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     public static final double GYM_STATUS_HEIGHT_RATIO=.333;
     private List<Message> _messages;
     private List<DayRecord> _days;
-    private Context _context;
+    private HashSet<Integer> _selectedPos;
+    private NewsfeedFragment mFrag;
+
+    private int posOfItemThatStartedCAB;
+    private int mSelectedPosition;
+    private boolean allSelected;
+    private boolean selectionMode;
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
+        boolean selected;
         CardView cv;
         TextView timestamp;
         TextView header;
@@ -48,6 +62,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
 
         CardViewHolder(View itemView) {
             super(itemView);
+            selected=false;
             cv = (CardView)itemView.findViewById(R.id.cv);
             header = (TextView)itemView.findViewById(R.id.header);
             comment = (TextView)itemView.findViewById(R.id.comment);
@@ -58,9 +73,12 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         }
     }
 
-    public NewsfeedAdapter(List<Message> mMessages, List<DayRecord> mDays, Context context) {
+    public NewsfeedAdapter(List<Message> mMessages, List<DayRecord> mDays, NewsfeedFragment frag) {
         _messages = mMessages;
-        _context = context;
+        _selectedPos = new HashSet<Integer>();
+        selectionMode = false;
+        allSelected = false;
+        mFrag = frag;
         _days = mDays;
     }
 
@@ -74,22 +92,24 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     }
 
     @Override
-    public void onBindViewHolder(final CardViewHolder holder, int position) {
+    public void onBindViewHolder(final CardViewHolder holder, final int position) {
         Message m = _messages.get(position);
-        Resources r = _context.getResources();
+        Resources r = mFrag.getContext().getResources();
         holder.header.setText(m.getHeader());
         holder.comment.setText(m.getBody());
         holder.timestamp.setText(m.getIntelligentDateString());
-        holder.timestamp.setTextColor(ContextCompat.getColor(_context, R.color.black));
+        holder.icon.setBackground(ContextCompat.getDrawable(mFrag.getContext(), R.drawable.circle));
+
+        holder.timestamp.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
         if (m.getReason()== Message.HIT_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_hit_gym_yesterday));
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
         }
         if (m.getReason()== Message.MISSED_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_missed_gym));
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
         }
@@ -98,10 +118,10 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             //holder.reason.setTextColor(ContextCompat.getColor(_context, R.color.darkgreen));
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
         }
         if (m.getReason() == Message.WELCOME) {
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(_context, R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setText(r.getText(R.string.welcome));
         }
         //holder.iconwrapper.setLayoutParams(new RelativeLayout.LayoutParams(holder.iconwrapper.getMeasuredHeight(), holder.iconwrapper.getMeasuredHeight()));
@@ -110,32 +130,67 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
 
         if (!m.getRead()){
             //Todo: Add "read" field to databaseace(null, Typeface.BOLD);
-            holder.reason.setTextColor(ContextCompat.getColor(_context, R.color.black));
+            holder.reason.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
             holder.reason.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
-            holder.timestamp.setTextColor(ContextCompat.getColor(_context, R.color.black));
+            holder.timestamp.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
             holder.timestamp.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
             //holder.header.setTypeface(holder.comment.getTypeface(), Typeface.BOLD);
             //holder.timestamp.setTypeface(holder.timestamp.getTypeface(), Typeface.BOLD);
         }
-        Bitmap bMap = BitmapFactory.decodeResource(_context.getResources(), R.drawable.notification_icon);
+
+        if (selectionMode && _selectedPos.contains(position)){
+            Log.d("Eric", "pos " + position + " adapterpos " + holder.getAdapterPosition() + "msg " + m.getHeader());
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.setBackground(ContextCompat.getDrawable(mFrag.getContext(), android.R.drawable.checkbox_on_background));
+        }
         final int mpos = position;
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(_context, MessageBodyActivity.class);
+                if (selectionMode){
+                    if (_selectedPos.contains(position)){
+                        _selectedPos.remove(position);
+                    }else{
+                        _selectedPos.add(position);
+                    }
+                    notifyItemChanged(position);
+                    return;
+                }
+                Intent intent = new Intent(mFrag.getContext(), MessageBodyActivity.class);
                 intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos).getId());
-                _context.startActivity(intent);
+                mFrag.getContext().startActivity(intent);
                 _messages.get(mpos).setRead(true);
                 DBRecordsSource datasource = DBRecordsSource.getInstance();
                 datasource.openDatabase();
                 datasource.markMessageRead(_messages.get(mpos).getId(), true);
+                _messages=datasource.getAllMessages();
                 datasource.closeDatabase();
+                Collections.reverse(_messages);
                 notifyDataSetChanged();
-                holder.reason.setTextColor(ContextCompat.getColor(_context, android.R.color.primary_text_light));
+                /*
+                holder.reason.setTextColor(ContextCompat.getColor(mFrag.getContext(), android.R.color.primary_text_light));
                 holder.reason.setTypeface(holder.reason.getTypeface(), Typeface.NORMAL);
-                holder.timestamp.setTextColor(ContextCompat.getColor(_context, android.R.color.primary_text_dark));
-                holder.timestamp.setTypeface(holder.reason.getTypeface(), Typeface.NORMAL);
+                holder.timestamp.setTextColor(ContextCompat.getColor(mFrag.getContext(), android.R.color.primary_text_dark));
+                holder.timestamp.setTypeface(holder.reason.getTypeface(), Typeface.NORMAL);*/
            }
+        });
+
+        holder.cv.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+        public boolean onLongClick(View v){
+                if (mFrag.getCab()==null) return false;
+                if (selectionMode) return false;
+                selectionMode = true;
+                //v.setSelected(true);
+                //notifyDataSetChanged();
+                mFrag.getCab()
+                        .setMenu(R.menu.cab_menu)
+                        .setTitle("Manage Inbox")
+                        .start(mCabCallback);
+                _selectedPos.add(position);
+                notifyItemChanged(position);
+                return true;
+            }
         });
     }
 
@@ -151,7 +206,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     }
 
     private int calculateGymStatusCardHeight(){
-        double screenheight = Util.getScreenHeightMinusStatusBar(_context);
+        double screenheight = Util.getScreenHeightMinusStatusBar(mFrag.getContext());
         screenheight*=GYM_STATUS_HEIGHT_RATIO;
         return (int) screenheight;
     }
@@ -159,5 +214,59 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     public void updateDayrecords(List<DayRecord> newSet){
         _days=newSet;
     }
+
+    private MaterialCab.Callback mCabCallback = new MaterialCab.Callback() {
+        @Override
+        public boolean onCabCreated(MaterialCab cab, Menu menu) {
+            return true;
+        }
+
+        @Override
+        public boolean onCabItemClicked(MenuItem item) {
+            Log.d("Eric", "CabClicked ");
+            switch (item.getItemId()) {
+                case R.id.select_all:
+                    if (allSelected){
+                        allSelected=false;
+                        _selectedPos = new HashSet<>();
+                    }else{
+                        allSelected=true;
+                        for(int i = 0 ; i < _messages.size(); i++){
+                            _selectedPos.add(i);
+                        }
+                    }
+                    notifyDataSetChanged();
+                    return true;
+
+                case R.id.delete:
+                    DBRecordsSource datasource = DBRecordsSource.getInstance();
+                    datasource.openDatabase();
+
+                    for (Integer i : _selectedPos){
+                        datasource.deleteMessage(_messages.get(i));
+                    }
+                    _messages=datasource.getAllMessages();
+                    datasource.closeDatabase();
+                    Collections.reverse(_messages);
+                    _selectedPos = new HashSet<>();
+                    notifyDataSetChanged();
+                    return true;
+
+                default:
+                    // If we got here, the user's action was not recognized.
+                    // Invoke the superclass to handle it.
+
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onCabFinished(MaterialCab cab) {
+            selectionMode = false;
+            _selectedPos = new HashSet<>();
+            return true;
+        }
+    };
+
 
 }

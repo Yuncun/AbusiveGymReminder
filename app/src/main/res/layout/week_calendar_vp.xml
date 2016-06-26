@@ -30,7 +30,7 @@
 
         <ImageButton
             android:id="@+id/left_nav"
-            android:layout_width="24dp"
+            android:layout_width="36dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|left"
             android:paddingLeft="8dp"
@@ -39,7 +39,7 @@
 
         <ImageButton
             android:id="@+id/right_nav"
-            android:layout_width="24dp"
+            android:layout_width="36dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|right"
             android:paddingRight="8dp"

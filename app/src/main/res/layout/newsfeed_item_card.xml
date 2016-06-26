@@ -10,6 +10,7 @@
         card_view:cardUseCompatPadding="true"
         android:layout_marginBottom="-2dp"
         android:elevation="2dp"
+        android:background="@drawable/listitemselector"
         android:id="@+id/cv"
         >
         <RelativeLayout

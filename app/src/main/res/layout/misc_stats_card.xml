@@ -36,24 +36,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:text="Stat One"
                     android:gravity="center"
                     android:layout_centerVertical="true"
                     android:textSize="24sp"
                     />
 
-                <TextView
+                <com.pipit.agc.agc.widget.CircleView
                     android:id="@+id/stat_circle_1"
                     android:layout_alignParentRight="true"
                     android:layout_marginBottom="10dp"
                     android:gravity="center"
                     android:text="10"
-                    android:textSize="40dp"
                     android:textStyle="bold"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:elevation="4dp"
-                    android:background="@drawable/circle"/>
+                    android:elevation="4dp" />
             </RelativeLayout>
 
             <!-- SECOND STAT ROW -->
@@ -65,19 +62,6 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp">
                 <TextView
-                    android:id="@+id/stat_circle_2"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center"
-                    android:text="10"
-                    android:textSize="40dp"
-                    android:textStyle="bold"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:elevation="4dp"
-                    android:background="@drawable/circle"/>
-
-                <TextView
                     android:id="@+id/stat_text_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,6 +71,16 @@
                     android:layout_centerVertical="true"
                     android:textSize="24sp"
                     />
+                <com.pipit.agc.agc.widget.CircleView
+                    android:id="@+id/stat_circle_2"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center"
+                    android:text="10"
+                    android:textStyle="bold"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:elevation="4dp" />
 
             </RelativeLayout>
 

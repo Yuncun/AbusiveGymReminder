@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.afollestad.materialcab.MaterialCab;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -63,6 +64,7 @@ public class AllinOneActivity extends AppCompatActivity {
     private AlarmManagerBroadcastReceiver _alarm;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
+    private MaterialCab cab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +120,7 @@ public class AllinOneActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.setupWithViewPager(mViewPager);
 
-
+        cab = new MaterialCab(this, R.id.cab_stub);
         Log.d(TAG, "remaking _alarmmanager " + _alarm);
         _alarm = new AlarmManagerBroadcastReceiver();
         Calendar calendar = Calendar.getInstance();
@@ -152,15 +154,6 @@ public class AllinOneActivity extends AppCompatActivity {
             //prefs.edit().putBoolean("showGymStatus", true).commit();
             SharedPrefUtil.setFirstTime(this, true);
             Util.putListToSharedPref(this, Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
-        }
-        else if (id == R.id.action_remove_messages){
-            DBRecordsSource datasource = DBRecordsSource.getInstance();
-            datasource.openDatabase();
-            datasource.deleteAllMessages();
-            datasource.closeDatabase();
-        }
-        else if (id == R.id.action_remove_geofences){
-            //GeofenceController.getInstance().removeAllGeofences(null);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -343,6 +336,10 @@ public class AllinOneActivity extends AppCompatActivity {
                 ((StatisticsFragment) f).update();
             }
         }
+    }
+
+    public MaterialCab getCab(){
+        return cab;
     }
 }
 
