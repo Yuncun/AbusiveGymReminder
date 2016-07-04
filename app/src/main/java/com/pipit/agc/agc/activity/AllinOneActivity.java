@@ -33,6 +33,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.pipit.agc.agc.controller.GeofenceController;
+import com.pipit.agc.agc.fragment.DayPickerFragmentTwo;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.agc.receiver.GeoFenceTransitionsIntentReceiver;
@@ -117,6 +118,7 @@ public class AllinOneActivity extends AppCompatActivity {
         mTabLayout.addTab(mTabLayout.newTab().setText("Inbox"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Days"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Gyms"));
+        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.basewhite));
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.setupWithViewPager(mViewPager);
 
@@ -236,6 +238,15 @@ public class AllinOneActivity extends AppCompatActivity {
                     if (lastDate.getDate().before(todaysDate.getDate())) {
                         //We skipped a day somehow
                         while (!lastDate.compareToDate(todaysDate.getDate())) {
+                            //If there are any visits on that day, we need to end them
+                            boolean  flagStartNewVisit = false;
+                            if (lastDate.isCurrentlyVisiting()){
+                                datasource.closeDatabase();
+                                lastDate.endCurrentVisit();
+                                datasource.openDatabase();
+                                flagStartNewVisit = true;
+                            }
+
                             //Add days until we match up
                             Calendar cal = Calendar.getInstance();
                             cal.setTime(lastDate.getDate());
@@ -245,10 +256,12 @@ public class AllinOneActivity extends AppCompatActivity {
                             day.setComment(getResources().getString(R.string.no_record));
                             day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(this, cal.get(Calendar.DAY_OF_WEEK)));
                             datasource.createDayRecord(day);
+                            if (flagStartNewVisit){
+                                day.startCurrentVisit();
+                            }
                             SharedPrefUtil.updateMainLog(this, "Updated day from onStart");
 
-                            Log.d(TAG, "Incremented a day, lastDate is now" + lastDate.getDateString()
-                                    + "and today's date is " + todaysDate.getDateString());
+
                         }
                     } else if (lastDate.getDate().after(todaysDate.getDate())) {
                         //A more nefarious case when we have dates ahead of system time

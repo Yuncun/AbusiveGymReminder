@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.pipit.agc.agc.fragment.DayPickerFragmentTwo;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.Util;
@@ -33,7 +34,7 @@ import java.util.List;
 /**
  * Created by Eric on 2/3/2016.
  */
-public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.CardViewHolder>{
+public class DayOfWeekAdapterTwo extends RecyclerView.Adapter<DayOfWeekAdapterTwo.DOWViewHolder>{
     private final Context context;
     private final Fragment mFrag;
     public int count = 7;
@@ -41,55 +42,45 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
     public static String TAG = "DayPickerAdapter";
     private HashSet<Integer> weeklySchedule; //Contains 0-7 days that are gym days
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
+    public static class DOWViewHolder extends RecyclerView.ViewHolder {
         TextView comment;
         TextView statuscircle;
         LinearLayout cvlayout;
 
-        CardViewHolder(View itemView) {
+        DOWViewHolder(View itemView) {
             super(itemView);
             comment = (TextView) itemView.findViewById(R.id.comment);
-            cv = (CardView)  itemView.findViewById(R.id.cv);
             statuscircle = (TextView) itemView.findViewById(R.id.stat_circle);
             cvlayout = (LinearLayout) itemView.findViewById(R.id.cvlayout);
         }
     }
 
-    public DayOfWeekAdapter( HashSet<Integer> weeklySchedule, Fragment frag, int sizeToFill) {
+    public DayOfWeekAdapterTwo( HashSet<Integer> weeklySchedule, Fragment frag) {
         this.mFrag = frag;
         this.context = frag.getContext();
-        this._screenheight=sizeToFill;
         this.weeklySchedule = weeklySchedule;
     }
 
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup parent,
+    public DOWViewHolder onCreateViewHolder(ViewGroup parent,
                                              int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.dayofweek_layout, parent, false);
-        CardViewHolder vh = new CardViewHolder(v);
+                .inflate(R.layout.dayofweek_layout_two, parent, false);
+        DOWViewHolder vh = new DOWViewHolder(v);
         return vh;
     }
 
 
     @Override
-    public void onBindViewHolder(final CardViewHolder holder, final int position) {
+    public void onBindViewHolder(final DOWViewHolder holder, final int position) {
         holder.comment.setText(getDayOfWeekText(position + 1));
-
-        /*Set listview height to show 7 days*/
-        if (_screenheight<1){
-            _screenheight = Math.round(Util.getScreenHeightMinusStatusBar(context));
-        }
-        int txtheight = (int) (_screenheight / 7);
-        holder.cv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, txtheight));
 
 
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
         final String gymDay = context.getResources().getString(R.string.gym_day);
         final String restDay = context.getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(position)){
-            holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+            holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
             holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
             //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
             holder.statuscircle.setText(gymDay);
@@ -100,7 +91,7 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
             holder.statuscircle.setText(restDay);
         }
 
-        holder.cv.setOnClickListener(new View.OnClickListener() {
+        holder.cvlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                         /*Remove or Add the date to the list*/
@@ -118,19 +109,19 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
                     //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
                         if (mFrag instanceof DayOfWeekPickerFragment){
-                            ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(false);
+                            ((DayPickerFragmentTwo) mFrag).toggleCurrentGymDayData(false);
                         }
                     }
                 } else {
                     dates.add(datestr);
                     Log.d(TAG, "Added day " + datestr + " to weekly gym days");
                     holder.statuscircle.setText(gymDay);
-                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
                     holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
                     //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
                         if (mFrag instanceof DayOfWeekPickerFragment) {
-                            ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(true);
+                            ((DayPickerFragmentTwo) mFrag).toggleCurrentGymDayData(true);
                         }
                     }
 
@@ -148,33 +139,6 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         return count;
     }
 
-    /* Re size the font so the specified text fits in the text box
-    * assuming the text box is the specified width.
-    *
-    *  Written by StackOverflow user speedplane
-    *  MIT license
-    */
-    private void refitText(TextView txtv, int targetheight)
-    {
-        if (targetheight <= 0)
-            return;
-        Paint mTestPaint = new Paint();
-        mTestPaint.set(txtv.getPaint());
-        float hi = 100;
-        float lo = 2;
-        final float threshold = 0.5f; // How close we have to be
-
-        while((hi - lo) > threshold) {
-            float size = (hi+lo)/2;
-            mTestPaint.setTextSize(size);
-            if(mTestPaint.measureText((String) txtv.getText()) >= targetheight)
-                hi = size; // too big
-            else
-                lo = size; // too small
-        }
-        // Use lo so that we undershoot rather than overshoot
-        txtv.setTextSize(TypedValue.COMPLEX_UNIT_PX, lo);
-    }
 
     private String getDayOfWeekText(int n){
         switch(n){

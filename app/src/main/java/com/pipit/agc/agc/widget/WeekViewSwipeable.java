@@ -56,6 +56,7 @@ public class WeekViewSwipeable extends LinearLayout {
     private boolean listenForLayoutUpdate;
     private int _width = 0;
     private int _navwidth = nav_button_default_width;
+    private boolean navEnabled = true;
 
     public WeekViewSwipeable(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -239,6 +240,15 @@ public class WeekViewSwipeable extends LinearLayout {
     }
     public int getSavedNavWidth(){
         return _navwidth;
+    }
+
+    public void setNavEnabled(boolean f){
+        navEnabled=f;
+        if (!f){
+            leftNav.setVisibility(GONE);
+            rightNav.setVisibility(GONE);
+       }
+
     }
 
 }

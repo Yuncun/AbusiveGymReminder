@@ -27,6 +27,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * DEPRECATED - ONLY USE AS A RESOURCE
+ */
 public class DayPickerFragment extends ListFragment implements AbsListView.OnScrollListener {
     private static final String TAG = "DayPickerFragment";
     DayPickerAdapter _adapter;

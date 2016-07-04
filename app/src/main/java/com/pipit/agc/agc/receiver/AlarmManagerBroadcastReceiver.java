@@ -123,9 +123,15 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         }
         datasource.openDatabase();
 
-        //Finish the current day
-        boolean  flagStartNewVisit = false;
+        //If the day was already updated by another mechanism, (like in onStart), then
+        //we don't need to do this again.
         DayRecord yesterday = datasource.getLastDayRecord();
+        if (yesterday.compareToDate(new Date())){
+            return;
+        }
+
+        //Finish the current visit if we are currently in a gym
+        boolean flagStartNewVisit = false;
         if (yesterday.isCurrentlyVisiting()){
             datasource.closeDatabase();
             yesterday.endCurrentVisit();
