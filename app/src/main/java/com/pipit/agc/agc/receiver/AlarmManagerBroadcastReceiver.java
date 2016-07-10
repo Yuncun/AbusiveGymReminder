@@ -10,6 +10,7 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.ReminderOracle;
@@ -59,36 +60,36 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                 if (m.getRepoId()>0){
                     Util.putStringIntoListIntoSharedPrefs(context, Constants.TAKEN_MESSAGE_IDS, Long.toString(m.getRepoId()));
                 }
-                String messageheader = "";
-                String notificationheader = "";
-                String messageBody = "";
+                String firstLineBody = "";
+                String title = "";
+                String secondLineBody = "";
                 long msgid = -1;
                 int reason = Message.NO_RECORD;
                 //Construct notification message and show
                 switch (m.getReason()){
                     case Message.MISSED_YESTERDAY:
-                        notificationheader = "You missed the gym yesterday";
-                        messageheader = m.getHeader();
-                        messageBody = m.getBody();
+                        title = m.getHeader();
+                        firstLineBody = m.getBody();
+                        secondLineBody = "(Missed a gym day yesterday)";
                         msgid = m.getId();
                         reason = Message.MISSED_YESTERDAY;
                         break;
                     case Message.HIT_YESTERDAY:
                     case Message.HIT_TODAY:
-                        notificationheader = "Gym visit registered";
-                        messageheader = m.getHeader();
-                        messageBody = m.getBody();
+                        title = m.getHeader();
+                        firstLineBody = m.getBody();
+                        secondLineBody = context.getString(R.string.reason_hit_gym_today);
                         reason = Message.HIT_TODAY;
                         msgid = m.getId();
                         break;
                     case Message.NO_RECORD:
                     default:
-                        messageheader = "New Message from Abusive Gym Reminder";
+                        title = m.getHeader();
+                        firstLineBody = m.getBody();
                         msgid = m.getId();
-                        notificationheader = m.getBody();
-                        reason = Message.HIT_TODAY;
+                        reason = Message.NEW_MSG;
                 }
-                ReminderOracle.showNotification(context,notificationheader, messageheader,messageBody, msgid, reason);
+                ReminderOracle.showNotification(context, title, firstLineBody, secondLineBody, msgid, reason);
                 break;
             default:
                 break;

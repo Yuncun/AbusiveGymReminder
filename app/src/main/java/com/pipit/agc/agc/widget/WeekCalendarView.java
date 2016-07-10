@@ -22,8 +22,7 @@ import java.util.List;
 
 /**
  * Created by Eric on 3/12/2016.
- * Deprecated
- */
+ **/
 public class WeekCalendarView extends LinearLayout {
     private static final String TAG = "WeekCalendarView";
 

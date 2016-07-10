@@ -30,7 +30,7 @@ public class WeekViewAdapter extends PagerAdapter {
     private static final String TAG = "WeekViewAdapter";
 
     private Context mContext;
-    private List<DayRecord> _allDayRecords;
+    protected List<DayRecord> _allDayRecords;
     private WeekViewSwipeable mlayout;
     public int targetWidth;
 
@@ -119,7 +119,7 @@ public class WeekViewAdapter extends PagerAdapter {
      * Given a list of days, how many weeks exist between the first
      * and last days inclusive?
      */
-    public static int getNumberOfWeeks(List<DayRecord> dayrecords){
+    public static int getNumberOfWeeks(List<?> dayrecords){
         if (dayrecords == null || dayrecords.size() == 0){
             return 1;
         }
@@ -152,7 +152,7 @@ public class WeekViewAdapter extends PagerAdapter {
         //Now, DOWofFirstDAY is in Calendar format, i.e. 1-7, we need to decrement here.
         dowOfFirstDay--;
 
-        List<DayRecord> week = new ArrayList<DayRecord>();
+        List<DayRecord> week = new ArrayList<>();
         int indexStart = 0 + a - dowOfFirstDay;
         int indexEnd = 7 + a - dowOfFirstDay;
 
@@ -179,7 +179,7 @@ public class WeekViewAdapter extends PagerAdapter {
     }
 
     /**
-     * Since our view is being instantiated in the ViewPager, it is necessary
+     * Since our view is being instantiated in the ViewPager, it is necessary to size the cirlces dyamically
      * @param wv
      */
     public void resizeToFit(View wv){
@@ -200,8 +200,6 @@ public class WeekViewAdapter extends PagerAdapter {
                 (WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight) -
                 16;
 
-        //cvwidth-=20; //Something is messed up with padding - this looks nicer.
-        Log.d("Eric", "cvwidth " + cvwidth);
         if (cvwidth<=0) return;
 
         for (int i = 1; i < 8; i++){
@@ -247,92 +245,37 @@ public class WeekViewAdapter extends PagerAdapter {
             //If it negative, then we have no record for it.
             final int index = i + a - dowOfFirstDay;
 
-            //The indexed day versus today's date
-            //The first card should be today's date, minus
+            /*Get identifier*/
+            int j = i+1; //I'm as confused as you are
+            int viewid = r.getIdentifier("day_" + j, "id", name);
+            View weekitem = root.findViewById(viewid);
+            CircleView cv = (CircleView) weekitem.findViewById(R.id.calendar_day_info);
+            TextView rfd = (TextView) weekitem.findViewById(R.id.record_for_day);
+
+            //This snippet assigns the date numbers to the weekview
+            //This code uses Sunday as the last day of the week and fills in gaps
             int offset = index - (_allDayRecords.size()-1);
             Calendar indexedDay = Calendar.getInstance();
             indexedDay.add(Calendar.DATE, offset);
             int dow = indexedDay.get(Calendar.DAY_OF_WEEK);
             int date = indexedDay.get(Calendar.DATE);
+            cv.setTitleText(Integer.toString(date));
 
-
-            /*Get identifier*/
-            int j = i+1; //I'm as confused as you are
-            int viewid = r.getIdentifier("day_" + j, "id", name);
-            View weekitem = root.findViewById(viewid);
-            CircleView tv = (CircleView) weekitem.findViewById(R.id.calendar_day_info);
-            //tv.getLayoutParams().height = tv.getMeasuredWidth();
-
-            tv.setShowSubtitle(false);
-            TextView rfd = (TextView) weekitem.findViewById(R.id.record_for_day);
-            tv.setTitleText(Integer.toString(date));
-
-            //Check if it is a day for which we have records
-            if (index >= _allDayRecords.size()){
-                tv.setFillColor(ContextCompat.getColor(context, R.color.grey_lighter));
-                tv.setTitleColor(ContextCompat.getColor(context, R.color.colorPrimary));
-                //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
-                //tv.getBackground().setAlpha(128);
-                continue;
-            }else if (index < 0){
-                tv.setFillColor(ContextCompat.getColor(context, R.color.grey_lighter));
-                tv.setTitleColor(ContextCompat.getColor(context, R.color.colorPrimary));
-                //tv.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.grey_lighter), PorterDuff.Mode.SRC_ATOP);
-                //tv.getBackground().setAlpha(128);
-                continue;
-            }
-
-            rfd.setVisibility(View.VISIBLE);
-            weekitem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Get latset since this isn't commonly called
-                    DBRecordsSource datasource;
-                    datasource = DBRecordsSource.getInstance();
-                    datasource.openDatabase();
-                    DayRecord today = datasource.getLastDayRecord();
-                    datasource.closeDatabase();
-
-                    MaterialDialog dialog = new MaterialDialog.Builder(context)
-                            .title(today.getDateString())
-                            .content("Visits: \n" + _allDayRecords.get(index).printVisits())
-                            .show();
-                }
-            });
-
-            if (_allDayRecords.get(index).beenToGym()){
-                /*HIT DAY*/
-                rfd.setText(r.getString(R.string.hit));
-                tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_teal));
-                //tv.setBa().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
-                tv.setTitleColor(ContextCompat.getColor(context, R.color.basewhite));
-            }
-            else{
-                /* For days we haven't gone to gym, we want to say "MISS" if it was a gym day
-                    and "REST" if it was a rest day. */
-                if (_allDayRecords.get(index).isGymDay()){
-                    if (index==_allDayRecords.size()-1){
-                        /* CURRENT DAY STATE */
-                        //The message for today; don't say "missed"
-                        rfd.setText("?");
-                    }
-                    else{
-                        /*MISSED A GYM DAY STATE */
-                        rfd.setText(r.getString(R.string.miss));
-                        tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
-                        tv.setTitleColor(ContextCompat.getColor(context, R.color.basewhite));
-                    }
-                }else{
-                    /* REST DAY STATE */
-                    rfd.setText(r.getString(R.string.rest));
-                }
-            }
-            if (index==_allDayRecords.size()-1){
-                tv.setStrokeColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-                rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-                rfd.setText("Today");
-            }
+            drawCircleDays(context, cv, rfd, weekitem, index);
         }
+    }
+
+    /**
+     * This is called for every day of each weekview. It is the key function that binds adapter data
+     * to each day in your weekview. Override and set your own behavior for the given circleview, etc.
+     * @param context
+     * @param cv - Circleview of the given day. Set your custom text/click behavior here
+     * @param rfd - "Record for Day" - This textview sits below the circleview
+     * @param weekitem - The entire day view (parent of circleview)
+     * @param index - index relative to adapter data
+     */
+    protected void drawCircleDays(final Context context, CircleView cv, TextView rfd, View weekitem, final int index ){
+
     }
 
 }

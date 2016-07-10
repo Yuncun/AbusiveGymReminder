@@ -28,6 +28,7 @@ public class Message {
     public final static int HIT_YESTERDAY = 1;
     public final static int HIT_TODAY = 2;
     public final static int WELCOME = 3;
+    public final static int NEW_MSG = 4;
 
     public Message(){
         timeCreated =  Calendar.getInstance();

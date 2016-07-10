@@ -124,6 +124,10 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setText(r.getText(R.string.welcome));
         }
+        if (m.getReason() == Message.NEW_MSG){
+            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+            holder.reason.setText(r.getText(R.string.new_msg));
+        }
         //holder.iconwrapper.setLayoutParams(new RelativeLayout.LayoutParams(holder.iconwrapper.getMeasuredHeight(), holder.iconwrapper.getMeasuredHeight()));
         //holder.reason.setTextSize(12);
         //holder.timestamp.setTextSize(12);

@@ -180,7 +180,7 @@ public class AllinOneActivity extends AppCompatActivity {
                 case 1:
                     return NewsfeedFragment.newInstance();
                 case 2:
-                    return DayOfWeekPickerFragment.newInstance(2);
+                    return DayPickerFragmentTwo.newInstance(2);
                 case 3:
                     return LocationListFragment.newInstance(1);
                 default:

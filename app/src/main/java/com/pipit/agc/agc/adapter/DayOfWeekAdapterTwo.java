@@ -174,8 +174,6 @@ public class DayOfWeekAdapterTwo extends RecyclerView.Adapter<DayOfWeekAdapterTw
             this.weeklySchedule=weeklySchedule;
         }
         notifyDataSetChanged();
-
-        //this.notifyDataSetChanged();
     }
 
 }

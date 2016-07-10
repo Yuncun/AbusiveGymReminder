@@ -37,7 +37,7 @@
                 app:spark_lineWidth="6dp"
                 />
 
-            <com.pipit.agc.agc.widget.WeekViewSwipeable
+            <com.pipit.agc.agc.widget.CalendarWeekViewSwipeable
                 android:id="@+id/calendar_component"
                 android:layout_width="match_parent"
                 android:layout_below="@id/sparkview"

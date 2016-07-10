@@ -156,8 +156,11 @@ public class MessageBodyFragment extends Fragment {
         if (_msg.getReason()== Message.HIT_TODAY) {
             reason.setText(getContext().getResources().getString(R.string.reason_hit_gym));
         }
-        if (_msg.getReason()==Message.WELCOME){
+        if (_msg.getReason()== Message.WELCOME){
             reason.setText("Welcome");
+        }
+        else{
+            reason.setText(getContext().getText(R.string.new_msg));
         }
 
         drawer.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.schemefour_teal));

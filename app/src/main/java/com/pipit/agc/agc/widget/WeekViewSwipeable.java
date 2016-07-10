@@ -31,9 +31,7 @@ import java.util.List;
 /**
  * Created by Eric on 3/12/2016.
  */
-    //TODO
-    //Right now circleviews are lokced with default margins - Accept the margin from the given params
-    //
+
 public class WeekViewSwipeable extends LinearLayout {
     private static final String TAG = "WeekViewSwipeable";
     public static final String PERSISTEDWIDTH = "weekviewwidth";
@@ -48,15 +46,14 @@ public class WeekViewSwipeable extends LinearLayout {
     public int circleMargin;
 
     public AgcViewPager viewPager;
-    private MySparkAdapter sparkAdapter;
     private WeekViewAdapter wvadapter;
     public ImageButton leftNav;
     public ImageButton rightNav;
-    private  List<DayRecord> _allPreviousDays;
+    protected List<DayRecord> _allPreviousDays;
     private boolean listenForLayoutUpdate;
     private int _width = 0;
     private int _navwidth = nav_button_default_width;
-    private boolean navEnabled = true;
+    protected boolean navEnabled = true;
 
     public WeekViewSwipeable(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -73,10 +70,7 @@ public class WeekViewSwipeable extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View root = inflater.inflate(R.layout.week_calendar_vp, this, true);
 
-        DBRecordsSource datasource = DBRecordsSource.getInstance();
-        datasource.openDatabase();
-        _allPreviousDays = datasource.getAllDayRecords();
-        DBRecordsSource.getInstance().closeDatabase();
+        _allPreviousDays = new ArrayList<>();
 
         //Reason:
         //Need to specify each child circle size
@@ -85,7 +79,6 @@ public class WeekViewSwipeable extends LinearLayout {
         //and resets the adapter. This is ofc slow if this view is created/destroyed multiple times,
         //so we cheat by saving the width of the first time we calculate.
         _width = SharedPrefUtil.getInt(context, PERSISTEDWIDTH, 0);
-        Log.d("Eric", "_width " + _width);
         if (_width>0){
             listenForLayoutUpdate = false;
         }else{
@@ -93,24 +86,8 @@ public class WeekViewSwipeable extends LinearLayout {
         }
 
         viewPager = (AgcViewPager) root.findViewById(R.id.weekvp);
-        wvadapter = new WeekViewAdapter(context, _allPreviousDays, this);
-        viewPager.setAdapter(wvadapter);
-        viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays) - 1);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+        setAdapter(new WeekViewAdapter(context, _allPreviousDays, this));
 
-            @Override
-            public void onPageSelected(int position) {
-                List<DayRecord> daysForWeek = ((WeekViewAdapter) viewPager.getAdapter()).getDaysForFocusedWeek(position);
-                updateSparkLineData(daysForWeek);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
 
         leftNav = (ImageButton) root.findViewById(R.id.left_nav);
         rightNav = (ImageButton) root.findViewById(R.id.right_nav);
@@ -128,7 +105,6 @@ public class WeekViewSwipeable extends LinearLayout {
             }
         });
 
-        // Images right navigatin
         rightNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,54 +151,22 @@ public class WeekViewSwipeable extends LinearLayout {
         }
     }
 
-    public void updateSparkLineData(List<DayRecord> days){
-        if (sparkAdapter==null) return;
-
-        float[] times = new float[days.size()];
-        for (int i = 0 ; i < days.size(); i++){
-            if (days.get(i) == null || days.get(i).calculateTotalVisitTime() <= 0){
-                times[i] = 0;
-            }
-            else{
-                times[i] = (float) days.get(i).calculateTotalVisitTime();
-            }
-        }
-
-        //I found that sparkline doesn't show line with only one value
-        if (times.length < 2){
-            times = new float[] {times[0], times[0]};
-            sparkAdapter.setGraphWidth(18.0f); //One data point should not appear too large
-        } else {
-            sparkAdapter.setGraphWidth(6.0f);
-        }
-        
-        sparkAdapter.update(times);
-        //Log.d(TAG, "updating sparkline " + Arrays.toString(times));
-    }
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
+        //TODO:
+        // This current uses sharedpreferences to remmeber settings. This works fine for
+        // AGR but is not a sustainable solution if this is to be used as a standalone view.
         if (listenForLayoutUpdate){
             _width=getWidth();
             _navwidth=leftNav.getWidth();
             SharedPrefUtil.putInt(getContext(), PERSISTEDWIDTH, _width);
             SharedPrefUtil.putInt(getContext(), NAV_WIDTH, _navwidth);
             wvadapter = new WeekViewAdapter(getContext(), _allPreviousDays, this);
-            viewPager.setAdapter(wvadapter);
-            viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays) - 1);
+            setAdapter(wvadapter);
             listenForLayoutUpdate = false;
         }
-    }
-
-
-    public void attachSparklineAdapter(MySparkAdapter sparky){
-        sparkAdapter = sparky;
-    }
-
-    public void unattachSparklineAdapter(){
-        sparkAdapter=null;
     }
 
 
@@ -248,7 +192,12 @@ public class WeekViewSwipeable extends LinearLayout {
             leftNav.setVisibility(GONE);
             rightNav.setVisibility(GONE);
        }
+    }
 
+    protected void setAdapter(WeekViewAdapter wva){
+        wvadapter = wva;
+        viewPager.setAdapter(wva);
+        viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays) - 1);
     }
 
 }

@@ -21,6 +21,7 @@ import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
+import com.pipit.agc.agc.widget.CalendarWeekViewSwipeable;
 import com.pipit.agc.agc.widget.CircleView;
 import com.pipit.agc.agc.widget.WeekViewSwipeable;
 import com.robinhood.spark.SparkView;
@@ -193,11 +194,11 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
         public final SparkView sparkgraph;
 
-        public final WeekViewSwipeable calendar;
+        public final CalendarWeekViewSwipeable calendar;
 
         public WeeklyViewHolder(View view){
             super(view);
-            calendar = (WeekViewSwipeable) view.findViewById(R.id.calendar_component);
+            calendar = (CalendarWeekViewSwipeable) view.findViewById(R.id.calendar_component);
             sparkgraph = (SparkView) view.findViewById(R.id.sparkview);
 
 

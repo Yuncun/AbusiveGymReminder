@@ -92,6 +92,7 @@ public class ReminderOracle {
                         Toast.LENGTH_LONG).show();
             }
         }
+
         /*Not test mode - Same code as above, but we do nothing for yesterday.beenToGym case, and does the waiting*/
         else{
             if (yesterday.beenToGym()) {
@@ -107,6 +108,7 @@ public class ReminderOracle {
                         MessageRepositoryStructure.KINDA_ANNOYED);
                 msg.setReason(Message.MISSED_YESTERDAY);
                 try{
+                    //This whole mechanism prevents us from showing the same message over and over again
                     Log.d(TAG, "Attempting to get a new message");
                     long id = findANewMessageId(context, type);
                     if (!messagerepo.isOpen()) { messagerepo.open(); }
@@ -130,7 +132,7 @@ public class ReminderOracle {
         }
         messagerepo.close();
 
-        /*Calculate Noise*/
+        /*Calculate some noise to add to the time shown*/
         Random rand = new Random();
         int hr_noise = rand.nextInt(POST_TIME_NOISE_HOURS);
         int min_noise = rand.nextInt(POST_TIME_NOISE_MINTUES);
@@ -185,7 +187,7 @@ public class ReminderOracle {
         }
         else
         if (msg!=null){
-            SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dateFormat.format(cal.getTime()));
+            SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dateFormat.format(cal.getTime()) + " with setting  " + notifpref);
             SharedPrefUtil.putLong(context, "nextnotificationtime", cal.getTimeInMillis());
             Log.d(TAG, "hours"+hour + " min"+minutes + " from hour_noise"+hr_noise + " and min_noise"+min_noise);
             setLeaveMessageAlarm(context, msg, hour, minutes);
@@ -261,8 +263,13 @@ public class ReminderOracle {
     }
 
     /**
-     * Posts a notification in the notification bar when a transition is detected.
-     * If the user clicks the notification, control goes to the MainActivity.
+     *
+     * @param context
+     * @param header Title (The first thing that is seen)
+     * @param body First line of msg body
+     * @param body2 Second line
+     * @param messageID
+     * @param reason Specifies if this is shown for missing/hitting a gym
      */
     public static void showNotification(Context context, String header, String body, String body2, long messageID, int reason){
         Intent notificationIntent = new Intent(context, AllinOneActivity.class);
@@ -280,15 +287,8 @@ public class ReminderOracle {
 
         Notification.Builder builder = new Notification.Builder(context);
 
-        if (!body2.isEmpty()){
-            body+="...";
-        }
-
-
         if (reason==Message.MISSED_YESTERDAY){
             builder.setSmallIcon(R.drawable.notification_icon)
-                // In a real app, you may want to use a library like Volley
-                // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.drawable.notification_icon))
                 //.setColor(Color.RED)
@@ -304,9 +304,8 @@ public class ReminderOracle {
                             R.drawable.notification_icon))
                     //.setColor(Color.GREEN)
                 .setContentTitle(header)
-                //.setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setContentText(body)
-                    .setStyle(new Notification.BigTextStyle()
+                .setStyle(new Notification.BigTextStyle()
                             .bigText(body + "\n" + body2))
                 .setContentIntent(notificationPendingIntent);
         }
