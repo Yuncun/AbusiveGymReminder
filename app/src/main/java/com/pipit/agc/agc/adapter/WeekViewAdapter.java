@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,34 +27,34 @@ import java.util.List;
 /**
  * Created by Eric on 5/1/2016.
  */
-public class WeekViewAdapter extends PagerAdapter {
+public class WeekViewAdapter<T> extends PagerAdapter {
     private static final String TAG = "WeekViewAdapter";
 
     private Context mContext;
-    protected List<DayRecord> _allDayRecords;
+    protected List<T> _allDayRecords;
     private WeekViewSwipeable mlayout;
-    public int targetWidth;
 
-    public WeekViewAdapter(Context context) {
-        mContext = context;
-    }
-
-    public WeekViewAdapter(Context context, List<DayRecord> allDayRecords, WeekViewSwipeable layout){
+    public WeekViewAdapter(Context context, List<T> allDayRecords, WeekViewSwipeable layout){
         mlayout = layout;
         mContext = context;
         _allDayRecords = allDayRecords;
     }
 
     @Override
-    public Object instantiateItem(ViewGroup collection, int position) {
+    public Object instantiateItem(ViewGroup collection, final int position) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View v = inflater.inflate(R.layout.week_calendar, null, true);
-        resizeToFit(v);
-        styleFromDayrecordsData(mContext, _allDayRecords, position, v);
-        //mlayout.updateSparkLineData(getDaysForFocusedWeek(position));
-        setDayOfWeekText(0, v);
+        final View v = inflater.inflate(R.layout.week_calendar, null, true);
+        v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                resizeToFit(v);
+                styleFromDayrecordsData(mContext, _allDayRecords, position, v);
+                //mlayout.updateSparkLineData(getDaysForFocusedWeek(position));
+                setDayOfWeekText(0, v);
+            }
+        });
         collection.addView(v);
-
         return v;
     }
 
@@ -92,35 +93,12 @@ public class WeekViewAdapter extends PagerAdapter {
         }
     }
 
-    public static String getDayOfWeekText(int n){
-        switch(n){
-            case 0:
-                return "Sat";
-            case 1:
-                return "Sun";
-            case 2:
-                return "Mon";
-            case 3:
-                return "Tue";
-            case 4:
-                return "Wed";
-            case 5:
-                return "Thu";
-            case 6:
-                return "Fri";
-            case 7:
-                return "Sat";
-            default:
-                return Integer.toString(n);
-        }
-    }
-
     /**
      * Given a list of days, how many weeks exist between the first
      * and last days inclusive?
      */
     public static int getNumberOfWeeks(List<?> dayrecords){
-        if (dayrecords == null || dayrecords.size() == 0){
+        if (dayrecords == null || dayrecords.size() == 0 ){
             return 1;
         }
         int n = dayrecords.size() / 7;
@@ -131,7 +109,6 @@ public class WeekViewAdapter extends PagerAdapter {
         if (c.get(Calendar.DAY_OF_WEEK) < rem){
             n++;
         }
-
         //This always gives us an "extra" week - so seven days starting on Sunday may give us two weeks
         return n;
     }
@@ -141,7 +118,7 @@ public class WeekViewAdapter extends PagerAdapter {
      * @param page
      * @return Days of the week, including NULL if we have no info on that day
      */
-    public List<DayRecord> getDaysForFocusedWeek(int page){
+    public List<T> getDaysForFocusedWeek(int page){
         int a = 7*page;
 
         Calendar c = Calendar.getInstance();
@@ -152,7 +129,7 @@ public class WeekViewAdapter extends PagerAdapter {
         //Now, DOWofFirstDAY is in Calendar format, i.e. 1-7, we need to decrement here.
         dowOfFirstDay--;
 
-        List<DayRecord> week = new ArrayList<>();
+        List<T> week = new ArrayList<>();
         int indexStart = 0 + a - dowOfFirstDay;
         int indexEnd = 7 + a - dowOfFirstDay;
 
@@ -179,7 +156,7 @@ public class WeekViewAdapter extends PagerAdapter {
     }
 
     /**
-     * Since our view is being instantiated in the ViewPager, it is necessary to size the cirlces dyamically
+     * Since our view is being instantiated in the ViewPager, we have to do some layout stuff here
      * @param wv
      */
     public void resizeToFit(View wv){
@@ -187,12 +164,9 @@ public class WeekViewAdapter extends PagerAdapter {
         Resources r = wv.getResources();
         String name = wv.getContext().getPackageName();
 
-        int width = mlayout.getSavedWidth();
+        int width = wv.getWidth();
         int navwidth = mlayout.getSavedNavWidth();
-        if (width<=0) width = mlayout.getWidth();
-        if (navwidth<=0) navwidth = WeekViewSwipeable.nav_button_default_width;
-
-        Log.d("Eric", "Layout width" + width + " navWidth" + navwidth);
+        if (navwidth<=0){ navwidth = WeekViewSwipeable.nav_button_default_width; }
 
         // Calculate the expected dimen of each circle
         int cvwidth = (width -
@@ -222,7 +196,7 @@ public class WeekViewAdapter extends PagerAdapter {
     * Used to populate and style the WeekCalendarView that shows attendance over last seven days
     * @return
     */
-    public void styleFromDayrecordsData(final Context context, final List<DayRecord> _allDayRecords, int page, View root){
+    protected void styleFromDayrecordsData(final Context context, final List<T> _allDayRecords, int page, View root){
         Resources r = root.getContext().getResources();
         String name = context.getPackageName();
         int a = 7*page;
@@ -276,6 +250,41 @@ public class WeekViewAdapter extends PagerAdapter {
      */
     protected void drawCircleDays(final Context context, CircleView cv, TextView rfd, View weekitem, final int index ){
 
+    }
+
+    /**
+     *
+     * @return Index of first default position in weekadapter
+     */
+    public int getStartPosition(){
+        return getNumberOfWeeks(_allDayRecords) - 1;
+    }
+
+    public T get(int index){
+        return _allDayRecords.get(index);
+    }
+
+    public static String getDayOfWeekText(int n){
+        switch(n){
+            case 0:
+                return "Sat";
+            case 1:
+                return "Sun";
+            case 2:
+                return "Mon";
+            case 3:
+                return "Tue";
+            case 4:
+                return "Wed";
+            case 5:
+                return "Thu";
+            case 6:
+                return "Fri";
+            case 7:
+                return "Sat";
+            default:
+                return Integer.toString(n);
+        }
     }
 
 }

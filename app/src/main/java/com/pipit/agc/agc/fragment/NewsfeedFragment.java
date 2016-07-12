@@ -125,18 +125,6 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("Eric", "ONPAUSE");
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        Log.d("Eric", "ONDESTROY");
-    }
-
-    @Override
     public void onStop(){
         super.onStop();
         Log.d("Eric", "ONSTOP");

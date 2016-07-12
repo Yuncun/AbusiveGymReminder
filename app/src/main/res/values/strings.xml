@@ -35,6 +35,7 @@
     <string name="new_msg">Message from Abusive Gym Reminder</string>
     <string name="reason_missed_gym">Missed Gym</string>
     <string name="friendly_reminder">Dont forget to go to them gym today</string>
+    <string name="pickdaysmsg">Select your gym days</string>
 
     <string name="hit">Hit</string>
     <string name="miss">Miss</string>

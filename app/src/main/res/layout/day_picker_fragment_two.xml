@@ -2,10 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.pipit.agc.agc.widget.WeekViewSwipeable
-        android:id="@+id/weekview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </com.pipit.agc.agc.widget.WeekViewSwipeable>
+        <TextView
+            android:id="@+id/pickdaysmsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/sevendays"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <include layout="@layout/week_calendar_item"
+                android:id="@+id/day_1" />
+            <include layout="@layout/week_calendar_item"
+                android:id="@+id/day_2" />
+            <include layout="@layout/week_calendar_item"
+                android:id="@+id/day_3"/>
+            <include layout="@layout/week_calendar_item"
+                android:id="@+id/day_4" />
+            <include layout="@layout/week_calendar_item"
+                android:id="@+id/day_5" />
+            <include layout="@layout/week_calendar_item"
+                android:id="@+id/day_6" />
+            <include layout="@layout/week_calendar_item"
+                android:id="@+id/day_7" />
+        </LinearLayout>
 
 </LinearLayout>

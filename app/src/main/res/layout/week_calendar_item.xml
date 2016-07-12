@@ -24,7 +24,6 @@
         app:titleColor="@color/basewhite"
         app:subtitleColor="@color/basewhite"
         app:strokeColorValue="@color/grey_darker"
-        app:backgroundColorValue="@color/grey"
         app:fillColor="@color/grey_darker"
         app:fillRadius=".9"
         app:strokeWidthSize="5"/>

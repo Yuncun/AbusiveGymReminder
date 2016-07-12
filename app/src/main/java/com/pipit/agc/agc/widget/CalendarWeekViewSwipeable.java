@@ -28,7 +28,7 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
         super(context, attrs);
         DBRecordsSource datasource = DBRecordsSource.getInstance();
         datasource.openDatabase();
-        _allPreviousDays =  datasource.getAllDayRecords();
+        List<DayRecord> _allPreviousDays =  datasource.getAllDayRecords();
         DBRecordsSource.getInstance().closeDatabase();
         setAdapter(new MyWeekViewAdapter(context, _allPreviousDays, this));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -49,7 +49,7 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
 
     }
 
-    class MyWeekViewAdapter extends WeekViewAdapter{
+    class MyWeekViewAdapter extends WeekViewAdapter<DayRecord>{
         public MyWeekViewAdapter(Context context, List<DayRecord> allDayRecords, WeekViewSwipeable layout){
             super(context, allDayRecords, layout);
         }
@@ -58,12 +58,12 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
             cv.setShowSubtitle(false);
             //Check if it is a day for which we have records
             if (index >= _allDayRecords.size()){
-                cv.setFillColor(ContextCompat.getColor(context, R.color.grey_lighter));
-                cv.setTitleColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                
+                cv.setFillColor(ContextCompat.getColor(context, R.color.grey_darker));
                 return;
             }else if (index < 0){
-                cv.setFillColor(ContextCompat.getColor(context, R.color.grey_lighter));
-                cv.setTitleColor(ContextCompat.getColor(context, R.color.colorPrimary));
+
+                cv.setFillColor(ContextCompat.getColor(context, R.color.grey_darker));
                 return;
             }
 

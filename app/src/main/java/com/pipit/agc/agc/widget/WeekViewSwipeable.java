@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,9 +50,6 @@ public class WeekViewSwipeable extends LinearLayout {
     private WeekViewAdapter wvadapter;
     public ImageButton leftNav;
     public ImageButton rightNav;
-    protected List<DayRecord> _allPreviousDays;
-    private boolean listenForLayoutUpdate;
-    private int _width = 0;
     private int _navwidth = nav_button_default_width;
     protected boolean navEnabled = true;
 
@@ -68,26 +66,8 @@ public class WeekViewSwipeable extends LinearLayout {
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View root = inflater.inflate(R.layout.week_calendar_vp, this, true);
-
-        _allPreviousDays = new ArrayList<>();
-
-        //Reason:
-        //Need to specify each child circle size
-        //To do this, we need total width
-        //Total width is not immediately available, so we have an observer on onLayout, that redraws
-        //and resets the adapter. This is ofc slow if this view is created/destroyed multiple times,
-        //so we cheat by saving the width of the first time we calculate.
-        _width = SharedPrefUtil.getInt(context, PERSISTEDWIDTH, 0);
-        if (_width>0){
-            listenForLayoutUpdate = false;
-        }else{
-            listenForLayoutUpdate = true;
-        }
-
+        final View root = inflater.inflate(R.layout.week_calendar_vp, this, true);
         viewPager = (AgcViewPager) root.findViewById(R.id.weekvp);
-        setAdapter(new WeekViewAdapter(context, _allPreviousDays, this));
-
 
         leftNav = (ImageButton) root.findViewById(R.id.left_nav);
         rightNav = (ImageButton) root.findViewById(R.id.right_nav);
@@ -114,6 +94,17 @@ public class WeekViewSwipeable extends LinearLayout {
             }
         });
 
+        final WeekViewSwipeable ll = this;
+        setAdapter(new WeekViewAdapter(getContext(), new ArrayList(), ll));
+
+        /*
+        leftNav.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                leftNav.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                setAdapter(new WeekViewAdapter(getContext(), new ArrayList(), ll));
+            }
+        });*/
     }
 
     public WeekViewSwipeable(Context context) {
@@ -151,37 +142,10 @@ public class WeekViewSwipeable extends LinearLayout {
         }
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-
-        //TODO:
-        // This current uses sharedpreferences to remmeber settings. This works fine for
-        // AGR but is not a sustainable solution if this is to be used as a standalone view.
-        if (listenForLayoutUpdate){
-            _width=getWidth();
-            _navwidth=leftNav.getWidth();
-            SharedPrefUtil.putInt(getContext(), PERSISTEDWIDTH, _width);
-            SharedPrefUtil.putInt(getContext(), NAV_WIDTH, _navwidth);
-            wvadapter = new WeekViewAdapter(getContext(), _allPreviousDays, this);
-            setAdapter(wvadapter);
-            listenForLayoutUpdate = false;
-        }
-    }
-
-
     public void showLastDayMarker(){
         findViewById(R.id.day_7).findViewById(R.id.record_for_day).setVisibility(VISIBLE);
     }
 
-    public void showLastDayMarker(int color){
-        findViewById(R.id.day_7).setBackgroundColor(color);
-        showLastDayMarker();
-    }
-
-    public int getSavedWidth(){
-        return _width;
-    }
     public int getSavedNavWidth(){
         return _navwidth;
     }
@@ -197,7 +161,7 @@ public class WeekViewSwipeable extends LinearLayout {
     protected void setAdapter(WeekViewAdapter wva){
         wvadapter = wva;
         viewPager.setAdapter(wva);
-        viewPager.setCurrentItem(WeekViewAdapter.getNumberOfWeeks(_allPreviousDays) - 1);
+        viewPager.setCurrentItem(wvadapter.getStartPosition());
     }
 
 }
