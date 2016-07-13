@@ -3,6 +3,7 @@ package com.pipit.agc.agc.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -103,8 +104,9 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         String name = getContext().getPackageName();
 
         //Calculate the width
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) root.getLayoutParams();
-        int cvparam = (root.getWidth() - root.getPaddingLeft() - root.getPaddingRight())/7 -(WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight);
+        int cvparam = (root.getWidth() - root.getPaddingLeft() - root.getPaddingRight())/7
+                -(WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight)
+                - 16;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(cvparam, cvparam);
         layoutParams.setMargins(WeekViewSwipeable.circleMarginDefaultLeft,
                 WeekViewSwipeable.circleMarginDefaultTop,
@@ -129,11 +131,14 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         rfd.setVisibility(View.GONE);
         cv.setTitleText(WeekViewAdapter.getDayOfWeekText(index + 1));
         cv.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent));
+        cv.setFillColor(Color.GRAY);
 
         if (_plannedDays.get(index)){
-            cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+            cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
+
         }else{
             cv.setStrokeColor(ContextCompat.getColor(context, R.color.transparent));
+            cv.setTitleColor(Color.WHITE);
         }
         weekitem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,7 +163,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
                     _plannedDays.set(index, true);
                     dates.add(Integer.toString(index));
                     //cv.setTitleText(gymDay);
-                    cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+                    cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
                         /*
                         if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
                             if (mFrag instanceof DayOfWeekPickerFragment) {

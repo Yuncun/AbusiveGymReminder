@@ -75,7 +75,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 dv.gymstate_circle.setShowSubtitle(false);
                 if (today.isGymDay()){
                     dv.gymstate_circle.setTitleText("GYM\nDAY");
-                    dv.gymstate_circle.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerred));
+                    dv.gymstate_circle.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red));
                     //dv.gymstate_circle.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red));
                 }else{
                     dv.gymstate_circle.setTitleText("REST\nDAY");
