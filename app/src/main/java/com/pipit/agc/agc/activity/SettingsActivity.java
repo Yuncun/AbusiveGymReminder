@@ -2,6 +2,7 @@ package com.pipit.agc.agc.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -35,14 +36,10 @@ public class SettingsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 switch (position) {
                     case (0):
-                        i.putExtra("fragment", "LogFragment");
-                        startActivity(i);
-                        break;
-                    case (1):
                         i.putExtra("fragment", "TestDBFragmentMessages");
                         startActivity(i);
                         break;
-                    case (2):
+                    case (1):
                         i.putExtra("fragment", "PreferencesFragment");
                         startActivity(i);
                         break;

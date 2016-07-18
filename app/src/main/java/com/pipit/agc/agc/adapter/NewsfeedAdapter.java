@@ -46,7 +46,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     private NewsfeedFragment mFrag;
 
     private int posOfItemThatStartedCAB;
-    private int mSelectedPosition;
     private boolean allSelected;
     private boolean selectionMode;
 
@@ -59,6 +58,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         TextView reason;
         View icon;
         LinearLayout iconwrapper;
+        RelativeLayout rlayout;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -70,6 +70,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             reason = (TextView) itemView.findViewById(R.id.reason);
             icon = itemView.findViewById(R.id.statusicon);
             iconwrapper = (LinearLayout) itemView.findViewById(R.id.iconwrapper);
+            rlayout = (RelativeLayout) itemView.findViewById(R.id.rlayout);
         }
     }
 
@@ -99,6 +100,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         holder.comment.setText(m.getBody());
         holder.timestamp.setText(m.getIntelligentDateString());
         holder.icon.setBackground(ContextCompat.getDrawable(mFrag.getContext(), R.drawable.circle));
+        //holder.rlayout.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.));
 
         holder.timestamp.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
         if (m.getReason()== Message.HIT_YESTERDAY) {
@@ -115,7 +117,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         }
         if (m.getReason()== Message.HIT_TODAY) {
             holder.reason.setText(r.getText(R.string.reason_hit_gym));
-            //holder.reason.setTextColor(ContextCompat.getColor(_context, R.color.darkgreen));
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
@@ -143,9 +144,9 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         }
 
         if (selectionMode && _selectedPos.contains(position)){
-            Log.d("Eric", "pos " + position + " adapterpos " + holder.getAdapterPosition() + "msg " + m.getHeader());
             holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite), PorterDuff.Mode.SRC_ATOP);
             holder.icon.setBackground(ContextCompat.getDrawable(mFrag.getContext(), android.R.drawable.checkbox_on_background));
+            //holder.rlayout.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.grey));
         }
         final int mpos = position;
         holder.cv.setOnClickListener(new View.OnClickListener() {
@@ -190,6 +191,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 mFrag.getCab()
                         .setMenu(R.menu.cab_menu)
                         .setTitle("Manage Inbox")
+                        .setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal))
                         .start(mCabCallback);
                 _selectedPos.add(position);
                 notifyItemChanged(position);
@@ -227,7 +229,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
 
         @Override
         public boolean onCabItemClicked(MenuItem item) {
-            Log.d("Eric", "CabClicked ");
             switch (item.getItemId()) {
                 case R.id.select_all:
                     if (allSelected){
@@ -267,6 +268,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         @Override
         public boolean onCabFinished(MaterialCab cab) {
             selectionMode = false;
+            notifyDataSetChanged();
             _selectedPos = new HashSet<>();
             return true;
         }

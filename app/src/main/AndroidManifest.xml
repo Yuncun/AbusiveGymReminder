@@ -74,11 +74,11 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.IndividualSettingActivity"
             android:label="@string/title_activity_setting_wrapper"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
 
         <service android:name=".service.GeofenceTransitionsIntentService" />
     </application>

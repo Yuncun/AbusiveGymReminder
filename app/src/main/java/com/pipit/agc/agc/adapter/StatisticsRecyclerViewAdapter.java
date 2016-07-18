@@ -153,6 +153,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 mv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).details);
                 mv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
 
+                mv.stat_subtext_1.setVisibility(View.GONE);
+                mv.stat_subtext_2.setText(mStats.STAT_MAP.get(StatsContent.WEEK_OF_RECORD_STREAK).details + " (RIP)");
+
                 //Todo:Use dimens
                 mv.stat_circle_1.setTitleSize(80f);
                 mv.stat_circle_2.setTitleSize(80f);
@@ -210,6 +213,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         public final CircleView stat_circle_2;
         public final TextView stat_text_1;
         public final TextView stat_text_2;
+        public final TextView stat_subtext_1;
+        public final TextView stat_subtext_2;
         public final RelativeLayout stat_card_1;
         public final RelativeLayout stat_card_2;
 
@@ -223,6 +228,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
             stat_text_1 = (TextView) view.findViewById(R.id.stat_text_1);
             stat_text_2 = (TextView) view.findViewById(R.id.stat_text_2);
+
+            stat_subtext_1 = (TextView) view.findViewById(R.id.stat_subtext_1);
+            stat_subtext_2 = (TextView) view.findViewById(R.id.stat_subtext_2);
         }
     }
 

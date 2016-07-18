@@ -3,6 +3,8 @@ package com.pipit.agc.agc.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,7 +36,7 @@ import java.util.List;
 /**
  * Created by Eric on 2/3/2016.
  */
-public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
+public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
     private static final String TAG = "DayPickerFragmentTwo";
     private final static String ARG_SECTION_NUMBER = "section_number";
 
@@ -41,9 +44,10 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
 
     private List<Boolean> _plannedDays;
     private LinearLayout wv;
+    private ImageView feat_graphic;
 
     //This is used to update the "GYM DAY" cardview in the Newsfeed
-    public interface UpdateGymDayToday{
+    public interface UpdateGymDayToday {
         void todayIsGymDay(boolean isGymDay);
     }
 
@@ -68,23 +72,25 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.day_picker_fragment_two, container, false);
         TextView tv = (TextView) rootView.findViewById(R.id.pickdaysmsg);
+        feat_graphic = (ImageView) rootView.findViewById(R.id.bro_pic);
+
         tv.setText(getText(R.string.pickdaysmsg));
         wv = (LinearLayout) rootView.findViewById(R.id.sevendays);
-        wv.setPadding(8,0,8,0);
+        wv.setPadding(8, 0, 8, 0);
         prefs = getContext().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
         //TODO:
         //I know this is a roundabout way of doing it, but it's some old code that I will change later
         _plannedDays = new ArrayList<>();
-        for (int i = 0 ; i < 7 ; i++){
+        for (int i = 0; i < 7; i++) {
             if (plannedDOW.contains(i)) {
                 _plannedDays.add(true);
-            }else{
+            } else {
                 _plannedDays.add(false);
             }
         }
-
+        setFeatureGraphic();
         ViewTreeObserver observer = wv.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
@@ -99,13 +105,13 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         return rootView;
     }
 
-    protected void styleFromDayrecordsData( View root) {
+    protected void styleFromDayrecordsData(View root) {
         Resources r = root.getContext().getResources();
         String name = getContext().getPackageName();
 
         //Calculate the width
-        int cvparam = (root.getWidth() - root.getPaddingLeft() - root.getPaddingRight())/7
-                -(WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight)
+        int cvparam = (root.getWidth() - root.getPaddingLeft() - root.getPaddingRight()) / 7
+                - (WeekViewSwipeable.circleMarginDefaultLeft + WeekViewSwipeable.circleMarginDefaultRight)
                 - 16;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(cvparam, cvparam);
         layoutParams.setMargins(WeekViewSwipeable.circleMarginDefaultLeft,
@@ -113,8 +119,8 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
                 WeekViewSwipeable.circleMarginDefaultRight,
                 WeekViewSwipeable.circleMarginDefaultBottom);
 
-        for (int i = 0 ; i < 7 ; i++) {
-            int j = i+1; //I'm as confused as you are
+        for (int i = 0; i < 7; i++) {
+            int j = i + 1; //I'm as confused as you are
             int viewid = r.getIdentifier("day_" + j, "id", name);
             View weekitem = root.findViewById(viewid);
             CircleView cv = (CircleView) weekitem.findViewById(R.id.calendar_day_info);
@@ -133,10 +139,10 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         cv.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent));
         cv.setFillColor(Color.GRAY);
 
-        if (_plannedDays.get(index)){
+        if (_plannedDays.get(index)) {
             cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
 
-        }else{
+        } else {
             cv.setStrokeColor(ContextCompat.getColor(context, R.color.transparent));
             cv.setTitleColor(Color.WHITE);
         }
@@ -152,27 +158,15 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
                     dates.remove(Integer.toString(index)); //This is used to keep our sharedprefs records straight
                     //cv.setTitleText(restDay);
                     cv.setStrokeColor(ContextCompat.getColor(context, R.color.transparent));
-
-                        /*
-                        if (index == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                            if (mFrag instanceof DayOfWeekPickerFragment){
-                                ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(false);
-                            }
-                        }*/
                 } else {
                     _plannedDays.set(index, true);
                     dates.add(Integer.toString(index));
                     //cv.setTitleText(gymDay);
                     cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
-                        /*
-                        if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                            if (mFrag instanceof DayOfWeekPickerFragment) {
-                                ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(true);
-                            }
-                        }*/
                 }
 
                 Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, new ArrayList(dates));
+                setFeatureGraphic();
                 weekitem.invalidate();
             }
         });
@@ -185,11 +179,45 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         }*/
     }
 
+    private void setFeatureGraphic() {
+        //Set the graphic
+        Bitmap bMap;
+        int count = 0;
+        for (Boolean b : _plannedDays) {
+            if (b) count++;
+        }
+
+        switch (count) {
+            case 0:
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_ooze);
+                break;
+            case 1:
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_tadpole);
+                break;
+            case 2:
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_brotege);
+                break;
+            case 3:
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_gybro);
+                break;
+            case 4:
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_gymrat);
+                break;
+            case 5:
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_monster);
+                break;
+            case 6:
+            case 7:
+            default:
+                return;
+        }
+        feat_graphic.setImageBitmap(bMap);
+    }
 
     /* ******************************************************* */
-    public static List<Integer> datesToDaysOfWeek(List<Date> dates){
+    public static List<Integer> datesToDaysOfWeek(List<Date> dates) {
         List<Integer> dow = new ArrayList<Integer>();
-        for (Date d : dates){
+        for (Date d : dates) {
             Calendar c = Calendar.getInstance();
             c.setTime(d);
             int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
@@ -198,7 +226,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         return dow;
     }
 
-    private Calendar getCalFromListPosition(int pos){
+    private Calendar getCalFromListPosition(int pos) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, pos);
         return cal;
@@ -218,7 +246,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         */
     }
 
-    public void toggleCurrentGymDayData(boolean gymDay){
+    public void toggleCurrentGymDayData(boolean gymDay) {
         DBRecordsSource datasource = DBRecordsSource.getInstance();
 
         datasource.openDatabase();
@@ -226,5 +254,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment{
         DBRecordsSource.getInstance().closeDatabase();
         executeUpdateCallback(false); //Update the newsfeed fragment
     }
+
+
 
 }

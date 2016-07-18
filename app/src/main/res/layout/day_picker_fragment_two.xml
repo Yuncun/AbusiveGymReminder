@@ -45,6 +45,10 @@
                     <include layout="@layout/week_calendar_item"
                         android:id="@+id/day_7" />
                 </LinearLayout>
+                <ImageView
+                    android:id="@+id/bro_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
     </android.support.v7.widget.CardView>

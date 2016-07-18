@@ -133,6 +133,11 @@ public class AllinOneActivity extends AppCompatActivity {
         _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
         GeofenceController.getInstance().init(this);
         checkPermissions();
+
+        /*Do stats */
+        StatsContent stats = StatsContent.getInstance();
+        stats.refreshDayRecords();
+        stats.updateAll();
     }
 
     @Override
@@ -146,9 +151,14 @@ public class AllinOneActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Intent i = new Intent(this, SettingsActivity.class);
+            final Intent i = new Intent(this, IndividualSettingActivity.class);
+            i.putExtra("fragment", "PreferencesFragment");
             startActivityForResult(i, 0);
             return true;
+        }
+        else if (id == R.id.action_dev){
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivityForResult(i, 1);
         }
         else if (id == R.id.action_forget){
             /* This action forgets the key sharedpreferences except for gyms */
@@ -261,7 +271,6 @@ public class AllinOneActivity extends AppCompatActivity {
                             }
                             SharedPrefUtil.updateMainLog(this, "Updated day from onStart");
 
-
                         }
                     } else if (lastDate.getDate().after(todaysDate.getDate())) {
                         //A more nefarious case when we have dates ahead of system time
@@ -352,6 +361,7 @@ public class AllinOneActivity extends AppCompatActivity {
     }
 
     public MaterialCab getCab(){
+        //return null;
         return cab;
     }
 }

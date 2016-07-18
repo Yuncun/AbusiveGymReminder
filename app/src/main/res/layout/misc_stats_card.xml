@@ -35,6 +35,7 @@
                     android:id="@+id/stat_text_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Stat One"
                     android:layout_alignParentLeft="true"
                     android:gravity="center"
                     android:layout_centerVertical="true"
@@ -51,6 +52,14 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:elevation="4dp" />
+
+                <TextView
+                    android:id="@+id/stat_subtext_1"
+                    android:layout_alignLeft="@id/stat_text_1"
+                    android:layout_below="@id/stat_text_1"
+                    android:text="Heating up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RelativeLayout>
 
             <!-- SECOND STAT ROW -->
@@ -66,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:text="Stat One"
+                    android:text="Stat Two"
                     android:gravity="center"
                     android:layout_centerVertical="true"
                     android:textSize="24sp"
@@ -81,6 +90,13 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:elevation="4dp" />
+                <TextView
+                    android:id="@+id/stat_subtext_2"
+                    android:layout_alignLeft="@id/stat_text_2"
+                    android:layout_below="@id/stat_text_2"
+                    android:text="When I was a wee lad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
             </RelativeLayout>
 

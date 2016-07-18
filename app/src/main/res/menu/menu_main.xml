@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".activity.AllinOneActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_dev" android:title="Dev stuff"
+        android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_forget" android:title="@string/show_gym_status"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

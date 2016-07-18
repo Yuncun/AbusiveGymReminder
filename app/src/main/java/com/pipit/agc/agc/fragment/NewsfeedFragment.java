@@ -76,7 +76,6 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
         _gymstatus_cv = (CardView) rootView.findViewById(R.id.gymstatus_cv);
         _gymstatus_cv.setBackgroundColor(fetchAccentColor());
 
-        //_gymstatus_cv.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary_material_dark));
         _gymstatus_body = (TextView) _gymstatus_cv.findViewById(R.id.gymstatus_body);
         _gymstatus_header = (TextView) _gymstatus_cv.findViewById(R.id.gymstatus_header);
 
@@ -125,9 +124,9 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
     }
 
     @Override
-    public void onStop(){
-        super.onStop();
-        Log.d("Eric", "ONSTOP");
+    public void onPause(){
+        super.onPause();
+        getCab().finish();
     }
     private String getDayComments(){
         if (_allDayRecords==null || _allDayRecords.size()<1){
@@ -167,8 +166,5 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
     public MaterialCab getCab(){
         return cab;
     }
-
-
-
 
 }

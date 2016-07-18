@@ -8,7 +8,6 @@
         <item name="android:windowBackground">@color/grey</item>
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
         <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
-
     </style>
 
     <style name="AppThemeDark" parent="Theme.AppCompat">

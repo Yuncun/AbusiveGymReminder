@@ -24,8 +24,10 @@ public class StatsContent {
     public static final String DAYS_MISSED_WEEK = "totalmisseddaysweek";
     public static final String REST_DAYS_WEEK = "totalrestdaysweek";
     public static final String DAYS_PLANNED_WEEK = "totalplanneddaysweek";
+    public static final String WEEK_OF_RECORD_STREAK = "weekofrecord";
 
     public class Stat {
+        //Todo: Refactor as a generic type
         public final String id;
         public int content;
         public String details;
@@ -135,14 +137,27 @@ public class StatsContent {
     public void updateLongestStreak(){
         int longest = 0;
         int curr = 0;
+        DayRecord tmpstartday = null;
+        DayRecord tmpendday = null;
+        DayRecord startDay = null;
+        DayRecord endDay = null;
+
         for (int i = _allDayRecords.size()-1; i>=0; i--){
             if (!_allDayRecords.get(i).beenToGym() && _allDayRecords.get(i).isGymDay()){
-                curr=0;
+                curr = 0;
             }else{
                 if (_allDayRecords.get(i).isGymDay() || _allDayRecords.get(i).beenToGym()){
+                    if (curr < 1){
+                        tmpstartday = _allDayRecords.get(i);
+                    }
                     curr++;
+                    tmpendday = _allDayRecords.get(i);
                 }
-                if (curr>longest) longest=curr;
+                if (curr>longest){
+                    startDay = tmpstartday;
+                    endDay = tmpendday;
+                    longest=curr;
+                }
             }
         }
         Stat longeststreak = new Stat(LONGEST_STREAK);
@@ -150,6 +165,14 @@ public class StatsContent {
         longeststreak.details = "Longest Streak";
         STAT_MAP.put(longeststreak.id, longeststreak);
         ITEMS.add(longeststreak);
+
+        if (endDay!=null && startDay!=null){
+            Stat weekofstreak = new Stat(WEEK_OF_RECORD_STREAK);
+            weekofstreak.details = endDay.getDateString();
+            STAT_MAP.put(weekofstreak.id, weekofstreak);
+            ITEMS.add(weekofstreak);
+        }
+
     }
 
 

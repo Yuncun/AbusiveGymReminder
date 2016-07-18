@@ -233,7 +233,7 @@ public class ReminderOracle {
      */
     private static void setLeaveMessageAlarm(Context context, Message m, int hours, int minutes){
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR, hours);
+        calendar.add(Calendar.HOUR_OF_DAY, hours);
         calendar.add(Calendar.MINUTE, minutes);
         calendar.add(Calendar.SECOND, 10);
         setLeaveMessageAlarm(context, m, calendar);
