@@ -12,17 +12,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.data.DBRecordsSource;
-import com.pipit.agc.agc.data.MySQLiteHelper;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
+import com.pipit.agc.agc.data.MsgDBHelper;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 
-import org.joda.time.LocalDateTime;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +32,7 @@ public class TestDBFragmentMessages extends ListFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "TestDBFragmentMessages";
 
-    private DBRecordsSource datasource;
+    private MsgAndDayRecords datasource;
     private TextView currentTime;
     private TextView resetTime;
     private Button _simulateMidnight;
@@ -62,7 +59,7 @@ public class TestDBFragmentMessages extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.test_db_fragment, container, false);
-        datasource = DBRecordsSource.getInstance();
+        datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         List<Message> values = datasource.getAllMessages();
         ArrayAdapter<Message> adapter = new ArrayAdapter<Message>(getActivity(),
@@ -114,11 +111,11 @@ public class TestDBFragmentMessages extends ListFragment {
             @Override
             public void onClick(View v) {
                 //Copy+pasted from AlarmManagerBroadcastReceiver
-                DBRecordsSource datasource;
-                datasource = DBRecordsSource.getInstance();
+                MsgAndDayRecords datasource;
+                datasource = MsgAndDayRecords.getInstance();
                 if (datasource==null){
-                    DBRecordsSource.initializeInstance(new MySQLiteHelper(getActivity()));
-                    datasource = DBRecordsSource.getInstance();
+                    MsgAndDayRecords.initializeInstance(new MsgDBHelper(getActivity()));
+                    datasource = MsgAndDayRecords.getInstance();
                 }
                 datasource.openDatabase();
                 DayRecord day = new DayRecord();
@@ -137,8 +134,8 @@ public class TestDBFragmentMessages extends ListFragment {
         final String gymVisitEnd = "End";
         _startGymVisit = (Button) view.findViewById(R.id.startVisit);
 
-        DBRecordsSource datasource;
-        datasource = DBRecordsSource.getInstance();
+        MsgAndDayRecords datasource;
+        datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         DayRecord today = datasource.getLastDayRecord();
         datasource.closeDatabase();
@@ -152,8 +149,8 @@ public class TestDBFragmentMessages extends ListFragment {
         _startGymVisit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBRecordsSource datasource;
-                datasource = DBRecordsSource.getInstance();
+                MsgAndDayRecords datasource;
+                datasource = MsgAndDayRecords.getInstance();
                 datasource.openDatabase();
                 DayRecord today = datasource.getLastDayRecord();
 
@@ -185,7 +182,7 @@ public class TestDBFragmentMessages extends ListFragment {
 
     @Override
     public void onPause() {
-        DBRecordsSource.getInstance().closeDatabase();
+        MsgAndDayRecords.getInstance().closeDatabase();
         super.onPause();
     }
 

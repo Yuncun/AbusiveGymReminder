@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.adapter.StatisticsRecyclerViewAdapter;
 import com.pipit.agc.agc.util.StatsContent;
-import com.pipit.agc.agc.util.StatsContent.Stat;
-import com.pipit.agc.agc.data.DBRecordsSource;
 
 public class StatisticsFragment extends Fragment {
 

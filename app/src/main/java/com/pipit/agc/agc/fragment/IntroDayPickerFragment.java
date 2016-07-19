@@ -9,20 +9,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.adapter.DayOfWeekAdapter;
-import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.Util;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -32,7 +29,7 @@ import java.util.List;
 public class IntroDayPickerFragment  extends android.support.v4.app.Fragment {
     private static final String TAG = "DayPickerFragment";
     DayOfWeekAdapter _adapter;
-    private DBRecordsSource datasource;
+    private MsgAndDayRecords datasource;
     private List<DayRecord> _allPreviousDays;
 
     private RecyclerView.Adapter mAdapter;
@@ -62,10 +59,10 @@ public class IntroDayPickerFragment  extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.intro_daypicker_layout, container, false);
         synchronized (this) {
-            datasource = DBRecordsSource.getInstance();
+            datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             _allPreviousDays = datasource.getAllDayRecords();
-            DBRecordsSource.getInstance().closeDatabase();
+            MsgAndDayRecords.getInstance().closeDatabase();
         }
 
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);

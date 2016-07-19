@@ -8,18 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
-import com.pipit.agc.agc.activity.MessageBodyActivity;
-import com.pipit.agc.agc.data.DBRecordsSource;
-import com.pipit.agc.agc.data.MessageRepoAccess;
-import com.pipit.agc.agc.data.MessageRepositoryStructure;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
+import com.pipit.agc.agc.data.InsultsRecords;
+import com.pipit.agc.agc.data.InsultRecordsConstants;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
@@ -29,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -54,7 +50,7 @@ public class ReminderOracle {
 
         DayRecord yesterday = StatsContent.getInstance().getYesterday(true);
         DayRecord today = StatsContent.getInstance().getToday(false);
-        MessageRepoAccess messagerepo = MessageRepoAccess.getInstance(context);
+        InsultsRecords messagerepo = InsultsRecords.getInstance(context);
         messagerepo.open();
         Message msg = null;
         if (yesterday==null){
@@ -65,10 +61,10 @@ public class ReminderOracle {
             int type = 0;
             int reason = 0;
             if (yesterday.beenToGym()){
-                type = MessageRepositoryStructure.REMINDER_HITYESTERDAY;
+                type = InsultRecordsConstants.REMINDER_HITYESTERDAY;
                 reason = Message.HIT_TODAY;
             }else{
-                type = MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY;
+                type = InsultRecordsConstants.REMINDER_MISSEDYESTERDAY;
                 reason = Message.MISSED_YESTERDAY;
             }
             try{
@@ -78,7 +74,7 @@ public class ReminderOracle {
                 if (id < 1){
                     Log.d(TAG, "No id's found, getting random message");
                     msg = messagerepo.getRandomMessageWithParams(type,
-                            MessageRepositoryStructure.KINDA_ANNOYED);
+                            InsultRecordsConstants.KINDA_ANNOYED);
                     msg.setReason(reason);
                 }else{
                     msg = messagerepo.getMessageById(id);
@@ -102,10 +98,10 @@ public class ReminderOracle {
                 // Todo: when user goes to the gym, which would make this redundant.
             }
             else if (!yesterday.beenToGym() && yesterday.isGymDay()) {
-                int type = MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY;
+                int type = InsultRecordsConstants.REMINDER_MISSEDYESTERDAY;
                 int reason = Message.MISSED_YESTERDAY;
-                msg = messagerepo.getRandomMessageWithParams(MessageRepositoryStructure.REMINDER_MISSEDYESTERDAY,
-                        MessageRepositoryStructure.KINDA_ANNOYED);
+                msg = messagerepo.getRandomMessageWithParams(InsultRecordsConstants.REMINDER_MISSEDYESTERDAY,
+                        InsultRecordsConstants.KINDA_ANNOYED);
                 msg.setReason(Message.MISSED_YESTERDAY);
                 try{
                     //This whole mechanism prevents us from showing the same message over and over again
@@ -115,7 +111,7 @@ public class ReminderOracle {
                     if (id < 1){
                         Log.d(TAG, "No id's found, getting random message");
                         msg = messagerepo.getRandomMessageWithParams(type,
-                                MessageRepositoryStructure.KINDA_ANNOYED);
+                                InsultRecordsConstants.KINDA_ANNOYED);
                         msg.setReason(reason);
                     }else{
                         msg = messagerepo.getMessageById(id);
@@ -199,8 +195,8 @@ public class ReminderOracle {
      * @param msg
      */
     public static void leaveMessage(Message msg) {
-        DBRecordsSource datasource;
-        datasource = DBRecordsSource.getInstance();
+        MsgAndDayRecords datasource;
+        datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         datasource.createMessage(msg, new Date());
         datasource.closeDatabase();
@@ -246,11 +242,11 @@ public class ReminderOracle {
      */
     public static void doLeaveOnGymArrivalMessage(Context context, boolean immediate){
         Log.d(TAG, "doLeaveOnGymArrivalMessage(Context, " + immediate + ")");
-        MessageRepoAccess databaseAccess = MessageRepoAccess.getInstance(context);
+        InsultsRecords databaseAccess = InsultsRecords.getInstance(context);
         databaseAccess.open();
         Message msg = null;
-        msg = databaseAccess.getRandomMessageWithParams(MessageRepositoryStructure.REMINDER_HITYESTERDAY,
-                MessageRepositoryStructure.KINDA_ANNOYED);
+        msg = databaseAccess.getRandomMessageWithParams(InsultRecordsConstants.REMINDER_HITYESTERDAY,
+                InsultRecordsConstants.KINDA_ANNOYED);
         msg.setReason(Message.HIT_TODAY);
         databaseAccess.close();
 
@@ -321,8 +317,8 @@ public class ReminderOracle {
     public static long findANewMessageId(Context context, int type){
         /* Get available Ids */
         StatsContent sc = StatsContent.getInstance();
-        MessageRepoAccess datasource;
-        datasource = MessageRepoAccess.getInstance(context);
+        InsultsRecords datasource;
+        datasource = InsultsRecords.getInstance(context);
         datasource.open();
         List<Long> available_ids = datasource.getListOfIDsForMessageType(type);
         datasource.close();

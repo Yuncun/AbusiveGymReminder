@@ -1,12 +1,10 @@
 package com.pipit.agc.agc.activity;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -22,25 +20,14 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
 import com.pipit.agc.agc.controller.GeofenceController;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.fragment.DayPickerFragmentTwo;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.receiver.AlarmManagerBroadcastReceiver;
-import com.pipit.agc.agc.receiver.GeoFenceTransitionsIntentReceiver;
 import com.pipit.agc.agc.util.Constants;
-import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
-import com.pipit.agc.agc.util.GeofenceUtils;
-import com.pipit.agc.agc.model.Gym;
 import com.pipit.agc.agc.fragment.LocationListFragment;
 import com.pipit.agc.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.agc.R;
@@ -49,13 +36,11 @@ import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.Util;
-import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class AllinOneActivity extends AppCompatActivity {
@@ -77,7 +62,7 @@ public class AllinOneActivity extends AppCompatActivity {
             long id = getIntent().getLongExtra(Constants.MESSAGE_ID, -1);
             Log.d(TAG, "Received intent with message id " + id);
             if (id>0){
-                DBRecordsSource datasource = DBRecordsSource.getInstance();
+                MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
                 datasource.openDatabase();
                 List<Message> msgs = datasource.getAllMessages();
                 long index = msgs.get(msgs.size()-1).getId(); //This is a bit hacky, but we need to direct user to last msg
@@ -230,7 +215,7 @@ public class AllinOneActivity extends AppCompatActivity {
     protected void onStart() {
         /*Make sure that we are up to date*/
         try {
-            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             synchronized (datasource) {
                 DayRecord lastDate = datasource.getLastDayRecord();
@@ -286,7 +271,7 @@ public class AllinOneActivity extends AppCompatActivity {
         }catch (Exception e){
             Log.e(TAG, "Unable to use Database on mainactivity start " + e);
         } finally{
-            DBRecordsSource.getInstance().closeDatabase();
+            MsgAndDayRecords.getInstance().closeDatabase();
         }
 
         super.onStart();

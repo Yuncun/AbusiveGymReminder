@@ -1,16 +1,12 @@
 package com.pipit.agc.agc.adapter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
@@ -30,7 +26,6 @@ import com.pipit.agc.agc.activity.MessageBodyActivity;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +35,8 @@ import java.util.List;
  */
 public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardViewHolder> {
     public static final double GYM_STATUS_HEIGHT_RATIO=.333;
+    public static final int MAX_MSGS_PER_PULL = 100;
+
     private List<Message> _messages;
     private List<DayRecord> _days;
     private HashSet<Integer> _selectedPos;
@@ -164,11 +161,12 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 Intent intent = new Intent(mFrag.getContext(), MessageBodyActivity.class);
                 intent.putExtra(Constants.MESSAGE_ID, _messages.get(mpos).getId());
                 mFrag.getContext().startActivity(intent);
-                _messages.get(mpos).setRead(true);
-                DBRecordsSource datasource = DBRecordsSource.getInstance();
+                //_messages.get(mpos).setRead(true);
+                MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
                 datasource.openDatabase();
                 datasource.markMessageRead(_messages.get(mpos).getId(), true);
-                _messages=datasource.getAllMessages();
+                //_messages=datasource.getAllMessages();
+                _messages=datasource.getMessagesByRange(0, MAX_MSGS_PER_PULL);
                 datasource.closeDatabase();
                 Collections.reverse(_messages);
                 notifyDataSetChanged();
@@ -244,13 +242,13 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                     return true;
 
                 case R.id.delete:
-                    DBRecordsSource datasource = DBRecordsSource.getInstance();
+                    MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
                     datasource.openDatabase();
 
                     for (Integer i : _selectedPos){
                         datasource.deleteMessage(_messages.get(i));
                     }
-                    _messages=datasource.getAllMessages();
+                    _messages=datasource.getMessagesByRange(0, MAX_MSGS_PER_PULL);
                     datasource.closeDatabase();
                     Collections.reverse(_messages);
                     _selectedPos = new HashSet<>();

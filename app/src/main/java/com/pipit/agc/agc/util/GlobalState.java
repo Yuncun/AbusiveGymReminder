@@ -2,8 +2,8 @@ package com.pipit.agc.agc.util;
 
 import android.app.Application;
 
-import com.pipit.agc.agc.data.DBRecordsSource;
-import com.pipit.agc.agc.data.MySQLiteHelper;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
+import com.pipit.agc.agc.data.MsgDBHelper;
 
 /**
  * Currently only used to initialize SqlDatabase singleton
@@ -13,7 +13,7 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DBRecordsSource.initializeInstance(new MySQLiteHelper(this));
+        MsgAndDayRecords.initializeInstance(new MsgDBHelper(this));
     }
 
     @Override

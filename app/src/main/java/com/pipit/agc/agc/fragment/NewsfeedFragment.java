@@ -1,18 +1,12 @@
 package com.pipit.agc.agc.fragment;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -21,11 +15,9 @@ import android.widget.TextView;
 import com.afollestad.materialcab.MaterialCab;
 import com.pipit.agc.agc.activity.AllinOneActivity;
 import com.pipit.agc.agc.adapter.NewsfeedAdapter;
-import com.pipit.agc.agc.model.Gym;
-import com.pipit.agc.agc.util.Constants;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.DayRecord;
-import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.Message;
 
 import java.util.Collections;
@@ -36,7 +28,7 @@ import java.util.List;
  * Created by Eric on 1/21/2016.
  */
 public class NewsfeedFragment extends android.support.v4.app.Fragment{
-    private DBRecordsSource datasource;
+    private MsgAndDayRecords datasource;
     private List<Message> _allMessages;
     private List<DayRecord> _allDayRecords;
 
@@ -85,12 +77,12 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         synchronized (this){
-            datasource = DBRecordsSource.getInstance();
+            datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
-            _allMessages = datasource.getAllMessages();
+            _allMessages=datasource.getMessagesByRange(0, NewsfeedAdapter.MAX_MSGS_PER_PULL);
             Collections.reverse(_allMessages);
             _allDayRecords = datasource.getAllDayRecords();
-            DBRecordsSource.getInstance().closeDatabase();
+            MsgAndDayRecords.getInstance().closeDatabase();
         }
 
         mAdapter = new NewsfeedAdapter(_allMessages, _allDayRecords, this);

@@ -2,7 +2,6 @@ package com.pipit.agc.agc.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -10,60 +9,55 @@ import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 
-import java.io.ByteArrayInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * This singleton holds the database and allows threadsafe access to it
  * Here are some helpful functions:
  *
- *          DBRecordsSource datasource = DBRecordsSource.getInstance()
+ *          MsgAndDayRecords datasource = MsgAndDayRecords.getInstance()
  *          datasource.openDatabase();
  *          List<DayRecord> values = datasource.getAllDayRecords();
- *          DBRecordsSource.getInstance().closeDatabase();
+ *          MsgAndDayRecords.getInstance().closeDatabase();
  *
  * Created by Eric on 1/10/2016.
  */
-public class DBRecordsSource {
-    private static final String TAG = "DBRecordsSource";
+public class MsgAndDayRecords {
+    private static final String TAG = "MsgAndDayRecords";
     private static int _count;
     private SQLiteDatabase mDatabase;
-    private static MySQLiteHelper _databaseHelper;
-    private static DBRecordsSource instance;
+    private static MsgDBHelper _databaseHelper;
+    private static MsgAndDayRecords instance;
     private String[] allColumnsDayRecords = {
-            MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_DAYRECORDS,
-            MySQLiteHelper.COLUMN_DATE,
-            MySQLiteHelper.COLUMN_ISGYMDAY,
-            MySQLiteHelper.COLUMN_BEENTOGYM,
-            MySQLiteHelper.COLUMN_VISITS};
+            MsgDBHelper.COLUMN_ID,
+            MsgDBHelper.COLUMN_DAYRECORDS,
+            MsgDBHelper.COLUMN_DATE,
+            MsgDBHelper.COLUMN_ISGYMDAY,
+            MsgDBHelper.COLUMN_BEENTOGYM,
+            MsgDBHelper.COLUMN_VISITS};
 
     private String[] allColumnsMessages = {
-            MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_MESSAGE_HEADER,
-            MySQLiteHelper.COLUMN_MESSAGE_BODY,
-            MySQLiteHelper.COLUMN_DATE,
-            MySQLiteHelper.COLUMN_REASON,
-            MySQLiteHelper.COLUMN_REPO_ID,
-            MySQLiteHelper.COLUMN_READ};
+            MsgDBHelper.COLUMN_ID,
+            MsgDBHelper.COLUMN_MESSAGE_HEADER,
+            MsgDBHelper.COLUMN_MESSAGE_BODY,
+            MsgDBHelper.COLUMN_DATE,
+            MsgDBHelper.COLUMN_REASON,
+            MsgDBHelper.COLUMN_REPO_ID,
+            MsgDBHelper.COLUMN_READ};
 
-    public static synchronized void initializeInstance(MySQLiteHelper helper) {
+    public static synchronized void initializeInstance(MsgDBHelper helper) {
         if (instance == null) {
-            instance = new DBRecordsSource();
+            instance = new MsgAndDayRecords();
             _databaseHelper = helper;
         }
     }
 
-    public static synchronized DBRecordsSource getInstance() {
+    public static synchronized MsgAndDayRecords getInstance() {
         if (instance == null) {
-            throw new IllegalStateException(DBRecordsSource.class.getSimpleName() +
+            throw new IllegalStateException(MsgAndDayRecords.class.getSimpleName() +
                     " is not initialized, cannot get instance.");
         }
         return instance;
@@ -93,21 +87,21 @@ public class DBRecordsSource {
         String servis = day.getSerializedVisitsList();
 
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_DAYRECORDS, comment);
-        values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
-        values.put(MySQLiteHelper.COLUMN_BEENTOGYM, (beenToGym) ? 1 : 0);
-        values.put(MySQLiteHelper.COLUMN_ISGYMDAY, (isGymDay) ? 1 : 0);
+        values.put(MsgDBHelper.COLUMN_DAYRECORDS, comment);
+        values.put(MsgDBHelper.COLUMN_DATE, Util.dateToString(date));
+        values.put(MsgDBHelper.COLUMN_BEENTOGYM, (beenToGym) ? 1 : 0);
+        values.put(MsgDBHelper.COLUMN_ISGYMDAY, (isGymDay) ? 1 : 0);
 
         if (servis==null){
-            values.putNull(MySQLiteHelper.COLUMN_VISITS);
+            values.putNull(MsgDBHelper.COLUMN_VISITS);
         }else{
 
-            values.put(MySQLiteHelper.COLUMN_VISITS, servis);
+            values.put(MsgDBHelper.COLUMN_VISITS, servis);
         }
-        long insertId = mDatabase.insert(MySQLiteHelper.TABLE_DAYRECORDS, null,
+        long insertId = mDatabase.insert(MsgDBHelper.TABLE_DAYRECORDS, null,
                 values);
-        Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS,
-                allColumnsDayRecords, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+        Cursor cursor = mDatabase.query(MsgDBHelper.TABLE_DAYRECORDS,
+                allColumnsDayRecords, MsgDBHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
         DayRecord newComment = cursorToDayRecord(cursor);
@@ -118,36 +112,36 @@ public class DBRecordsSource {
     public void deleteDayRecord(DayRecord day) {
         long id = day.getId();
         System.out.println("Comment deleted with id: " + id);
-        mDatabase.delete(MySQLiteHelper.TABLE_DAYRECORDS, MySQLiteHelper.COLUMN_ID
+        mDatabase.delete(MsgDBHelper.TABLE_DAYRECORDS, MsgDBHelper.COLUMN_ID
                 + " = " + id, null);
     }
 
     public void updateLatestDayRecordVisits(String s){
 
-        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_VISITS + " = "
-                + "?" + " WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+        String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " + MsgDBHelper.COLUMN_VISITS + " = "
+                + "?" + " WHERE " + MsgDBHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MsgDBHelper.TABLE_DAYRECORDS
                 + ")";
 
-        mDatabase.execSQL(query, new String[]{ s });
+        mDatabase.execSQL(query, new String[]{s});
     }
 
     public void updateLatestDayRecordComment(String comment){
-        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_DAYRECORDS + " = \""
-                + comment + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+        String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " + MsgDBHelper.COLUMN_DAYRECORDS + " = \""
+                + comment + "\" WHERE " + MsgDBHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MsgDBHelper.TABLE_DAYRECORDS
                 + ")";
         mDatabase.execSQL(query);
     }
 
     public void updateLatestDayRecordBeenToGym(boolean beenToGymToday){
-        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_BEENTOGYM + " = \""
-                + ((beenToGymToday) ? 1 : 0) + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+        String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " + MsgDBHelper.COLUMN_BEENTOGYM + " = \""
+                + ((beenToGymToday) ? 1 : 0) + "\" WHERE " + MsgDBHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MsgDBHelper.TABLE_DAYRECORDS
                 + ")";
         mDatabase.execSQL(query);
     }
 
     public void updateLatestDayRecordIsGymDay(boolean isGymDay){
-        String query = "UPDATE " + MySQLiteHelper.TABLE_DAYRECORDS + " SET " + MySQLiteHelper.COLUMN_ISGYMDAY + " = \""
-                + ((isGymDay) ? 1 : 0) + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_DAYRECORDS
+        String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " + MsgDBHelper.COLUMN_ISGYMDAY + " = \""
+                + ((isGymDay) ? 1 : 0) + "\" WHERE " + MsgDBHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MsgDBHelper.TABLE_DAYRECORDS
                 + ")";
         mDatabase.execSQL(query);
     }
@@ -155,10 +149,10 @@ public class DBRecordsSource {
     public List<DayRecord> getAllDayRecords() {
         List<DayRecord> dayrecords = new ArrayList<DayRecord>();
 
-        Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS,
+        Cursor cursor = mDatabase.query(MsgDBHelper.TABLE_DAYRECORDS,
                 allColumnsDayRecords, null, null, null, null, null);
 
-        Cursor dbCursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS, null, null, null, null, null, null);
+        Cursor dbCursor = mDatabase.query(MsgDBHelper.TABLE_DAYRECORDS, null, null, null, null, null, null);
         String[] columnNames = dbCursor.getColumnNames();
 
         cursor.moveToFirst();
@@ -174,8 +168,8 @@ public class DBRecordsSource {
 
     public DayRecord getLastDayRecord(){
         DayRecord lastDayRecord = new DayRecord();
-        Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_DAYRECORDS, allColumnsDayRecords, null, null, null, null,
-                MySQLiteHelper.COLUMN_ID + " DESC", "1");
+        Cursor cursor = mDatabase.query(MsgDBHelper.TABLE_DAYRECORDS, allColumnsDayRecords, null, null, null, null,
+                MsgDBHelper.COLUMN_ID + " DESC", "1");
         if(cursor!=null && cursor.getCount()>0) {
             cursor.moveToFirst();
             lastDayRecord = cursorToDayRecord(cursor);
@@ -204,16 +198,16 @@ public class DBRecordsSource {
     /** MESSAGES STUFF **/
     public Message createMessage(Message msg, Date date) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_MESSAGE_HEADER, msg.getHeader());
-        values.put(MySQLiteHelper.COLUMN_MESSAGE_BODY, msg.getBody());
-        values.put(MySQLiteHelper.COLUMN_DATE, Util.dateToString(date));
-        values.put(MySQLiteHelper.COLUMN_REASON, msg.getReason());
-        values.put(MySQLiteHelper.COLUMN_REPO_ID, msg.getRepoId());
-        values.put(MySQLiteHelper.COLUMN_READ, (msg.getRead()) ? 1 : 0);
-        long insertId = mDatabase.insert(MySQLiteHelper.TABLE_MESSAGES, null,
+        values.put(MsgDBHelper.COLUMN_MESSAGE_HEADER, msg.getHeader());
+        values.put(MsgDBHelper.COLUMN_MESSAGE_BODY, msg.getBody());
+        values.put(MsgDBHelper.COLUMN_DATE, Util.dateToString(date));
+        values.put(MsgDBHelper.COLUMN_REASON, msg.getReason());
+        values.put(MsgDBHelper.COLUMN_REPO_ID, msg.getRepoId());
+        values.put(MsgDBHelper.COLUMN_READ, (msg.getRead()) ? 1 : 0);
+        long insertId = mDatabase.insert(MsgDBHelper.TABLE_MESSAGES, null,
                 values);
-        Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_MESSAGES,
-                allColumnsMessages, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+        Cursor cursor = mDatabase.query(MsgDBHelper.TABLE_MESSAGES,
+                allColumnsMessages, MsgDBHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
         Message newComment = cursorToMessage(cursor);
@@ -224,35 +218,35 @@ public class DBRecordsSource {
     public void deleteMessage(Message comment) {
         long id = comment.getId();
         System.out.println("Comment deleted with id: " + id);
-        mDatabase.delete(MySQLiteHelper.TABLE_MESSAGES, MySQLiteHelper.COLUMN_ID
+        mDatabase.delete(MsgDBHelper.TABLE_MESSAGES, MsgDBHelper.COLUMN_ID
                 + " = " + id, null);
     }
 
     public void deleteAllMessages(){
-        mDatabase.execSQL("delete from "+ MySQLiteHelper.TABLE_MESSAGES);
+        mDatabase.execSQL("delete from " + MsgDBHelper.TABLE_MESSAGES);
     }
 
     public void updateLatestMessage(String comment){
-        String query = "UPDATE " + MySQLiteHelper.TABLE_MESSAGES + " SET " + MySQLiteHelper.COLUMN_MESSAGE_BODY + " = \""
-                + comment + "\" WHERE " + MySQLiteHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MySQLiteHelper.TABLE_MESSAGES
+        String query = "UPDATE " + MsgDBHelper.TABLE_MESSAGES + " SET " + MsgDBHelper.COLUMN_MESSAGE_BODY + " = \""
+                + comment + "\" WHERE " + MsgDBHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MsgDBHelper.TABLE_MESSAGES
                 + ")";
         mDatabase.execSQL(query);
     }
 
     public void markMessageRead(long id, boolean read){
         int readint = (read) ? 1 : 0;
-        String query = "UPDATE " + MySQLiteHelper.TABLE_MESSAGES + " SET " + MySQLiteHelper.COLUMN_READ + " = "
-                + readint + " WHERE " + MySQLiteHelper.COLUMN_ID + " = " + id;
+        String query = "UPDATE " + MsgDBHelper.TABLE_MESSAGES + " SET " + MsgDBHelper.COLUMN_READ + " = "
+                + readint + " WHERE " + MsgDBHelper.COLUMN_ID + " = " + id;
         mDatabase.execSQL(query);
     }
 
     public List<Message> getAllMessages() {
         List<Message> messages = new ArrayList<Message>();
 
-        Cursor cursor = mDatabase.query(MySQLiteHelper.TABLE_MESSAGES,
+        Cursor cursor = mDatabase.query(MsgDBHelper.TABLE_MESSAGES,
                 allColumnsMessages, null, null, null, null, null);
 
-        Cursor dbCursor = mDatabase.query(MySQLiteHelper.TABLE_MESSAGES, null, null, null, null, null, null);
+        Cursor dbCursor = mDatabase.query(MsgDBHelper.TABLE_MESSAGES, null, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -264,9 +258,24 @@ public class DBRecordsSource {
         return messages;
     }
 
+    public List<Message> getMessagesByRange(int a, int b){
+        List<Message> messages = new ArrayList<Message>();
+        Cursor cursor = mDatabase.rawQuery("SELECT * FROM " + MsgDBHelper.TABLE_MESSAGES
+                + " WHERE " + MsgDBHelper.COLUMN_ID + " LIMIT " + a + ", " + b, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Message msg = cursorToMessage(cursor);
+            messages.add(msg);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return messages;
+    }
+
+
     public Message getMessageById(String id){
-        Cursor cursorc = mDatabase.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_MESSAGES
-                + " WHERE " + MySQLiteHelper.COLUMN_ID + " = " + id, null);
+        Cursor cursorc = mDatabase.rawQuery("SELECT * FROM " + MsgDBHelper.TABLE_MESSAGES
+                + " WHERE " + MsgDBHelper.COLUMN_ID + " = " + id, null);
         cursorc.moveToFirst();
         Message msg = cursorToMessage(cursorc);
         return msg;
@@ -297,7 +306,7 @@ public class DBRecordsSource {
     }
 
     public int getSizeOfMessagesTable(){
-        Cursor cursorc = mDatabase.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_MESSAGES, null);
+        Cursor cursorc = mDatabase.rawQuery("SELECT * FROM " + MsgDBHelper.TABLE_MESSAGES, null);
         boolean isOk = cursorc.moveToFirst();
         return cursorc.getInt(0);
     }

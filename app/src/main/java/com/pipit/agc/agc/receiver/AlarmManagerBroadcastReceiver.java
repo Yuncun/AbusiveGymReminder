@@ -8,20 +8,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.model.DayRecord;
-import com.pipit.agc.agc.data.DBRecordsSource;
-import com.pipit.agc.agc.data.MySQLiteHelper;
+import com.pipit.agc.agc.data.MsgDBHelper;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -116,11 +113,11 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         SharedPrefUtil.updateMainLog(context, "Doing day logging, adding a day");
 
         //Progress current day - open db
-        DBRecordsSource datasource;
-        datasource = DBRecordsSource.getInstance();
+        MsgAndDayRecords datasource;
+        datasource = MsgAndDayRecords.getInstance();
         if (datasource==null){
-            DBRecordsSource.initializeInstance(new MySQLiteHelper(context));
-            datasource = DBRecordsSource.getInstance();
+            MsgAndDayRecords.initializeInstance(new MsgDBHelper(context));
+            datasource = MsgAndDayRecords.getInstance();
         }
         datasource.openDatabase();
 

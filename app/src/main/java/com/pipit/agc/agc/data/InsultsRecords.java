@@ -4,12 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.pipit.agc.agc.model.Message;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -17,15 +15,15 @@ import java.util.Random;
  * Used for accessing the offline messages repo
  * Created by Eric on 2/17/2016.
  */
-public class MessageRepoAccess {
-    private static final String TAG = "MessageRepoAccess";
+public class InsultsRecords {
+    private static final String TAG = "InsultsRecords";
 
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase database;
-    private static MessageRepoAccess instance;
+    private static InsultsRecords instance;
 
-    private MessageRepoAccess(Context context) {
-        this.openHelper = new MessageRepoDBHelper(context);
+    private InsultsRecords(Context context) {
+        this.openHelper = new InsultsDBHelper(context);
     }
 
     /**
@@ -34,9 +32,9 @@ public class MessageRepoAccess {
      * @param context the Context
      * @return the instance of DabaseAccess
      */
-    public static MessageRepoAccess getInstance(Context context) {
+    public static InsultsRecords getInstance(Context context) {
         if (instance == null) {
-            instance = new MessageRepoAccess(context);
+            instance = new InsultsRecords(context);
         }
         return instance;
     }
@@ -64,9 +62,9 @@ public class MessageRepoAccess {
      * @return
      */
     public Message getRandomMessageWithParams(int type, int anger){
-        Cursor cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
-                + " WHERE " + //MessageRepoDBHelper.COLUMN_ANGER + " = " + anger + ", " +
-                MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
+        Cursor cursorc = database.rawQuery("SELECT * FROM " + InsultsDBHelper.TABLE_MESSAGES
+                + " WHERE " + //InsultsDBHelper.COLUMN_ANGER + " = " + anger + ", " +
+                InsultsDBHelper.COLUMN_TYPE + " = " + type, null);
         Random rn = new Random();
         int rand = rn.nextInt(cursorc.getCount());
         cursorc.moveToPosition(rand);
@@ -75,8 +73,8 @@ public class MessageRepoAccess {
     }
 
     public Message getMessageById(long id){
-        Cursor cursorc = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
-                + " WHERE " + MessageRepoDBHelper.COLUMN_ID + " = " + id, null);
+        Cursor cursorc = database.rawQuery("SELECT * FROM " + InsultsDBHelper.TABLE_MESSAGES
+                + " WHERE " + InsultsDBHelper.COLUMN_ID + " = " + id, null);
         cursorc.moveToFirst();
         Message msg = cursorToMessage(cursorc);
         return msg;
@@ -99,9 +97,9 @@ public class MessageRepoAccess {
     public List<Long> getListOfIDsForMessageType(int type){
         Cursor cursor = null;
         List<Long> k = new ArrayList<>();
-        if (type>0 && type<=MessageRepositoryStructure.REMINDER_HITYESTERDAY){
-                cursor = database.rawQuery("SELECT * FROM " + MessageRepoDBHelper.TABLE_MESSAGES
-                        + " WHERE " + MessageRepoDBHelper.COLUMN_TYPE + " = " + type, null);
+        if (type>0 && type<= InsultRecordsConstants.REMINDER_HITYESTERDAY){
+                cursor = database.rawQuery("SELECT * FROM " + InsultsDBHelper.TABLE_MESSAGES
+                        + " WHERE " + InsultsDBHelper.COLUMN_TYPE + " = " + type, null);
         }
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

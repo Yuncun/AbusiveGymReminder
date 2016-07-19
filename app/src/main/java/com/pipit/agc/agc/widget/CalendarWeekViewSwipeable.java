@@ -11,10 +11,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.adapter.MySparkAdapter;
 import com.pipit.agc.agc.adapter.WeekViewAdapter;
-import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,10 +25,10 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
 
     public CalendarWeekViewSwipeable(Context context, AttributeSet attrs) {
         super(context, attrs);
-        DBRecordsSource datasource = DBRecordsSource.getInstance();
+        MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         List<DayRecord> _allPreviousDays =  datasource.getAllDayRecords();
-        DBRecordsSource.getInstance().closeDatabase();
+        MsgAndDayRecords.getInstance().closeDatabase();
         setAdapter(new MyWeekViewAdapter(context, _allPreviousDays, this));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -72,8 +71,8 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
                 @Override
                 public void onClick(View v) {
                     //Get latset since this isn't commonly called
-                    DBRecordsSource datasource;
-                    datasource = DBRecordsSource.getInstance();
+                    MsgAndDayRecords datasource;
+                    datasource = MsgAndDayRecords.getInstance();
                     datasource.openDatabase();
                     DayRecord today = datasource.getLastDayRecord();
                     datasource.closeDatabase();

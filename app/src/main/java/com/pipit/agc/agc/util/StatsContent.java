@@ -1,10 +1,6 @@
 package com.pipit.agc.agc.util;
 
-import android.content.Context;
-import android.content.res.Resources;
-
-import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.ArrayList;
@@ -68,12 +64,12 @@ public class StatsContent {
     }
 
     public void refreshDayRecords(){
-        DBRecordsSource datasource;
-        datasource = DBRecordsSource.getInstance();
+        MsgAndDayRecords datasource;
+        datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         StatsContent stats = StatsContent.getInstance();
         stats._allDayRecords = datasource.getAllDayRecords();
-        DBRecordsSource.getInstance().closeDatabase();
+        MsgAndDayRecords.getInstance().closeDatabase();
     }
 
     public void updateAll(){

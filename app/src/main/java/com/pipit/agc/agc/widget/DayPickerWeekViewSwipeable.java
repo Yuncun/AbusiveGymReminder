@@ -5,24 +5,15 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.adapter.WeekViewAdapter;
-import com.pipit.agc.agc.data.DBRecordsSource;
-import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
-import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.Util;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 
 /**

@@ -8,7 +8,7 @@ import android.util.Log;
 /**
  * Created by Eric on 1/10/2016.
  */
-public class MySQLiteHelper extends SQLiteOpenHelper {
+public class MsgDBHelper extends SQLiteOpenHelper {
 
     /**DayRecords Table**/
     public static final String TABLE_DAYRECORDS = "dayrecords";
@@ -49,7 +49,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + ");";
 
     /**SQL Helper functions**/
-    public MySQLiteHelper(Context context) {
+    public MsgDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -61,7 +61,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(MySQLiteHelper.class.getName(),
+        Log.w(MsgDBHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
 

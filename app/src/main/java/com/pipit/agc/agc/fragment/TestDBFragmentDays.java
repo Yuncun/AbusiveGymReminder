@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.text.DateFormat;
@@ -25,7 +25,7 @@ public class TestDBFragmentDays extends ListFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "TestDBFragmentDays";
 
-    private DBRecordsSource datasource;
+    private MsgAndDayRecords datasource;
     private TextView currentTime;
     private TextView resetTime;
     private Button _addButton;
@@ -48,7 +48,7 @@ public class TestDBFragmentDays extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.test_db_fragment, container, false);
-        datasource = DBRecordsSource.getInstance();
+        datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         List<DayRecord> values = datasource.getAllDayRecords();
         ArrayAdapter<DayRecord> adapter = new ArrayAdapter<DayRecord>(getActivity(),
@@ -111,7 +111,7 @@ public class TestDBFragmentDays extends ListFragment {
 
     @Override
     public void onPause() {
-        DBRecordsSource.getInstance().closeDatabase();
+        MsgAndDayRecords.getInstance().closeDatabase();
         super.onPause();
     }
 

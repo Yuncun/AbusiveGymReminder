@@ -2,10 +2,7 @@ package com.pipit.agc.agc.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.PorterDuff;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +10,7 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.data.DBRecordsSource;
-import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.widget.CircleView;
 import com.pipit.agc.agc.widget.WeekViewSwipeable;
 

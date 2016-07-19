@@ -1,12 +1,10 @@
 package com.pipit.agc.agc.receiver;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
@@ -16,18 +14,15 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
-import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
-import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -80,8 +75,8 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             SharedPrefUtil.updateLastVisitTime(context, time);
 
             //Open a visiting counter on this day
-            DBRecordsSource datasource;
-            datasource = DBRecordsSource.getInstance();
+            MsgAndDayRecords datasource;
+            datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             DayRecord today = datasource.getLastDayRecord();
             today.startCurrentVisit();
@@ -90,8 +85,8 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
         }
         else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             //Open a visiting counter on this day
-            DBRecordsSource datasource;
-            datasource = DBRecordsSource.getInstance();
+            MsgAndDayRecords datasource;
+            datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             DayRecord today = datasource.getLastDayRecord();
             today.endCurrentVisit();
@@ -195,12 +190,12 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
 
     private void updateLastDayRecord(){
         synchronized (this){
-            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             if (!datasource.getLastDayRecord().beenToGym()){
                 datasource.updateLatestDayRecordBeenToGym(true);
             }
-            DBRecordsSource.getInstance().closeDatabase();
+            MsgAndDayRecords.getInstance().closeDatabase();
         }
     }
 

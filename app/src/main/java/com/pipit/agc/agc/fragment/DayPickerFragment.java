@@ -14,11 +14,11 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.adapter.DayPickerAdapter;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.Util;
-import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
     private static final String TAG = "DayPickerFragment";
     DayPickerAdapter _adapter;
     private final static String ARG_SECTION_NUMBER = "section_number";
-    private DBRecordsSource datasource;
+    private MsgAndDayRecords datasource;
     private List<DayRecord> _allPreviousDays;
 
     public static DayPickerFragment newInstance(int sectionNumber) {
@@ -58,7 +58,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.day_picker_fragment, container, false);
-        datasource = DBRecordsSource.getInstance();
+        datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         _allPreviousDays = datasource.getAllDayRecords();
 
@@ -107,7 +107,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
 
     @Override
     public void onPause() {
-        DBRecordsSource.getInstance().closeDatabase();
+        MsgAndDayRecords.getInstance().closeDatabase();
         super.onPause();
     }
 

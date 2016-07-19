@@ -1,6 +1,5 @@
 package com.pipit.agc.agc.fragment;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -18,9 +17,7 @@ import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.Message;
-import com.pipit.agc.agc.data.DBRecordsSource;
-
-import java.util.ArrayList;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 
 /**
  * Displays message
@@ -29,7 +26,7 @@ import java.util.ArrayList;
 public class MessageBodyFragment extends Fragment {
     public final static String TAG = "MessageBodyFragment";
     private static final String ARG_PARAM1 = "id";
-    private DBRecordsSource datasource;
+    private MsgAndDayRecords datasource;
     private Message _msg;
 
     private static final int SWIPE_MIN_DISTANCE = 5;
@@ -126,7 +123,7 @@ public class MessageBodyFragment extends Fragment {
         if (_id==null){
             return rootView;
         }
-        datasource = DBRecordsSource.getInstance();
+        datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
         Log.d(TAG, "getting frag id " + _id);
         _msg = datasource.getMessageById(_id);
@@ -173,7 +170,7 @@ public class MessageBodyFragment extends Fragment {
 
         /*Mark as read*/
         if (!_msg.getRead()){
-            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             datasource.markMessageRead(_msg.getId(), true);
             datasource.closeDatabase();

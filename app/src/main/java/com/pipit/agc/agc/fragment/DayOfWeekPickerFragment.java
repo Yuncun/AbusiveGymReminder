@@ -3,20 +3,17 @@ package com.pipit.agc.agc.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.adapter.DayOfWeekAdapter;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.Util;
-import com.pipit.agc.agc.activity.AllinOneActivity;
-import com.pipit.agc.agc.data.DBRecordsSource;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.ArrayList;
@@ -32,7 +29,7 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
     private static final String TAG = "DayPickerFragment";
     DayOfWeekAdapter _adapter;
     private final static String ARG_SECTION_NUMBER = "section_number";
-    private DBRecordsSource datasource;
+    private MsgAndDayRecords datasource;
     private List<DayRecord> _allPreviousDays;
 
     private RecyclerView.Adapter mAdapter;
@@ -65,10 +62,10 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.day_picker_fragment, container, false);
         synchronized (this){
-            datasource = DBRecordsSource.getInstance();
+            datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             _allPreviousDays = datasource.getAllDayRecords();
-            DBRecordsSource.getInstance().closeDatabase();
+            MsgAndDayRecords.getInstance().closeDatabase();
         }
 
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
@@ -129,11 +126,11 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
 
     public void toggleCurrentGymDayData(boolean gymDay){
         if (datasource==null){
-            datasource = DBRecordsSource.getInstance();
+            datasource = MsgAndDayRecords.getInstance();
         }
         datasource.openDatabase();
         datasource.updateLatestDayRecordIsGymDay(gymDay);
-        DBRecordsSource.getInstance().closeDatabase();
+        MsgAndDayRecords.getInstance().closeDatabase();
         executeUpdateCallback(false); //Update the newsfeed fragment
     }
 }

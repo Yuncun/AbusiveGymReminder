@@ -4,10 +4,12 @@ import android.location.Location;
 
 import com.pipit.agc.agc.util.Constants;
 
+import java.io.Serializable;
+
 /**
  * Created by Eric on 2/20/2016.
  */
-public class Gym {
+public class Gym implements Serializable{
     public Location location;
     public String address;
     public String name;

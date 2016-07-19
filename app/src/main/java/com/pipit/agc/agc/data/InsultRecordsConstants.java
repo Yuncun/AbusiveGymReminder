@@ -8,7 +8,7 @@ package com.pipit.agc.agc.data;
  *
  * Created by Eric on 2/17/2016.
  */
-public class MessageRepositoryStructure {
+public class InsultRecordsConstants {
     //Message Types
     public static final int REMINDER_MISSEDYESTERDAY = 1;
     public static final int REMINDER_HITYESTERDAY = 2;

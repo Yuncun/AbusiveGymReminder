@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
@@ -15,18 +14,14 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
-import com.pipit.agc.agc.model.DayRecord;
-import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.activity.AllinOneActivity;
-import com.pipit.agc.agc.data.DBRecordsSource;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -186,12 +181,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     private void updateLastDayRecord(){
         synchronized (this){
-            DBRecordsSource datasource = DBRecordsSource.getInstance();
+            MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             if (!datasource.getLastDayRecord().beenToGym()){
                 datasource.updateLatestDayRecordBeenToGym(true);
             }
-            DBRecordsSource.getInstance().closeDatabase();
+            MsgAndDayRecords.getInstance().closeDatabase();
         }
     }
 

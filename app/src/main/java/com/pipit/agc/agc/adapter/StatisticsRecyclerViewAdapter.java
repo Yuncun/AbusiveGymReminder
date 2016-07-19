@@ -154,7 +154,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 mv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
 
                 mv.stat_subtext_1.setVisibility(View.GONE);
-                mv.stat_subtext_2.setText(mStats.STAT_MAP.get(StatsContent.WEEK_OF_RECORD_STREAK).details + " (RIP)");
+                mv.stat_subtext_2.setText(mStats.STAT_MAP.get(StatsContent.WEEK_OF_RECORD_STREAK).details);
 
                 //Todo:Use dimens
                 mv.stat_circle_1.setTitleSize(80f);
