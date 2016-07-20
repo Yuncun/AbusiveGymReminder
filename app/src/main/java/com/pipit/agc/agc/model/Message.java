@@ -126,11 +126,11 @@ public class Message {
         return timeCreated;
     }
 
-    public void setRead(boolean b){
+    synchronized public void setRead(boolean b){
         read = b;
     }
 
-    public boolean getRead(){
+    synchronized public boolean getRead(){
         return read;
     }
 

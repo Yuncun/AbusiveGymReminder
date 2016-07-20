@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.Converters;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 
 import org.joda.time.DateTime;
@@ -121,7 +122,7 @@ public class DayRecord {
     }
 
     public boolean checkAndSetIfGymDay(final SharedPreferences prefs){
-        List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        List<String> plannedDOWstrs = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
         if (this.date==null){
             return false;

@@ -55,7 +55,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                 //Directly leave message in inbox
                 ReminderOracle.leaveMessage(m);
                 if (m.getRepoId()>0){
-                    Util.putStringIntoListIntoSharedPrefs(context, Constants.TAKEN_MESSAGE_IDS, Long.toString(m.getRepoId()));
+                    SharedPrefUtil.putStringIntoListIntoSharedPrefs(context, Constants.TAKEN_MESSAGE_IDS, Long.toString(m.getRepoId()));
                 }
                 String firstLineBody = "";
                 String title = "";
@@ -153,7 +153,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
     private static boolean isTheNewDayAGymDay(Context context){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        List<String> plannedDOWstrs = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
         HashSet<Integer> set = new HashSet<Integer>(plannedDOW);
         Calendar cal = Calendar.getInstance();

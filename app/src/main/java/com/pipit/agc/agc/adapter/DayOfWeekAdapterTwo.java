@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.pipit.agc.agc.fragment.DayPickerFragmentTwo;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
 import com.pipit.agc.agc.model.DayRecord;
@@ -98,7 +99,7 @@ public class DayOfWeekAdapterTwo extends RecyclerView.Adapter<DayOfWeekAdapterTw
                 String datestr = (Integer.toString(position));
 
                 SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-                List<String> dates = (Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
+                List<String> dates = (SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
                 if (dates.contains(datestr)) {
                     //The clicked date was previously a Gym Day, and we need to toggle it off
                     dates.remove(datestr);
@@ -126,7 +127,7 @@ public class DayOfWeekAdapterTwo extends RecyclerView.Adapter<DayOfWeekAdapterTw
                     }
 
                 }
-                Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
+                SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
                 updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));
             }
         });

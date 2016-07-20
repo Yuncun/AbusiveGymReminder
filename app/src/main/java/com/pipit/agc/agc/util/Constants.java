@@ -16,8 +16,6 @@ public class Constants {
     public static int timeBetweenLocationChecks = 1000 * 60 * 10; //Milliseconds
     public static int DAY_RESET_HOUR = 0;
     public static int DAY_RESET_MINUTE = 0;
-    public static final int MAX_NUMBER_OF_GYMS = 3;
-    public static final int GYM_LIMIT = MAX_NUMBER_OF_GYMS+1;
     public static final int DEFAULT_RADIUS = 200;
 
 
@@ -29,6 +27,8 @@ public class Constants {
     public static final String GEOFENCES_ADDED_KEY= "geofenceadded";
     public static final String TAKEN_MESSAGE_IDS = "taken_message_ids"; //repoids of messages we have received
     public static final String PREF_NOTIF_TIME = "prefnotificationtime";
+    public static final String GYM_LIST = "gymlist";
+    public static final String HIGHEST_PROXID = "highestproxid";
     //Todo: I kind of stopped doing this halfway through there may be others out there
 
 

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerlist"
         android:name="com.pipit.agc.agc.LocationListFragment"
@@ -18,4 +19,14 @@
         app:layoutManager="LinearLayoutManager"
         tools:context=".fragment.LocationListFragment"
         tools:listitem="@layout/location_item" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/locationsFab"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:paddingBottom="20dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/schemethree_darkerteal"
+        android:clickable="true"/>
 </android.support.design.widget.CoordinatorLayout>

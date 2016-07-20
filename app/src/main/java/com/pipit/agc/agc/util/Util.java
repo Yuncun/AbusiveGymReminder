@@ -28,51 +28,7 @@ import java.util.List;
  */
 public class Util {
 
-    public static boolean putStringIntoListIntoSharedPrefs(final Context context, final String key, String s){
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> strs = getListFromSharedPref(prefs, key);
-        strs.add(s);
-        return putListToSharedPref(prefs.edit(), key, strs);
-    }
 
-
-    public static boolean putListToSharedPref(Context context, final String key, final List<String> list) {
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        return putListToSharedPref(prefs.edit(), key, list);
-    }
-
-    public static boolean putListToSharedPref(final SharedPreferences.Editor edit, final String key, final List<String> list){
-        try{
-            JSONArray mJSONArray = new JSONArray(list);
-            edit.putString(key, mJSONArray.toString());
-            edit.commit();
-            return true;
-        } catch(Exception e){
-            Log.d("Util", "putListToSharedPref failed with " + e.toString());
-            return false;
-        }
-    }
-
-    public static ArrayList<String> getListFromSharedPref(final SharedPreferences prefs, final String key){
-        ArrayList<String> list = new ArrayList<String>();
-        try{
-            String k = prefs.getString(key, "");
-            if (k.isEmpty()){
-                return list;
-            }
-            JSONArray jsonArray = new JSONArray(k);
-            if (jsonArray != null) {
-                int len = jsonArray.length();
-                for (int i=0;i<len;i++){
-                    list.add(jsonArray.get(i).toString());
-                }
-            }
-            return list;
-        } catch (Exception e){
-            Log.d("Util", "getListFromSharedPref Failed to convert into jsonArray " + e.toString());
-            return list;
-        }
-    }
 
     public static List<String> dateListToStringList(List<Date> dates){
         List<String> ret = new ArrayList<String>();

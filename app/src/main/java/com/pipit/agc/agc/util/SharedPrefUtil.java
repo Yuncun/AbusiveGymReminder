@@ -5,11 +5,16 @@ import android.content.SharedPreferences;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
+import com.pipit.agc.agc.model.Gym;
+
+import org.json.JSONArray;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -121,12 +126,90 @@ public class SharedPrefUtil {
         String datestr = (Integer.toString(pos));
 
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> dates = (Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
+        List<String> dates = (getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
         if (dates.contains(datestr)) {
             return true;
         } else {
             return false;
         }
     }
+
+    public static boolean putStringIntoListIntoSharedPrefs(final Context context, final String key, String s){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        List<String> strs = getListFromSharedPref(prefs, key);
+        strs.add(s);
+        return putListToSharedPref(prefs.edit(), key, strs);
+    }
+
+
+    public static boolean putListToSharedPref(Context context, final String key, final List<String> list) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        return putListToSharedPref(prefs.edit(), key, list);
+    }
+
+    public static boolean putListToSharedPref(final SharedPreferences.Editor edit, final String key, final List<String> list){
+        try{
+            JSONArray mJSONArray = new JSONArray(list);
+            edit.putString(key, mJSONArray.toString());
+            edit.commit();
+            return true;
+        } catch(Exception e){
+            Log.d("Util", "putListToSharedPref failed with " + e.toString());
+            return false;
+        }
+    }
+
+    public static ArrayList<String> getListFromSharedPref(final SharedPreferences prefs, final String key){
+        ArrayList<String> list = new ArrayList<String>();
+        try{
+            String k = prefs.getString(key, "");
+            if (k.isEmpty()){
+                return list;
+            }
+            JSONArray jsonArray = new JSONArray(k);
+            if (jsonArray != null) {
+                int len = jsonArray.length();
+                for (int i=0;i<len;i++){
+                    list.add(jsonArray.get(i).toString());
+                }
+            }
+            return list;
+        } catch (Exception e){
+            Log.d("Util", "getListFromSharedPref Failed to convert into jsonArray " + e.toString());
+            return list;
+        }
+    }
+
+    public static void putGeofenceList(Context context, List<Gym> gyms){
+        Gson gson = new Gson();
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        List<String> jsonarr = new ArrayList<>();
+        for (Gym gym : gyms){
+            String gs = gson.toJson(gym);
+            jsonarr.add(gs);
+        }
+        putListToSharedPref(editor, Constants.GYM_LIST, jsonarr);
+    }
+
+    public static List<Gym> getGeofenceList(Context context){
+        List<Gym> gyms = new ArrayList<Gym>();
+        Gson gson = new Gson();
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        List<String> gymstrings = getListFromSharedPref(prefs, Constants.GYM_LIST);
+        for (String gs : gymstrings){
+            Gym g = gson.fromJson(gs, Gym.class);
+            gyms.add(g);
+        }
+        return gyms;
+    }
+
+    public static void addGeofenceToSharedPrefs(Context context, Gym gym){
+        List<Gym> g = getGeofenceList(context);
+        g.add(gym);
+        putGeofenceList(context, g);
+
+    }
+
 
 }

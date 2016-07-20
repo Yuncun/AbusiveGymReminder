@@ -18,6 +18,7 @@ import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.adapter.DayPickerAdapter;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.model.DayRecord;
 
@@ -63,8 +64,8 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
         _allPreviousDays = datasource.getAllDayRecords();
 
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> exceptionDaysList = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_EXCEPT_DAYS);
-        List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        List<String> exceptionDaysList = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_EXCEPT_DAYS);
+        List<String> plannedDOWstrs = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
 
         _adapter = new DayPickerAdapter(getActivity(), _allPreviousDays, new HashSet<String>(exceptionDaysList),
@@ -130,7 +131,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
 
         /*Remove or Add the date to the list*/
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> dates = (Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
+        List<String> dates = (SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
         if (dates.contains(datestr)){
             //The clicked date was previously a Gym Day, and we need to toggle it off
             dates.remove(datestr);
@@ -143,7 +144,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.gym_day));
             v.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lightgreen));
         }
-        Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
+        SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
         _adapter.updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));
     }
 

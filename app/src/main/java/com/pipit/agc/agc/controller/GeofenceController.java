@@ -26,6 +26,7 @@ import com.pipit.agc.agc.util.SharedPrefUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -85,8 +86,10 @@ public class GeofenceController {
         }
         mGeofenceList = new ArrayList<Geofence>();
         mGeofenceMap = new HashMap<Integer, Geofence>();
-        for (int i = 1; i < Constants.GYM_LIMIT; i++) {
-            addGeofenceByGym(getGymLocation(context, i), null, false);
+
+        List<Gym> gyms = SharedPrefUtil.getGeofenceList(context);
+        for (Gym g : gyms){
+            addGeofenceByGym(g, null, false);
         }
         executeAddGeofence();
     }
@@ -121,7 +124,6 @@ public class GeofenceController {
         mGeofenceList.add(g);
         mGeofenceMap.put(gym.proxid, g);
         mNextGeofenceToAdd = g;
-        GeofenceUtils.addGeofenceToSharedPrefs(context, gym);
         if (listener!=null){
             mListener = listener;
         }
@@ -149,35 +151,50 @@ public class GeofenceController {
         Log.d(TAG, "Remove all geofences");
         mRemoveList = new ArrayList<String>();
 
-        for (int i = 1; i < Constants.GYM_LIMIT; i++ ){
-            mRemoveList.add(Integer.toString(i));
+        List<Gym> gyms = SharedPrefUtil.getGeofenceList(context);
+        for (Gym g : gyms){
+            mRemoveList.add(Integer.toString(g.proxid));
         }
 
         connectWithCallback(callback);
     }
 
-    public void removeGeofenceSharedPrefs(int i){
-        int proxid = prefs.getInt("proxalert" + i, 0); //Todo: Remember individual IDs
-        Log.d(TAG, "Attempting to remove prox alert, id is " + proxid);
-        try{
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.remove("lat"+i);
-            edit.remove("lng"+i);
-            edit.remove("proxalert"+i);
-            edit.remove("address" + i);
-            edit.remove("name" + i);
-            edit.commit();
-        } catch (SecurityException e){
-            Log.e(TAG, "No permission");
+    public void removeGeofenceSharedPrefs(int i) {
+        List<Gym> gyms = SharedPrefUtil.getGeofenceList(context);
+        Iterator<Gym> iterator = gyms.iterator();
+        while(iterator.hasNext())
+        {
+            Gym g = iterator.next();
+            if (g.proxid==i)
+            {
+                iterator.remove();
+                break;
+            }
         }
+        SharedPrefUtil.putGeofenceList(context, gyms);
     }
 
-    /**
-     * Used for removing individual geofences
-     * @param n: id of the alert to remove. (For three max gyms, the id will be 1, 2, or 3.
-     */
+    public void removeGeofenceSharePrefs(List<String> removeList) {
+        List<Gym> gyms = SharedPrefUtil.getGeofenceList(context);
+        Iterator<Gym> iterator = gyms.iterator();
+        while(iterator.hasNext())
+        {
+            Gym g = iterator.next();
+            if (removeList.contains(Integer.toString(g.proxid)));
+            {
+                iterator.remove();
+                break;
+            }
+        }
+        SharedPrefUtil.putGeofenceList(context, gyms);
+    }
+
+        /**
+         * Used for removing individual geofences
+         * @param n: id of the alert to remove. (For three max gyms, the id will be 1, 2, or 3.
+         */
     public void removeGeofencesById(int n, GeofenceControllerListener listener){
-        if (n < 0 || n>Constants.MAX_NUMBER_OF_GYMS){
+        if (n < 0){
             Log.e(TAG, "No geofence of given id to remove");
             return;
         }
@@ -196,27 +213,6 @@ public class GeofenceController {
                 "You need to use ACCESS_FINE_LOCATION with geofences", securityException);
     }
 
-
-    /**
-     * Utility function for getting the location of the gym
-     * @return Gym if a gym is found, and null if gym is not found
-     */
-    public static Gym getGymLocation(Context context, int i){
-        /*Check lat/lng*/
-        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        double lat = SharedPrefUtil.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
-        double lng = SharedPrefUtil.getDouble(prefs, "lng" + i, Constants.DEFAULT_COORDINATE);
-
-        Location gymLocation = new Location("");
-        gymLocation.setLatitude(lat);
-        gymLocation.setLongitude(lng);
-        Gym gym = new Gym();
-        gym.location = gymLocation;
-        gym.address = prefs.getString("address"+i, context.getResources().getString(R.string.no_address_default));
-        gym.name = prefs.getString("name"+i, "");
-        gym.proxid = prefs.getInt("proxalert"+i, 0);
-        return gym;
-    }
 
     /**
      * Builds and returns a GeofencingRequest. This just adds the current geofence in escrow
@@ -312,12 +308,8 @@ public class GeofenceController {
                     public void onResult(Status status) {
                         Log.d(TAG, "cleared geofence list");
                         if (status.isSuccess()) {
-                            for (int k = 0; k < mRemoveList.size(); k++) {
-                                int i = Integer.parseInt(mRemoveList.get(k));
-                                //removeGeofenceSharedPrefs(i);
-                            }
+                            removeGeofenceSharePrefs(mRemoveList);
                             populategeofencelist();
-
                         } else {
                             sendError();
                             Log.e(TAG, "Removing geofence failed: " + status.getStatusMessage());

@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +42,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
     private List<DayRecord> _days;
     private HashSet<Integer> _selectedPos;
     private NewsfeedFragment mFrag;
+    private HashSet<Integer> _unreadMsgs;
 
     private int posOfItemThatStartedCAB;
     private boolean allSelected;
@@ -98,8 +100,9 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         holder.timestamp.setText(m.getIntelligentDateString());
         holder.icon.setBackground(ContextCompat.getDrawable(mFrag.getContext(), R.drawable.circle));
         //holder.rlayout.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.));
-
         holder.timestamp.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
+
+
         if (m.getReason()== Message.HIT_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_hit_gym_yesterday));
             holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
@@ -130,14 +133,18 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         //holder.reason.setTextSize(12);
         //holder.timestamp.setTextSize(12);
 
-        if (!m.getRead()){
+        //Todo:Reenable this when we figure out why it's randomly evaluating to true
+        //if (!m.getRead()){
+        if (false) {
             //Todo: Add "read" field to databaseace(null, Typeface.BOLD);
+            Log.d("ERIC", "Position " + position + "Message" + m.getBody());
             holder.reason.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
             holder.reason.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
             holder.timestamp.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
             holder.timestamp.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
             //holder.header.setTypeface(holder.comment.getTypeface(), Typeface.BOLD);
             //holder.timestamp.setTypeface(holder.timestamp.getTypeface(), Typeface.BOLD);
+
         }
 
         if (selectionMode && _selectedPos.contains(position)){

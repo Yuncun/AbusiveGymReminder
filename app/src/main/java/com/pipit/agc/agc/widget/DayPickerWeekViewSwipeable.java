@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.adapter.WeekViewAdapter;
 import com.pipit.agc.agc.util.Constants;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
         super(context, attrs);
 
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        List<String> plannedDOWstrs = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
         //TODO:
         //I know this is a roundabout way of doing it, but it's some old code that I will change later
@@ -77,7 +78,7 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
                 @Override
                 public void onClick(View v) {
                     //Keep our sharedprefs synced with adapter data
-                    List<String> dates = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+                    List<String> dates = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
 
                     if (_allDayRecords.get(index)) {
                         //The clicked date was previously a Gym Day, and we need to toggle it off
@@ -104,7 +105,7 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
                         }*/
 
                     }
-                    Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
+                    SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
                 }
             });
 

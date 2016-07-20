@@ -33,6 +33,7 @@ import com.pipit.agc.agc.activity.IntroductionActivity;
 import com.pipit.agc.agc.model.Gym;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.GeofenceUtils;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.TextDrawable;
 
 /**
@@ -207,7 +208,7 @@ public class IntroPlacePickerFragment extends Fragment {
                         //        Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();
 
-        GeofenceUtils.addGeofenceToSharedPrefs(getContext(), gym);
+        SharedPrefUtil.addGeofenceToSharedPrefs(getContext(), gym);
     }
 
 }

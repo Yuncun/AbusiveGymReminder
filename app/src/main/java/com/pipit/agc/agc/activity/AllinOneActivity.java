@@ -150,7 +150,7 @@ public class AllinOneActivity extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
             //prefs.edit().putBoolean("showGymStatus", true).commit();
             SharedPrefUtil.setFirstTime(this, true);
-            Util.putListToSharedPref(this, Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
+            SharedPrefUtil.putListToSharedPref(this, Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
         }
         return super.onOptionsItemSelected(item);
     }

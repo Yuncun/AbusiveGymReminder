@@ -13,6 +13,7 @@ import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.adapter.DayOfWeekAdapter;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.model.DayRecord;
 
@@ -69,7 +70,7 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
         }
 
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        List<String> plannedDOWstrs = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv);

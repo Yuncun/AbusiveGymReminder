@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.MapView;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.controller.GeofenceController;
 import com.pipit.agc.agc.fragment.LocationListFragment;
@@ -69,8 +70,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "clicked addButton");
-                mFrag.mFlag = position + 1;
-                mFrag.startPlacePicker(position + 1);
+                mFrag.startPlacePicker(mValues.get(position).proxid);
             }
         });
 
@@ -78,7 +78,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             @Override
             public void onClick(View v){
                 Log.d(TAG, "clicked removeButton");
-                GeofenceController.getInstance().removeGeofencesById(position+1, mListener);
+                GeofenceController.getInstance().removeGeofencesById(mValues.get(position).proxid, mListener);
                 //((AllinOneActivity) mFrag.getActivity()).removeGeofencesById(position + 1);
                 //mValues.set(position, new Gym());
             }
@@ -89,7 +89,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
     @Override
     public int getItemCount() {
-        return Math.min(mValues.size(), 3);
+        return mValues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

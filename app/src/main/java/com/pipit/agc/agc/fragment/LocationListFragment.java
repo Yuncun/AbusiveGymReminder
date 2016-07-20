@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +44,9 @@ public class LocationListFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     public int mFlag;
+    public int mHighestProxId;
     private RecyclerView mRecyclerView;
+    FloatingActionButton mFab;
 
     private GeofenceController.GeofenceControllerListener mListener  = new GeofenceController.GeofenceControllerListener() {
         @Override
@@ -73,6 +77,7 @@ public class LocationListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mHighestProxId = SharedPrefUtil.getInt(getContext(), Constants.HIGHEST_PROXID, 0);
         mFlag=0;
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -84,6 +89,15 @@ public class LocationListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.locationlist_layout, container, false);
         RecyclerView recyclerlist = (RecyclerView) view.findViewById(R.id.recyclerlist);
+        mFab = (FloatingActionButton) view.findViewById(R.id.locationsFab);
+        mFab.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.schemethree_darkerteal));
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPlacePicker(mHighestProxId+1);
+            }
+        });
+
         // Set the adapter
         Context context = view.getContext();
         mRecyclerView = (RecyclerView) recyclerlist;
@@ -92,33 +106,10 @@ public class LocationListFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        List<Gym> gymlocations = getGymLocations(getContext());
+        List<Gym> gymlocations = SharedPrefUtil.getGeofenceList(getContext());
         mRecyclerView.setAdapter(new LocationListAdapter(gymlocations, mListener, this));
         return view;
     }
-
-    public static List<Gym> getGymLocations(Context context){
-        Log.d(TAG, "getGymLocations()");
-        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<Gym> gymlocations = new ArrayList<Gym>();
-        for (int i=1; i<Constants.GYM_LIMIT; i++){
-            double lat = SharedPrefUtil.getDouble(prefs, "lat" + i, Constants.DEFAULT_COORDINATE);
-            double lng = SharedPrefUtil.getDouble(prefs, "lng" + i, Constants.DEFAULT_COORDINATE);
-            Gym gym = new Gym();
-            gym.location = new Location("");
-            gym.location.setLongitude(lng);
-            gym.location.setLatitude(lat);
-            if (lat==Constants.DEFAULT_COORDINATE && lng==Constants.DEFAULT_COORDINATE){
-                gym.isEmpty=true;
-            }
-            gym.address = prefs.getString("address" + i, context.getResources().getString(R.string.no_address_default));
-            gym.proxid =  prefs.getInt("proxalert" + i, 0);
-            gym.name = prefs.getString("name"+i, "No name");
-            gymlocations.add(gym);
-        }
-        return gymlocations;
-    }
-
 
     @Override
     public void onDetach() {
@@ -129,7 +120,7 @@ public class LocationListFragment extends Fragment {
         try {
             PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
             Intent intent = intentBuilder.build(getActivity());
-            intent.putExtra("proxid", i);
+            mFlag = i;
 
             // Start the Intent by requesting a result, identified by a request code.
             startActivityForResult(intent, Constants.REQUEST_PLACE_PICKER);
@@ -166,9 +157,17 @@ public class LocationListFragment extends Fragment {
                 if(attribution == null){
                     attribution = "";
                 }
+                if (mFlag < 0){
+                    Log.e(TAG, "no proxID given for location picker");
+                    return;
+                }
                 int id = mFlag;
-                mFlag=0;
+                mFlag=-1;
                 Log.d(TAG, "Just picked a location, id=" + id);
+                if (id > mHighestProxId) {
+                    mHighestProxId = id;
+                }
+                SharedPrefUtil.putInt(getContext(), Constants.HIGHEST_PROXID, mHighestProxId);
 
                 Gym gym = new Gym();
                 gym.location = new Location("");
@@ -179,6 +178,7 @@ public class LocationListFragment extends Fragment {
                 gym.proxid = id;
 
                 GeofenceController.getInstance().addGeofenceByGym(gym, mListener, true);
+                SharedPrefUtil.addGeofenceToSharedPrefs(getContext(), gym);
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);
             }
@@ -189,6 +189,6 @@ public class LocationListFragment extends Fragment {
     }
 
     private void refresh(){
-        mRecyclerView.setAdapter(new LocationListAdapter(getGymLocations(getContext()), mListener, this));
+        mRecyclerView.setAdapter(new LocationListAdapter(SharedPrefUtil.getGeofenceList(getContext()), mListener, this));
     }
 }

@@ -325,7 +325,7 @@ public class ReminderOracle {
 
         /* Get taken Ids */
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<Long> taken_ids = new ArrayList<Long>(Util.listOfStringsToListOfLongs(Util.getListFromSharedPref(prefs, Constants.TAKEN_MESSAGE_IDS)));
+        List<Long> taken_ids = new ArrayList<Long>(Util.listOfStringsToListOfLongs(SharedPrefUtil.getListFromSharedPref(prefs, Constants.TAKEN_MESSAGE_IDS)));
 
         /* Combine both lists */
         List<Long> common = new ArrayList<Long>(available_ids);

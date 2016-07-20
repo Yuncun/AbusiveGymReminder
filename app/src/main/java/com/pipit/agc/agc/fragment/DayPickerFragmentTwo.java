@@ -20,6 +20,7 @@ import com.pipit.agc.agc.adapter.WeekViewAdapter;
 import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.widget.CircleView;
 import com.pipit.agc.agc.widget.WeekViewSwipeable;
@@ -75,7 +76,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
         wv = (LinearLayout) rootView.findViewById(R.id.sevendays);
         wv.setPadding(8, 0, 8, 0);
         prefs = getContext().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        List<String> plannedDOWstrs = Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
+        List<String> plannedDOWstrs = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
         //TODO:
         //I know this is a roundabout way of doing it, but it's some old code that I will change later
@@ -147,7 +148,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 //Keep our sharedprefs synced with adapter data TODO: Some kind of binding library would be nice here
-                HashSet<String> dates = new HashSet(Util.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
+                HashSet<String> dates = new HashSet(SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
 
                 if (_plannedDays.get(index)) {
                     //The clicked date was previously a Gym Day, and we need to toggle it off
@@ -162,7 +163,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
                     cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
                 }
 
-                Util.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, new ArrayList(dates));
+                SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, new ArrayList(dates));
                 setFeatureGraphic();
                 weekitem.invalidate();
             }
