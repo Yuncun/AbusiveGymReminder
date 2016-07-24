@@ -7,7 +7,6 @@
         android:layout_height="wrap_content"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         card_view:cardUseCompatPadding="true"
-        android:layout_marginTop="2dp"
         android:elevation="2dp"
         android:orientation="horizontal">
         <RelativeLayout

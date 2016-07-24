@@ -83,15 +83,6 @@ public class WeekViewSwipeable extends LinearLayout {
 
         final WeekViewSwipeable ll = this;
         setAdapter(new WeekViewAdapter(getContext(), new ArrayList(), ll));
-
-        /*
-        leftNav.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                leftNav.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                setAdapter(new WeekViewAdapter(getContext(), new ArrayList(), ll));
-            }
-        });*/
     }
 
     public WeekViewSwipeable(Context context) {
@@ -145,12 +136,11 @@ public class WeekViewSwipeable extends LinearLayout {
        }
     }
 
-    protected void setAdapter(WeekViewAdapter wva){
+    public void setAdapter(WeekViewAdapter wva){
         wvadapter = wva;
         viewPager.setAdapter(wva);
         viewPager.setCurrentItem(wvadapter.getStartPosition());
     }
-
 }
 
 

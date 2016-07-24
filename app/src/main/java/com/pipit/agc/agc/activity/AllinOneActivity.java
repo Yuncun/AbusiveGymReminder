@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -51,6 +52,7 @@ public class AllinOneActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private MaterialCab cab;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,32 @@ public class AllinOneActivity extends AppCompatActivity {
         mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.basewhite));
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.setupWithViewPager(mViewPager);
+
+        //Deal with floating action button used in locationlist fragment. This must be done here because it syncs up
+        //with the collapsing toolbar. We just choose to hide it when the wrong fragment is shown.
+        mFab = (FloatingActionButton) findViewById(R.id.locationsFab);
+        mFab.setBackgroundColor(ContextCompat.getColor(this, R.color.schemethree_darkerteal));
+        mFab.hide();
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 3) {
+                    mFab.show();
+                } else {
+                    mFab.hide();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         cab = new MaterialCab(this, R.id.cab_stub);
         Log.d(TAG, "remaking _alarmmanager " + _alarm);
@@ -346,8 +374,12 @@ public class AllinOneActivity extends AppCompatActivity {
     }
 
     public MaterialCab getCab(){
-        //return null;
         return cab;
     }
+
+    public FloatingActionButton getFab(){
+        return mFab;
+    }
 }
+
 

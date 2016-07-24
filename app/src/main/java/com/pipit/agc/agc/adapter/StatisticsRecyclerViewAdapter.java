@@ -16,11 +16,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
+import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.widget.CalendarWeekViewSwipeable;
 import com.pipit.agc.agc.widget.CircleView;
 import com.pipit.agc.agc.widget.WeekViewSwipeable;
@@ -28,6 +30,8 @@ import com.robinhood.spark.SparkView;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import iSoron.HistoryChart;
 
 public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.ViewHolder> {
     private final StatsContent mStats;
@@ -52,6 +56,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 return new WeeklyViewHolder(view);
             case 2:
                 view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.monthly_stats_card, parent, false);
+                return new MonthViewHolder(view);
+            case 3:
+                view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.misc_stats_card, parent, false);
                 return new MiscStatsViewHolder(view);
             default:
@@ -75,12 +83,12 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 dv.gymstate_circle.setShowSubtitle(false);
                 if (today.isGymDay()){
                     dv.gymstate_circle.setTitleText("GYM\nDAY");
-                    dv.gymstate_circle.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red));
-                    //dv.gymstate_circle.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red));
+                    dv.gymstate_circle.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
+                            R.attr.missColor));
                 }else{
                     dv.gymstate_circle.setTitleText("REST\nDAY");
-                    dv.gymstate_circle.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
-                    //dv.gymstate_circle.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal));
+                    dv.gymstate_circle.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
+                            R.attr.explicitHitColor));
                 }
                 if (today.beenToGym()){
                     SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
@@ -100,16 +108,17 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     }
                 }
                 dv.gymstate_text.setTextSize(30);
-
-                //TEST
-                //dv.rootlayout.setVisibility(View.GONE);
-
                 break;
 
             case 1:
                 //weekly_stats_card;
                 holder.mTitleView.setText("Last seven days");
                 final WeeklyViewHolder wv = (WeeklyViewHolder) holder;
+                MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
+                datasource.openDatabase();
+                List<DayRecord> _allPreviousDays =  datasource.getAllDayRecords();
+                MsgAndDayRecords.getInstance().closeDatabase();
+                wv.calendar.setAdapter(new CalendarWeekViewAdapter(mFrag.getContext(), _allPreviousDays, wv.calendar));
 
                 float[] data = {};
                 wv.sparkgraph.setAdapter(new MySparkAdapter(data));
@@ -144,28 +153,36 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 //wv.calendar.styleFromDayrecordsData(mFrag.getContext(), mStats.getAllDayRecords(false));
                 break;
             case 2:
+                holder.mTitleView.setText("History");
+                MonthViewHolder mv = (MonthViewHolder) holder;
+
+                /*Populate*/
+                int[] checkmarks = new int[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 0, 1, 1, 2, 2};
+                mv.historyChart.setCheckmarks(checkmarks);
+                break;
+            case 3:
                 holder.mTitleView.setText("Streaks");
-                MiscStatsViewHolder mv = (MiscStatsViewHolder) holder;
+                MiscStatsViewHolder msv = (MiscStatsViewHolder) holder;
                 /* Text */
-                mv.stat_circle_1.setTitleText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).get() + "");
-                mv.stat_circle_2.setTitleText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).get() + "");
+                msv.stat_circle_1.setTitleText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).get() + "");
+                msv.stat_circle_2.setTitleText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).get() + "");
 
-                mv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).details);
-                mv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
+                msv.stat_text_1.setText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).details);
+                msv.stat_text_2.setText(mStats.STAT_MAP.get(StatsContent.LONGEST_STREAK).details);
 
-                mv.stat_subtext_1.setVisibility(View.GONE);
-                mv.stat_subtext_2.setText(mStats.STAT_MAP.get(StatsContent.WEEK_OF_RECORD_STREAK).details);
+                msv.stat_subtext_1.setVisibility(View.GONE);
+                msv.stat_subtext_2.setText(mStats.STAT_MAP.get(StatsContent.WEEK_OF_RECORD_STREAK).details);
 
                 //Todo:Use dimens
-                mv.stat_circle_1.setTitleSize(80f);
-                mv.stat_circle_2.setTitleSize(80f);
-                mv.stat_circle_1.setShowSubtitle(false);
-                mv.stat_circle_2.setShowSubtitle(false);
+                msv.stat_circle_1.setTitleSize(80f);
+                msv.stat_circle_2.setTitleSize(80f);
+                msv.stat_circle_1.setShowSubtitle(false);
+                msv.stat_circle_2.setShowSubtitle(false);
 
-                mv.stat_circle_1.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
-                mv.stat_circle_1.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                mv.stat_circle_2.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
-                mv.stat_circle_2.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                msv.stat_circle_1.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
+                msv.stat_circle_1.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
+                msv.stat_circle_2.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
+                msv.stat_circle_2.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                 break;
             default:
                 holder.mTitleView.setText("Default");
@@ -175,7 +192,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 
     public class DayViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
@@ -196,7 +213,6 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     public class WeeklyViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
 
         public final SparkView sparkgraph;
-
         public final CalendarWeekViewSwipeable calendar;
 
         public WeeklyViewHolder(View view){
@@ -206,6 +222,19 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
 
         }
+    }
+
+    public class MonthViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
+
+        public final HistoryChart historyChart;
+
+        public MonthViewHolder(View view){
+            super(view);
+            historyChart = (HistoryChart) view.findViewById(R.id.historyChart);
+            historyChart.setColor(R.color.schemethree_darkerteal);
+            historyChart.setIsBackgroundTransparent(false);
+        }
+
     }
 
     public class MiscStatsViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder {

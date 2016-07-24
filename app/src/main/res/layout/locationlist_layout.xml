@@ -18,15 +18,9 @@
         android:layout_marginBottom="4dp"
         app:layoutManager="LinearLayoutManager"
         tools:context=".fragment.LocationListFragment"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/location_item" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/locationsFab"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:paddingBottom="20dp"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/schemethree_darkerteal"
-        android:clickable="true"/>
+
+
 </android.support.design.widget.CoordinatorLayout>

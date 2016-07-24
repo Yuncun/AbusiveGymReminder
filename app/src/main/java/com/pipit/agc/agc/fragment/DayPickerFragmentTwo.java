@@ -187,24 +187,26 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
 
         switch (count) {
             case 0:
-                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_ooze);
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.gym_ooze);
                 break;
             case 1:
-                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_tadpole);
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.gym_tadpole);
                 break;
             case 2:
-                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_brotege);
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.gym_brotege);
                 break;
             case 3:
-                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_gybro);
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.gym_gybro);
                 break;
             case 4:
-                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_gymrat);
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.gym_monster);
                 break;
             case 5:
-                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.bro_monster);
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.gym_rat);
                 break;
             case 6:
+                bMap = BitmapFactory.decodeResource(getResources(), R.drawable.gym_freakbeast);
+                break;
             case 7:
             default:
                 return;

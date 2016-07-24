@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Custom attrs-->
+    <attr name="explicitHitColor" format="reference"/> <!--Color used to denote gym day gym hit-->
+    <attr name="implicitHitColor" format="reference"/> <!--Color used to denote rest day no hit-->
+    <attr name="missColor" format="reference"/> <!--Color used to denote gym day no hit-->
+
     <declare-styleable name="WeekCalendarView">
         <attr name="wvTitleText" format="string" localization="suggested" />
         <attr name="wvValueColor" format="color" />
@@ -8,4 +13,14 @@
     <declare-styleable name = "cardStyle">
         <attr name="cardStyle" format="reference" />
     </declare-styleable>
+
+    <!--HistoryChart attrs-->
+    <attr name="highContrastTextColor" format="reference"/>
+    <attr name="mediumContrastTextColor" format="reference"/>
+    <attr name="lowContrastTextColor" format="reference"/>
+
+    <attr name="highContrastReverseTextColor" format="reference"/>
+    <attr name="mediumContrastReverseTextColor" format="reference"/>
+    <attr name="lowContrastReverseTextColor" format="reference"/>
+
 </resources>

@@ -39,4 +39,17 @@
             android:layout_width="match_parent" android:layout_height="match_parent"
             tools:context=".activity.AllinOneActivity"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/locationsFab"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/schemethree_darkerteal"
+        android:src="@drawable/ic_plus_white_24dp"
+        app:layout_anchor="@id/pager"
+        app:layout_anchorGravity="bottom|right|end"
+        android:clickable="true"/>
+
 </android.support.design.widget.CoordinatorLayout>

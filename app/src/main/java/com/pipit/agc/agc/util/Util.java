@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.DisplayMetrics;
@@ -27,8 +28,6 @@ import java.util.List;
  * Created by Eric on 12/14/2015.
  */
 public class Util {
-
-
 
     public static List<String> dateListToStringList(List<Date> dates){
         List<String> ret = new ArrayList<String>();
@@ -114,6 +113,22 @@ public class Util {
             }
         }
         return plannedDOW;
+    }
+
+    /*Interface utility for retrieving a style*/
+    public static int getStyledColor(Context context, int attrId)
+    {
+        TypedArray ta = getTypedArray(context, attrId);
+        int color = ta.getColor(0, 0);
+        ta.recycle();
+
+        return color;
+    }
+
+    private static TypedArray getTypedArray(Context context, int attrId)
+    {
+        int[] attrs = new int[]{ attrId };
+        return context.obtainStyledAttributes(attrs);
     }
 
 }

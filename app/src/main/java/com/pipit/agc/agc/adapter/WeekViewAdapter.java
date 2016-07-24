@@ -187,7 +187,7 @@ public class WeekViewAdapter<T> extends PagerAdapter {
     }
 
     /**
-    * Used to populate and style the WeekCalendarView that shows attendance over last seven days
+    * Used to populate and style the WeekViewSwipeable that shows attendance over last seven days
     * @return
     */
     protected void styleFromDayrecordsData(final Context context, final List<T> _allDayRecords, int page, View root){

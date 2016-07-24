@@ -25,6 +25,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.pipit.agc.agc.activity.AllinOneActivity;
 import com.pipit.agc.agc.controller.GeofenceController;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.adapter.LocationListAdapter;
@@ -46,7 +47,6 @@ public class LocationListFragment extends Fragment {
     public int mFlag;
     public int mHighestProxId;
     private RecyclerView mRecyclerView;
-    FloatingActionButton mFab;
 
     private GeofenceController.GeofenceControllerListener mListener  = new GeofenceController.GeofenceControllerListener() {
         @Override
@@ -89,15 +89,6 @@ public class LocationListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.locationlist_layout, container, false);
         RecyclerView recyclerlist = (RecyclerView) view.findViewById(R.id.recyclerlist);
-        mFab = (FloatingActionButton) view.findViewById(R.id.locationsFab);
-        mFab.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.schemethree_darkerteal));
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startPlacePicker(mHighestProxId+1);
-            }
-        });
-
         // Set the adapter
         Context context = view.getContext();
         mRecyclerView = (RecyclerView) recyclerlist;
@@ -190,5 +181,29 @@ public class LocationListFragment extends Fragment {
 
     private void refresh(){
         mRecyclerView.setAdapter(new LocationListAdapter(SharedPrefUtil.getGeofenceList(getContext()), mListener, this));
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        FloatingActionButton fab = ((AllinOneActivity) getActivity()).getFab();
+        if (fab!=null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startPlacePicker(mHighestProxId+1);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        //If FAB is accidently shown when not on this fragment, we dont want them opening placepicker
+        FloatingActionButton fab = ((AllinOneActivity) getActivity()).getFab();
+        if (fab!=null) {
+           fab.setOnClickListener(null);
+        }
     }
 }

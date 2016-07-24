@@ -7,7 +7,20 @@
         <item name="android:textAppearanceLarge">@style/largetext</item>
         <item name="android:windowBackground">@color/grey</item>
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
+
+        <item name="explicitHitColor">@color/schemethree_darkerteal</item>
+        <item name="implicitHitColor">@color/grey_300</item>
+        <item name="missColor">@color/schemethree_darkerred</item>
+
+        <!--HistoryChart stuff-->
         <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>
+        <item name="highContrastReverseTextColor">@color/basewhite</item>
+        <item name="mediumContrastReverseTextColor">@color/grey_500</item>
+        <item name="lowContrastReverseTextColor">@color/grey_700</item>
+
+        <item name="highContrastTextColor">@color/grey_800</item>
+        <item name="mediumContrastTextColor">@color/grey_500</item>
+        <item name="lowContrastTextColor">@color/grey_300</item>
     </style>
 
     <style name="AppThemeDark" parent="Theme.AppCompat">
