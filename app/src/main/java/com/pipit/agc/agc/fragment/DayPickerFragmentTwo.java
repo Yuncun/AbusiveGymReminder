@@ -94,7 +94,6 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
 
             @Override
             public void onGlobalLayout() {
-                // TODO Auto-generated method stub
                 styleFromDayrecordsData(wv);
                 wv.getViewTreeObserver().removeOnGlobalLayoutListener(
                         this);

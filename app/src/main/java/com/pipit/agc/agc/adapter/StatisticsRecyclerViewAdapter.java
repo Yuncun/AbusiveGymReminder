@@ -29,6 +29,7 @@ import com.pipit.agc.agc.widget.WeekViewSwipeable;
 import com.robinhood.spark.SparkView;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 
 import iSoron.HistoryChart;
@@ -73,6 +74,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        List<DayRecord> allPreviousDays =  StatsContent.getInstance().getAllDayRecords(false);
         int type = getItemViewType(position);
         switch (type){
             case 0:
@@ -114,11 +116,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 //weekly_stats_card;
                 holder.mTitleView.setText("Last seven days");
                 final WeeklyViewHolder wv = (WeeklyViewHolder) holder;
-                MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
-                datasource.openDatabase();
-                List<DayRecord> _allPreviousDays =  datasource.getAllDayRecords();
-                MsgAndDayRecords.getInstance().closeDatabase();
-                wv.calendar.setAdapter(new CalendarWeekViewAdapter(mFrag.getContext(), _allPreviousDays, wv.calendar));
+                wv.calendar.setAdapter(new CalendarWeekViewAdapter(mFrag.getContext(), allPreviousDays, wv.calendar));
 
                 float[] data = {};
                 wv.sparkgraph.setAdapter(new MySparkAdapter(data));
@@ -157,7 +155,18 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 MonthViewHolder mv = (MonthViewHolder) holder;
 
                 /*Populate*/
-                int[] checkmarks = new int[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 0, 1, 1, 2, 2};
+                int[] checkmarks = new int[allPreviousDays.size()];
+                int i = checkmarks.length-1;
+                for (DayRecord d : allPreviousDays){
+                    if (d.isGymDay()){
+                        if (d.beenToGym()){checkmarks[i] = 2;}
+                        else{checkmarks[i] = 1;}
+                    }else{
+                        if (d.beenToGym()){checkmarks[i] = 2;}
+                        else{checkmarks[i] = 0;}
+                    }
+                    i--;
+                }
                 mv.historyChart.setCheckmarks(checkmarks);
                 break;
             case 3:

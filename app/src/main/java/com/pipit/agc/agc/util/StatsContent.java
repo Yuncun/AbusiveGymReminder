@@ -2,16 +2,26 @@ package com.pipit.agc.agc.util;
 
 import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.model.Message;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This singleton serves two purposes;
+ *
+ *  One, it keeps a local cache of dayRecords and messages, so we can limit the number of database queries for
+ *  all records. Usually this is refreshed with the main activity.
+ *
+ *  Two, it saves a list of stats that can be accessed by ID.
+ */
 public class StatsContent {
     public List<Stat> ITEMS = new ArrayList<Stat>();
     public Map<String, Stat> STAT_MAP = new HashMap<String, Stat>();
-    public List<DayRecord> _allDayRecords;
+    private List<DayRecord> _allDayRecords;
+    private List<Message> _allMessages;
 
     public static final String CURRENT_STREAK = "currentstreak";
     public static final String LONGEST_STREAK = "longeststreak";
@@ -63,16 +73,25 @@ public class StatsContent {
         STAT_MAP.put(item.id, item);
     }
 
-    public void refreshDayRecords(){
+    public synchronized void refreshDayRecords(){
+        StatsContent stats = StatsContent.getInstance();
         MsgAndDayRecords datasource;
         datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
-        StatsContent stats = StatsContent.getInstance();
         stats._allDayRecords = datasource.getAllDayRecords();
         MsgAndDayRecords.getInstance().closeDatabase();
     }
 
-    public void updateAll(){
+    public synchronized void refreshMessageRecords(){
+        StatsContent stats = StatsContent.getInstance();
+        MsgAndDayRecords datasource;
+        datasource = MsgAndDayRecords.getInstance();
+        datasource.openDatabase();
+        stats._allMessages = datasource.getAllMessages();
+        MsgAndDayRecords.getInstance().closeDatabase();
+    }
+
+    public void calculateStats(){
         ITEMS=new ArrayList<Stat>();
         updateCurrentStreak();
         updateLongestStreak();
@@ -110,6 +129,13 @@ public class StatsContent {
             refreshDayRecords();
         }
         return _allDayRecords;
+    }
+
+    public List<Message> getAllMessages(boolean forceupdate){
+        if (forceupdate){
+            refreshMessageRecords();
+        }
+        return _allMessages;
     }
 
     public void updateCurrentStreak(){
@@ -168,11 +194,11 @@ public class StatsContent {
             STAT_MAP.put(weekofstreak.id, weekofstreak);
             ITEMS.add(weekofstreak);
         }
-
     }
 
-
-
+    /**
+     * Calculates several stats from the last week of dayrecords
+     */
     public void updateLastSevenDaysStats(){
         int missedGymDay = 0;
         int hitrestDay = 0;

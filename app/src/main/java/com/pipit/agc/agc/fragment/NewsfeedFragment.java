@@ -19,6 +19,7 @@ import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
+import com.pipit.agc.agc.util.StatsContent;
 
 import java.util.Collections;
 import java.util.Date;
@@ -28,7 +29,6 @@ import java.util.List;
  * Created by Eric on 1/21/2016.
  */
 public class NewsfeedFragment extends android.support.v4.app.Fragment{
-    private MsgAndDayRecords datasource;
     private List<Message> _allMessages;
     private List<DayRecord> _allDayRecords;
 
@@ -76,14 +76,10 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        synchronized (this){
-            datasource = MsgAndDayRecords.getInstance();
-            datasource.openDatabase();
-            _allMessages=datasource.getMessagesByRange(0, NewsfeedAdapter.MAX_MSGS_PER_PULL);
-            Collections.reverse(_allMessages);
-            _allDayRecords = datasource.getAllDayRecords();
-            MsgAndDayRecords.getInstance().closeDatabase();
-        }
+
+        _allMessages = StatsContent.getInstance().getAllMessages(false);
+        _allDayRecords = StatsContent.getInstance().getAllDayRecords(false);
+        Collections.reverse(_allMessages);
 
         mAdapter = new NewsfeedAdapter(_allMessages, _allDayRecords, this);
         mRecyclerView.setAdapter(mAdapter);

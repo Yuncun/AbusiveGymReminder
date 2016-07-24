@@ -36,7 +36,6 @@ import com.pipit.agc.agc.fragment.StatisticsFragment;
 import com.pipit.agc.agc.util.ReminderOracle;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
-import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.model.DayRecord;
 
 import java.util.ArrayList;
@@ -146,11 +145,6 @@ public class AllinOneActivity extends AppCompatActivity {
         _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
         GeofenceController.getInstance().init(this);
         checkPermissions();
-
-        /*Do stats */
-        StatsContent stats = StatsContent.getInstance();
-        stats.refreshDayRecords();
-        stats.updateAll();
     }
 
     @Override
@@ -241,6 +235,12 @@ public class AllinOneActivity extends AppCompatActivity {
     }
 
     protected void onStart() {
+        /*Do stats */
+        StatsContent stats = StatsContent.getInstance();
+        stats.refreshDayRecords();
+        stats.refreshMessageRecords();
+        stats.calculateStats();
+
         /*Make sure that we are up to date*/
         try {
             MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
