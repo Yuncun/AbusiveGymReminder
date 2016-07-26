@@ -8,10 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.model.DayRecord;
@@ -43,6 +45,10 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_notificationtime, parent, false);
                 return new NotificationTimeViewHolder(view);
+            case 1:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.preference_onebutton, parent, false);
+                return new OneButtonViewHolder(view);
             default:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_rowitem, parent, false);
@@ -94,6 +100,22 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 });
 
                 break;
+            case 1:
+                final OneButtonViewHolder obv = ((OneButtonViewHolder) holder);
+                obv.mPrefName.setText("Sanitize Dayrecords");
+                obv.button.setText("Go");
+                obv.button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        List<DayRecord> days = StatsContent.getInstance().getAllDayRecords(true);
+                        for (DayRecord d : days){
+                            d.sanitizeLastVisitTime(DayRecord.maxSaneVisitTime);
+                        }
+
+                        Toast.makeText(v.getContext(), "Removed unreasonably long gym visits", Toast.LENGTH_SHORT);
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -115,6 +137,14 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
         }
     }
 
+    public class OneButtonViewHolder extends PreferencesAdapter.ViewHolder{
+        Button button;
+
+        public OneButtonViewHolder (View view){
+            super(view);
+            button = (Button) view.findViewById(R.id.prefbutton);
+        }
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
@@ -135,6 +165,12 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
     @Override
     public int getItemCount() {
-        return 1;
+        return 2;
     }
+
+    @Override
+    public int getItemViewType (int position) {
+        return position;
+    }
+
 }

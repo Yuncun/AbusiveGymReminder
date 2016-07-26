@@ -125,10 +125,11 @@ public class MsgAndDayRecords {
         mDatabase.execSQL(query, new String[]{s});
     }
 
-    public void updateLatestDayRecordComment(String comment){
-        String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " + MsgDBHelper.COLUMN_DAYRECORDS + " = \""
-                + comment + "\" WHERE " + MsgDBHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MsgDBHelper.TABLE_DAYRECORDS
-                + ")";
+    public void updateDayRecordGymStats(DayRecord day){
+        String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " +
+                MsgDBHelper.COLUMN_BEENTOGYM + " = \"" + ((day.beenToGym()) ? 1 : 0) +
+                "\" AND " + MsgDBHelper.COLUMN_ISGYMDAY + " = \"" +  ((day.isGymDay()) ? 1 : 0) +
+                "\" WHERE " +  MsgDBHelper.COLUMN_ID + " = " + day.getId()  ;
         mDatabase.execSQL(query);
     }
 

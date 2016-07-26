@@ -1,4 +1,4 @@
-package com.pipit.agc.agc.widget;
+package com.pipit.agc.agc.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.pipit.agc.agc.R;

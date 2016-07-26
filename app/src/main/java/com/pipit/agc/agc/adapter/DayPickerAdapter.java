@@ -175,7 +175,7 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
      */
     private String getDayMessage(int dayOfWeek, Date date, View rowview){
         String primaryText;
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_ONE);
         String datestr = sdf.format(date);
         String gymDay = getContext().getResources().getString(R.string.gym_day);
         String restDay = getContext().getResources().getString(R.string.rest_day);

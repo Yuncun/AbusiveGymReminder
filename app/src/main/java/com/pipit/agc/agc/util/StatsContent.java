@@ -5,6 +5,7 @@ import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class StatsContent {
     public Map<String, Stat> STAT_MAP = new HashMap<String, Stat>();
     private List<DayRecord> _allDayRecords;
     private List<Message> _allMessages;
+    private List<Message> _allMessagesReverse;
 
     public static final String CURRENT_STREAK = "currentstreak";
     public static final String LONGEST_STREAK = "longeststreak";
@@ -89,6 +91,8 @@ public class StatsContent {
         datasource.openDatabase();
         stats._allMessages = datasource.getAllMessages();
         MsgAndDayRecords.getInstance().closeDatabase();
+        stats._allMessagesReverse = _allMessages;
+        Collections.reverse(_allMessagesReverse);
     }
 
     public void calculateStats(){
@@ -136,6 +140,31 @@ public class StatsContent {
             refreshMessageRecords();
         }
         return _allMessages;
+    }
+
+    public List<Message> getAllMessagesReverse(boolean forceupdate){
+        if (forceupdate){
+            refreshMessageRecords();
+        }
+        return _allMessagesReverse;
+    }
+
+    //Todo: Implement
+    public synchronized void putAllDayRecords(List<DayRecord> days){
+        _allDayRecords = days;
+        MsgAndDayRecords datasource;
+        datasource = MsgAndDayRecords.getInstance();
+        datasource.openDatabase();
+        //Todo: Write DB function
+        MsgAndDayRecords.getInstance().closeDatabase();
+    }
+
+    public synchronized void updateDayRecord(DayRecord day){
+        MsgAndDayRecords datasource;
+        datasource = MsgAndDayRecords.getInstance();
+        datasource.openDatabase();
+        datasource.updateDayRecordGymStats(day);
+        MsgAndDayRecords.getInstance().closeDatabase();
     }
 
     public void updateCurrentStreak(){

@@ -30,6 +30,7 @@ import java.util.List;
  */
 public class DayRecord {
     public static String TAG = "DayRecord";
+    public static final int maxSaneVisitTime = 60*12;
 
     public static class Visit implements Serializable{
         public LocalDateTime in;
@@ -92,6 +93,11 @@ public class DayRecord {
 
     public String getDateString(){
         return Util.dateToString(getDate());
+    }
+
+    public String getDateString(String format){
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(date);
     }
 
     // Will be used by the ArrayAdapter in the ListView
@@ -265,6 +271,19 @@ public class DayRecord {
             minutes += v.getVisitTimeMinutes();
         }
         return minutes;
+    }
+
+    /**
+     * This function can be used to clean up dayrecords that never ended their last visit. This bug may have been fixed
+     * but in any case this function will check the dayrecord and remove the last visit if it exceeds the max time.
+     * @param maxTime
+     */
+    public void sanitizeLastVisitTime(int maxTime){
+        if (visits.size()<1) return;
+        if (visits.get(visits.size()-1).getVisitTimeMinutes() > maxTime){
+            visits.remove(visits.size()-1);
+
+        }
     }
 
 }

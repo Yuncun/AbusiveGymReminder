@@ -1,25 +1,13 @@
 package com.pipit.agc.agc.util;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 
-import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.activity.AllinOneActivity;
-
-import org.json.JSONArray;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -52,12 +40,12 @@ public class Util {
     }
 
     public static String dateToString(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_ONE);
         return sdf.format(date);
     }
 
     public static Date stringToDate(String stringdate){
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_ONE);
         Date date = new Date();
         try {
             date = sdf.parse(stringdate);

@@ -8,7 +8,8 @@ public class Constants {
     public static final String SHARED_PREFS = "AGR_SharedPrefs";
     public static final int REQUEST_PLACE_PICKER = 1;
     public static final String PROXIMITY_INTENT_ACTION = "com.pipit.agc.agc.action.PROXIMITY_ALERT";
-    public static final String DATE_FORMAT_NOW = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_ONE = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_TWO = "EEE, MMM d, yyyy";
     public static final String MESSAGE_ID = "message_id";
     public static final double DEFAULT_COORDINATE = 0.0;
 

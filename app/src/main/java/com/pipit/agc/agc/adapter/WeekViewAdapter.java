@@ -11,8 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.widget.CircleView;
-import com.pipit.agc.agc.widget.WeekViewSwipeable;
+import com.pipit.agc.agc.views.CircleView;
+import com.pipit.agc.agc.views.WeekViewSwipeable;
 
 import java.util.ArrayList;
 import java.util.Calendar;

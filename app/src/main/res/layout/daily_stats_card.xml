@@ -35,7 +35,7 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <com.pipit.agc.agc.widget.CircleView
+                    <com.pipit.agc.agc.views.CircleView
                         xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/gymstate_circle"
                         android:layout_width="120dp"

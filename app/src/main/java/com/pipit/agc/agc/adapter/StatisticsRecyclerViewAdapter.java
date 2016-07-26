@@ -1,35 +1,31 @@
 package com.pipit.agc.agc.adapter;
 
-import android.content.Context;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.data.MsgAndDayRecords;
+import com.pipit.agc.agc.controller.DayrecordClickListener;
 import com.pipit.agc.agc.fragment.StatisticsFragment;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.StatsContent.Stat;
 import com.pipit.agc.agc.util.Util;
-import com.pipit.agc.agc.widget.CalendarWeekViewSwipeable;
-import com.pipit.agc.agc.widget.CircleView;
-import com.pipit.agc.agc.widget.WeekViewSwipeable;
+import com.pipit.agc.agc.views.CalendarWeekViewSwipeable;
+import com.pipit.agc.agc.views.CircleView;
 import com.robinhood.spark.SparkView;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import iSoron.HistoryChart;
@@ -38,8 +34,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     private final StatsContent mStats;
     private StatisticsFragment mFrag;
 
-    public StatisticsRecyclerViewAdapter(StatsContent stats, StatisticsFragment frag) {
-        mStats = stats;
+    public StatisticsRecyclerViewAdapter( StatisticsFragment frag) {
+        mStats = StatsContent.getInstance();
         mFrag = frag;
     }
 
@@ -116,7 +112,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 //weekly_stats_card;
                 holder.mTitleView.setText("Last seven days");
                 final WeeklyViewHolder wv = (WeeklyViewHolder) holder;
-                wv.calendar.setAdapter(new CalendarWeekViewAdapter(mFrag.getContext(), allPreviousDays, wv.calendar));
+                wv.calendar.setAdapter(new CalendarWeekViewAdapter(mFrag.getActivity(), allPreviousDays, wv.calendar));
 
                 float[] data = {};
                 wv.sparkgraph.setAdapter(new MySparkAdapter(data));
@@ -167,7 +163,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     }
                     i--;
                 }
+                mv.historyChart.setIsEditable(true);
                 mv.historyChart.setCheckmarks(checkmarks);
+                mv.historyChart.setController(historyGraphController);
+
                 break;
             case 3:
                 holder.mTitleView.setText("Streaks");
@@ -228,8 +227,6 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             super(view);
             calendar = (CalendarWeekViewSwipeable) view.findViewById(R.id.calendar_component);
             sparkgraph = (SparkView) view.findViewById(R.id.sparkview);
-
-
         }
     }
 
@@ -243,8 +240,19 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             historyChart.setColor(R.color.schemethree_darkerteal);
             historyChart.setIsBackgroundTransparent(false);
         }
-
     }
+
+    private HistoryChart.Controller historyGraphController = new HistoryChart.Controller() {
+        @Override
+        public void onToggleCheckmark(long timestamp, int offset) {
+            List<DayRecord> days = new ArrayList( StatsContent.getInstance().getAllDayRecords(false) );
+            int index = days.size() - 1 - offset;
+            if (index>=days.size() || index < 0) return;
+            DayrecordClickListener dcl = new DayrecordClickListener(days.get(index), mFrag.getContext());
+            dcl.onClick(null);
+            Log.d("Eric", "onToggleCheckmark timestamp:" + timestamp + " offset:" + offset);
+        }
+    };
 
     public class MiscStatsViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder {
         public final CircleView stat_circle_1;

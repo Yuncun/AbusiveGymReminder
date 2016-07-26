@@ -83,8 +83,8 @@ public class HistoryChart extends ScrollableChart
 
     private float headerOverflow = 0;
 
-    //@NonNull
-    //private Controller controller;
+    @NonNull
+    private Controller controller;
 
     public HistoryChart(Context context)
     {
@@ -111,6 +111,8 @@ public class HistoryChart extends ScrollableChart
 
         performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
 
+        if (controller==null) return false;
+
         int pointerId = e.getPointerId(0);
         float x = e.getX(pointerId);
         float y = e.getY(pointerId);
@@ -119,10 +121,13 @@ public class HistoryChart extends ScrollableChart
         if (timestamp == null) return false;
 
         int offset = timestampToOffset(timestamp);
-        boolean isChecked = checkmarks[offset] == 0;
-        checkmarks[offset] = (isChecked ? 1 : 2);
+        /*
+        if (offset<checkmarks.length){
+            boolean isChecked = checkmarks[offset] == 0;
+            checkmarks[offset] = (isChecked ? 1 : 2);
+        }*/
 
-        //controller.onToggleCheckmark(timestamp);
+        controller.onToggleCheckmark(timestamp, offset);
         postInvalidate();
         return true;
     }
@@ -157,12 +162,12 @@ public class HistoryChart extends ScrollableChart
         initColors();
         postInvalidate();
     }
-/*
+
     public void setController(@NonNull Controller controller)
     {
         this.controller = controller;
     }
-*/
+
     public void setIsBackgroundTransparent(boolean isBackgroundTransparent)
     {
         this.isBackgroundTransparent = isBackgroundTransparent;
@@ -443,9 +448,9 @@ public class HistoryChart extends ScrollableChart
         baseDate.add(Calendar.DAY_OF_YEAR, -todayPositionInColumn);
     }
 
-    /*
+
     public interface Controller
     {
-        default void onToggleCheckmark(long timestamp) {}
-    }*/
+        void onToggleCheckmark(long timestamp, int offset);
+    }
 }

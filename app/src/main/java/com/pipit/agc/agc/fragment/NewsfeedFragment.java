@@ -77,9 +77,8 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        _allMessages = StatsContent.getInstance().getAllMessages(false);
+        _allMessages = StatsContent.getInstance().getAllMessagesReverse(false);
         _allDayRecords = StatsContent.getInstance().getAllDayRecords(false);
-        Collections.reverse(_allMessages);
 
         mAdapter = new NewsfeedAdapter(_allMessages, _allDayRecords, this);
         mRecyclerView.setAdapter(mAdapter);

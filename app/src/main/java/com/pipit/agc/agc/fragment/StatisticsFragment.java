@@ -53,7 +53,8 @@ public class StatisticsFragment extends Fragment {
             } else {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mRecyclerView.setAdapter(new StatisticsRecyclerViewAdapter(getStaleStats(), this));
+            mRecyclerView.setAdapter(new StatisticsRecyclerViewAdapter(this));
+
         }
         return view;
     }
@@ -75,16 +76,7 @@ public class StatisticsFragment extends Fragment {
         return stats;
     }
 
-    /**
-     * This is faster than fresh stats
-     * @return
-     */
-    private StatsContent getStaleStats(){
-        StatsContent stats = StatsContent.getInstance();
-        return stats;
-    }
-
     public void update(){
-        mRecyclerView.setAdapter(new StatisticsRecyclerViewAdapter(getStaleStats(), this));
+        mRecyclerView.setAdapter(new StatisticsRecyclerViewAdapter(this));
     }
 }

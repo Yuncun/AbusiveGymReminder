@@ -3,7 +3,6 @@ package com.pipit.agc.agc.adapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.pipit.agc.agc.util.Constants;
@@ -23,8 +21,6 @@ import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.fragment.DayOfWeekPickerFragment;
 import com.pipit.agc.agc.model.DayRecord;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -85,8 +81,6 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         int txtheight = (int) (_screenheight / 7);
         holder.cv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, txtheight));
 
-
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
         final String gymDay = context.getResources().getString(R.string.gym_day);
         final String restDay = context.getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(position)){

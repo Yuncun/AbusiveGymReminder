@@ -1,19 +1,12 @@
-package com.pipit.agc.agc.widget;
+package com.pipit.agc.agc.views;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.adapter.MySparkAdapter;
 import com.pipit.agc.agc.adapter.WeekViewAdapter;
-import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
-import com.pipit.agc.agc.util.Util;
 
 import java.util.List;
 
@@ -38,7 +31,6 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
                     List<DayRecord> daysForWeek = ((WeekViewAdapter) viewPager.getAdapter()).getDaysForFocusedWeek(position);
                     updateSparkLineData(daysForWeek);
                 }
-
             }
 
             @Override

@@ -22,8 +22,8 @@ import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.Util;
-import com.pipit.agc.agc.widget.CircleView;
-import com.pipit.agc.agc.widget.WeekViewSwipeable;
+import com.pipit.agc.agc.views.CircleView;
+import com.pipit.agc.agc.views.WeekViewSwipeable;
 
 import java.util.ArrayList;
 import java.util.Calendar;

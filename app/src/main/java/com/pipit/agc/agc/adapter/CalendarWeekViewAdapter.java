@@ -1,17 +1,24 @@
 package com.pipit.agc.agc.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.agc.R;
-import com.pipit.agc.agc.data.MsgAndDayRecords;
+import com.pipit.agc.agc.activity.AllinOneActivity;
+import com.pipit.agc.agc.controller.DayrecordClickListener;
+import com.pipit.agc.agc.fragment.DayDetailDialog;
 import com.pipit.agc.agc.model.DayRecord;
+import com.pipit.agc.agc.util.Constants;
+import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.Util;
-import com.pipit.agc.agc.widget.CircleView;
-import com.pipit.agc.agc.widget.WeekViewSwipeable;
+import com.pipit.agc.agc.views.CircleView;
+import com.pipit.agc.agc.views.WeekViewSwipeable;
 
 import java.util.List;
 
@@ -37,22 +44,7 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
         }
 
         rfd.setVisibility(View.VISIBLE);
-        weekitem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Get latset since this isn't commonly called
-                MsgAndDayRecords datasource;
-                datasource = MsgAndDayRecords.getInstance();
-                datasource.openDatabase();
-                DayRecord today = datasource.getLastDayRecord();
-                datasource.closeDatabase();
-
-                MaterialDialog dialog = new MaterialDialog.Builder(context)
-                        .title(today.getDateString())
-                        .content("Visits: \n" + _allDayRecords.get(index).printVisits())
-                        .show();
-            }
-        });
+        weekitem.setOnClickListener(new DayrecordClickListener(_allDayRecords.get(index), context));
 
         if (_allDayRecords.get(index).beenToGym()){
                 /*HIT DAY*/

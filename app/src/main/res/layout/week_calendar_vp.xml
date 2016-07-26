@@ -22,11 +22,11 @@
         android:orientation="horizontal">
 
 
-        <com.pipit.agc.agc.widget.AgcViewPager
+        <com.pipit.agc.agc.views.AgcViewPager
             android:id="@+id/weekvp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </com.pipit.agc.agc.widget.AgcViewPager>
+        </com.pipit.agc.agc.views.AgcViewPager>
 
         <ImageButton
             android:id="@+id/left_nav"

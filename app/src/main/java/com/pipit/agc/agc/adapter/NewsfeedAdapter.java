@@ -22,6 +22,7 @@ import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.util.StatsContent;
 import com.pipit.agc.agc.util.Util;
 import com.pipit.agc.agc.activity.MessageBodyActivity;
 import com.pipit.agc.agc.model.DayRecord;
@@ -144,13 +145,11 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             holder.timestamp.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
             //holder.header.setTypeface(holder.comment.getTypeface(), Typeface.BOLD);
             //holder.timestamp.setTypeface(holder.timestamp.getTypeface(), Typeface.BOLD);
-
         }
 
         if (selectionMode && _selectedPos.contains(position)){
             holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite), PorterDuff.Mode.SRC_ATOP);
             holder.icon.setBackground(ContextCompat.getDrawable(mFrag.getContext(), android.R.drawable.checkbox_on_background));
-            //holder.rlayout.setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.grey));
         }
         final int mpos = position;
         holder.cv.setOnClickListener(new View.OnClickListener() {
@@ -173,9 +172,8 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 datasource.openDatabase();
                 datasource.markMessageRead(_messages.get(mpos).getId(), true);
                 //_messages=datasource.getAllMessages();
-                _messages=datasource.getMessagesByRange(0, MAX_MSGS_PER_PULL);
                 datasource.closeDatabase();
-                Collections.reverse(_messages);
+                _messages = StatsContent.getInstance().getAllMessagesReverse(true);
                 notifyDataSetChanged();
                 /*
                 holder.reason.setTextColor(ContextCompat.getColor(mFrag.getContext(), android.R.color.primary_text_light));
@@ -255,9 +253,8 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                     for (Integer i : _selectedPos){
                         datasource.deleteMessage(_messages.get(i));
                     }
-                    _messages=datasource.getMessagesByRange(0, MAX_MSGS_PER_PULL);
                     datasource.closeDatabase();
-                    Collections.reverse(_messages);
+                    _messages = StatsContent.getInstance().getAllMessagesReverse(true);
                     _selectedPos = new HashSet<>();
                     notifyDataSetChanged();
                     return true;

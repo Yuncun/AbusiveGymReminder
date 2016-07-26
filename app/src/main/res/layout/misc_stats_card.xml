@@ -41,7 +41,7 @@
                     android:textSize="24sp"
                     />
 
-                <com.pipit.agc.agc.widget.CircleView
+                <com.pipit.agc.agc.views.CircleView
                     android:id="@+id/stat_circle_1"
                     android:layout_alignParentRight="true"
                     android:layout_marginBottom="10dp"
@@ -79,7 +79,7 @@
                     android:layout_centerVertical="true"
                     android:textSize="24sp"
                     />
-                <com.pipit.agc.agc.widget.CircleView
+                <com.pipit.agc.agc.views.CircleView
                     android:id="@+id/stat_circle_2"
                     android:layout_alignParentRight="true"
                     android:layout_marginBottom="10dp"
