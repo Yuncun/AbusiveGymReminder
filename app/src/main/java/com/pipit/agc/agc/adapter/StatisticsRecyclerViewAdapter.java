@@ -30,9 +30,12 @@ import java.util.List;
 
 import iSoron.HistoryChart;
 
-public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.ViewHolder> {
+public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.ViewHolder>
+    implements DayrecordClickListener.DayrecordObserver{
     private final StatsContent mStats;
     private StatisticsFragment mFrag;
+
+    private HistoryChart mHistoryChart;
 
     public StatisticsRecyclerViewAdapter( StatisticsFragment frag) {
         mStats = StatsContent.getInstance();
@@ -112,7 +115,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 //weekly_stats_card;
                 holder.mTitleView.setText("Last seven days");
                 final WeeklyViewHolder wv = (WeeklyViewHolder) holder;
-                wv.calendar.setAdapter(new CalendarWeekViewAdapter(mFrag.getActivity(), allPreviousDays, wv.calendar));
+                CalendarWeekViewAdapter cwva = new CalendarWeekViewAdapter(mFrag.getActivity(), allPreviousDays, wv.calendar);
+                cwva.setObserver(this);
+                wv.calendar.setAdapter(cwva);
 
                 float[] data = {};
                 wv.sparkgraph.setAdapter(new MySparkAdapter(data));
@@ -166,7 +171,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 mv.historyChart.setIsEditable(true);
                 mv.historyChart.setCheckmarks(checkmarks);
                 mv.historyChart.setController(historyGraphController);
-
+                mHistoryChart = mv.historyChart;
                 break;
             case 3:
                 holder.mTitleView.setText("Streaks");
@@ -245,12 +250,12 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     private HistoryChart.Controller historyGraphController = new HistoryChart.Controller() {
         @Override
         public void onToggleCheckmark(long timestamp, int offset) {
-            List<DayRecord> days = new ArrayList( StatsContent.getInstance().getAllDayRecords(false) );
+            List<DayRecord> days = new ArrayList( StatsContent.getInstance().getAllDayRecords(false));
             int index = days.size() - 1 - offset;
             if (index>=days.size() || index < 0) return;
             DayrecordClickListener dcl = new DayrecordClickListener(days.get(index), mFrag.getContext());
+            dcl.setObserver(getSelf());
             dcl.onClick(null);
-            Log.d("Eric", "onToggleCheckmark timestamp:" + timestamp + " offset:" + offset);
         }
     };
 
@@ -299,6 +304,21 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
     public int getItemViewType (int position) {
         return position;
+    }
+
+    public StatisticsRecyclerViewAdapter getSelf(){
+        return this;
+    }
+
+    /**
+     * For DayRecordObserver interface. This is called as an observer when a refresh is needed.
+     * Currently only used for when user updates gym history.
+     */
+    public void update(){
+        if (mHistoryChart!=null){
+            mHistoryChart.postInvalidate();
+        }
+        notifyDataSetChanged();
     }
 
 }

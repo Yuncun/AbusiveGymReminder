@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ import java.util.List;
  * Created by Eric on 7/23/2016.
  */
 class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
+    private DayrecordClickListener.DayrecordObserver observer;
+
     public CalendarWeekViewAdapter(Context context, List<DayRecord> allDayRecords, WeekViewSwipeable layout){
         super(context, allDayRecords, layout);
     }
@@ -44,7 +47,11 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
         }
 
         rfd.setVisibility(View.VISIBLE);
-        weekitem.setOnClickListener(new DayrecordClickListener(_allDayRecords.get(index), context));
+        DayrecordClickListener dcl = new DayrecordClickListener(_allDayRecords.get(index), context);
+        if (observer!=null){
+            dcl.setObserver(observer);
+        }
+        weekitem.setOnClickListener(dcl);
 
         if (_allDayRecords.get(index).beenToGym()){
                 /*HIT DAY*/
@@ -81,5 +88,9 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
             rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
             rfd.setText("Today");
         }
+    }
+
+    public void setObserver(DayrecordClickListener.DayrecordObserver d){
+        observer = d;
     }
 }

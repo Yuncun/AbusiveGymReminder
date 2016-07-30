@@ -1,5 +1,7 @@
 package com.pipit.agc.agc.util;
 
+import android.util.Log;
+
 import com.pipit.agc.agc.data.MsgAndDayRecords;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
@@ -160,6 +162,7 @@ public class StatsContent {
     }
 
     public synchronized void updateDayRecord(DayRecord day){
+        Log.d("Eric", "Day is gym day" + day.isGymDay());
         MsgAndDayRecords datasource;
         datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();

@@ -4,32 +4,46 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     >
-    <TextView
-        android:id="@+id/was_gym_day"
+    <LinearLayout
+        android:id="@+id/was_gym_day_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="Gym Day"/>
-    <TextView
-        android:id="@+id/was_gym_day_result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        />
-
-    <TextView
         android:layout_marginTop="8dp"
-        android:id="@+id/went_to_gym"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="Went to Gym"/>
-    <TextView
-        android:id="@+id/went_to_gym_result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/was_gym_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:text="Gym Day"/>
+        <TextView
+            android:id="@+id/was_gym_day_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/went_to_gym_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/went_to_gym"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:text="Went to Gym"/>
+        <TextView
+            android:id="@+id/went_to_gym_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            />
+    </LinearLayout>
+
 
     <TextView
         android:layout_marginTop="8dp"
