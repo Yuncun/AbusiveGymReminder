@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.pipit.agc.agc.R;
 import com.pipit.agc.agc.adapter.PreferencesAdapter;
+import com.pipit.agc.agc.views.SimpleDividerItemDecoration;
 
 /**
  * Created by Eric on 5/8/2016.
@@ -20,11 +21,8 @@ public class PreferencesFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private static final String TAG = "NewsfeedFragment";
-
     public static PreferencesFragment newInstance() {
         PreferencesFragment fragment = new PreferencesFragment();
-        Bundle args = new Bundle();
         return fragment;
     }
 
@@ -44,7 +42,7 @@ public class PreferencesFragment extends Fragment {
 
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv);
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);

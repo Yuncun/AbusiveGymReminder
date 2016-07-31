@@ -23,26 +23,6 @@
         <item name="lowContrastTextColor">@color/grey_300</item>
     </style>
 
-    <style name="AppThemeDark" parent="Theme.AppCompat">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:textAppearanceLarge">@style/largetext</item>
-        <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
-        <item name="cardStyle">@style/CustomCardView</item>
-    </style>
-
-    <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
-    </style>
-
-    <style name="AppTheme.LightBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <!--<item name="android:background">#FFFFFF</item>-->
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColor">@color/basewhite</item>
         <item name="android:background">@color/schemethree_darkerteal</item>
@@ -51,21 +31,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="CustomCirclePageIndicator">
-        <item name="strokeColor">#FF000000</item>
-        <item name="strokeWidth">1dp</item>
-        <item name="radius">3dp</item>
-        <item name="centered">true</item>
-    </style>
-
-    <style name="CustomCardView" parent="CardView">
-        <item name="cardBackgroundColor">@color/robinhood_gray</item>
-        <item name="cardUseCompatPadding">true</item>
-    </style>
-
     <style name="MySparkViewStyle" parent="@style/spark_SparkView">
-        <item name="spark_lineWidth">4dp</item>
-        <item name="spark_cornerRadius">4dp</item>
+        <item name="spark_lineWidth">2dp</item>
+        <item name="spark_cornerRadius">2dp</item>
         <item name="spark_fill">false</item>
         <item name="spark_scrubEnabled">true</item>
         <item name="spark_animateChanges">true</item>
@@ -76,5 +44,20 @@
         <item name="android:textSize">30sp</item>
     </style>
 
+    <style name="primarytext" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="secondarytext" parent="@android:style/TextAppearance.Small"/>
+    <style name="primarytext_small" parent="TextAppearance.AppCompat.Body1"/>
+    <style name="secondarytext_small" parent="TextAppearance.AppCompat.Caption"/>
+
+    <!--Viewpagerindicator-->
+    <style name="CustomCirclePageIndicator">
+        <item name="strokeColor">#FF000000</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="radius">3dp</item>
+        <item name="centered">true</item>
+    </style>
 
 </resources>

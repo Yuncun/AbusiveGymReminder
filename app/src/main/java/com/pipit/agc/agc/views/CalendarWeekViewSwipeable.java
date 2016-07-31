@@ -11,6 +11,8 @@ import com.pipit.agc.agc.model.DayRecord;
 import java.util.List;
 
 /**
+ * Implementation of a WeekViewSwipeable
+ *
  * Created by Eric on 7/9/2016.
  */
 public class CalendarWeekViewSwipeable extends WeekViewSwipeable {

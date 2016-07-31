@@ -9,7 +9,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/primarytext"
-        android:text="Notification time"/>
+        android:text="Intensity Level"/>
+
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/prefkey"
+        android:textAppearance="@style/secondarytext"
+        />
+
+    <TextView
+        android:id="@+id/content_description"
+        android:layout_alignParentBottom="true"
+        android:textAppearance="@style/primarytext_small"
+        android:textColor="@color/flat_red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radiogroup_notiftime"
@@ -20,23 +36,19 @@
         <RadioButton android:id="@+id/radio_morning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Morning"
+            android:text="Low"
             />
         <RadioButton android:id="@+id/radio_afternoon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Afternoon"
+            android:text="Med"
             />
         <RadioButton android:id="@+id/radio_evening"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Evening"
+            android:text="High"
             />
-        <RadioButton android:id="@+id/radio_yolo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="yolo"
-            />
+
     </RadioGroup>
 
 </RelativeLayout>

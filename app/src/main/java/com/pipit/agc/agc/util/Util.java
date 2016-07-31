@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * For math and stuff
  * Created by Eric on 12/14/2015.
  */
 public class Util {

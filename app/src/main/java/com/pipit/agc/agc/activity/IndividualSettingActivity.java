@@ -56,6 +56,7 @@ public class IndividualSettingActivity extends AppCompatActivity  {
                     .add(R.id.fragment_container, frag).commit();
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

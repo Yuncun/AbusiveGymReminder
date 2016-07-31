@@ -68,7 +68,7 @@ public class ReminderOracle {
                 reason = Message.MISSED_YESTERDAY;
             }
             try{
-                Log.d(TAG, "Attempting to get a new message");
+                Log.d(TAG, "Attempting to get a new message type=" + type);
                 long id = findANewMessageId(context, type);
                 if (!messagerepo.isOpen()) { messagerepo.open(); }
                 if (id < 1){
@@ -138,7 +138,6 @@ public class ReminderOracle {
         }
 
         //Init Calendars
-        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
 
         //Find a time to display message depending on the notification preferences of the user
@@ -147,13 +146,13 @@ public class ReminderOracle {
 
         switch (notifpref){
             case Constants.NOTIFTIME_MORNING:
-                cal.add(Calendar.HOUR, MORNING_OFFSET);
+                cal.add(Calendar.HOUR_OF_DAY, MORNING_OFFSET);
                 break;
             case Constants.NOTIFTIME_AFTERNOON:
-                cal.add(Calendar.HOUR, AFTERNOON_OFFSET);
+                cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET);
                 break;
             case Constants.NOTIFTIME_EVENING:
-                cal.add(Calendar.HOUR, EVENING_OFFSET);
+                cal.add(Calendar.HOUR_OF_DAY, EVENING_OFFSET);
                 break;
             case Constants.NOTIFTIME_YOLO:
                 long time_ms = SharedPrefUtil.getLong(context, "lastgymtime", -1);
@@ -161,21 +160,21 @@ public class ReminderOracle {
                 if (time_ms>0){
                     Calendar c2 = Calendar.getInstance();
                     c2.setTimeInMillis(time_ms);
-                    cal.set(Calendar.HOUR, c2.get(Calendar.HOUR));
+                    cal.set(Calendar.HOUR_OF_DAY, c2.get(Calendar.HOUR_OF_DAY));
                     cal.set(Calendar.MINUTE, c2.get(Calendar.MINUTE));
                     cal.add(Calendar.MINUTE, min_noise);
-                    cal.add(Calendar.HOUR, hr_noise);
+                    cal.add(Calendar.HOUR_OF_DAY, hr_noise);
                 }
                 else{
-                    cal.add(Calendar.HOUR, AFTERNOON_OFFSET); //16 hours, a default (arbitrary) time to wait before showing message
+                    cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET); //16 hours, a default (arbitrary) time to wait before showing message
                 }
                 break;
             default:
-                cal.add(Calendar.HOUR, AFTERNOON_OFFSET);
+                cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET);
                 break;
         }
 
-        int hour = cal.get(Calendar.HOUR);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
         int minutes = cal.get(Calendar.MINUTE);
 
         if (testmode && msg!=null){
@@ -183,9 +182,9 @@ public class ReminderOracle {
         }
         else
         if (msg!=null){
+            DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
             SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dateFormat.format(cal.getTime()) + " with setting  " + notifpref);
             SharedPrefUtil.putLong(context, "nextnotificationtime", cal.getTimeInMillis());
-            Log.d(TAG, "hours"+hour + " min"+minutes + " from hour_noise"+hr_noise + " and min_noise"+min_noise);
             setLeaveMessageAlarm(context, msg, hour, minutes);
         }
     }
@@ -291,7 +290,7 @@ public class ReminderOracle {
                 .setContentIntent(notificationPendingIntent)
                 .setContentTitle(header)
                 .setStyle(new Notification.BigTextStyle()
-                        .bigText(body + "\n" + body2))
+                        .bigText(body))
                 .setContentText(body);
         }
         else{

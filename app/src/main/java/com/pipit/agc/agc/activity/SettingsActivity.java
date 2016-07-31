@@ -26,7 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String[] frags = {"Logs", "Test Message DB", "Preferences"};
+        String[] frags = {"Logs", "Test Message DB"};
         ArrayAdapter<String> adapter = new SettingsAdapter(this, frags);
         ListView lv = (ListView)findViewById(R.id.mylist);
         lv.setAdapter(adapter);
@@ -36,28 +36,19 @@ public class SettingsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 switch (position) {
                     case (0):
-                        i.putExtra("fragment", "TestDBFragmentMessages");
+                        i.putExtra("fragment", "LogFragment");
                         startActivity(i);
                         break;
                     case (1):
-                        i.putExtra("fragment", "PreferencesFragment");
+                        i.putExtra("fragment", "TestDBFragmentMessages");
                         startActivity(i);
                         break;
+
                     default:
                         break;
                 }
             }
         });
+    }
 
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 }

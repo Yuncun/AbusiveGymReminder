@@ -297,7 +297,7 @@ public class MsgAndDayRecords {
         return message;
     }
 
-    /*General stuff */
+    //General stuff
 
     //Used for debugging
     public String[] getColumnNames(String tablename){

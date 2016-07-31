@@ -210,6 +210,4 @@ public class SharedPrefUtil {
         putGeofenceList(context, g);
 
     }
-
-
 }

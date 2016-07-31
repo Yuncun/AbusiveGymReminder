@@ -278,12 +278,14 @@ public class DayRecord {
      * but in any case this function will check the dayrecord and remove the last visit if it exceeds the max time.
      * @param maxTime
      */
-    public void sanitizeLastVisitTime(int maxTime){
-        if (visits.size()<1) return;
+    public boolean sanitizeLastVisitTime(int maxTime){
+        if (visits.size()<1) return false;
+        boolean f = false;
         if (visits.get(visits.size()-1).getVisitTimeMinutes() > maxTime){
             visits.remove(visits.size()-1);
-
+            f = true;
         }
+        return f;
     }
 
 }

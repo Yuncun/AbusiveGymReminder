@@ -16,11 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pipit.agc.agc.R;
+import com.pipit.agc.agc.data.InsultRecordsConstants;
 import com.pipit.agc.agc.model.DayRecord;
 import com.pipit.agc.agc.model.Message;
 import com.pipit.agc.agc.util.Constants;
 import com.pipit.agc.agc.util.SharedPrefUtil;
 import com.pipit.agc.agc.util.StatsContent;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -43,9 +46,13 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
         switch (viewType){
             case 0:
                 view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.preference_maturitylevel, parent, false);
+                return new MaturityViewHolder(view);
+            case 1:
+                view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_notificationtime, parent, false);
                 return new NotificationTimeViewHolder(view);
-            case 1:
+            case 2:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_onebutton, parent, false);
                 return new OneButtonViewHolder(view);
@@ -63,6 +70,56 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
         int type = getItemViewType(position);
         switch (type) {
             case 0:
+                final MaturityViewHolder mv = (MaturityViewHolder) holder;
+                mv.mPrefName.setText("Maturity Level");
+                mv.subtitle.setText("Set abuse level of messages");
+
+                //Find the current selection
+                int mvindex = SharedPrefUtil.getInt(_context,  Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY);
+                ((RadioButton) mv.radiohead.getChildAt(mvindex)).setChecked(true);
+
+                int currentLevel = SharedPrefUtil.getInt(_context, Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY);
+                if (currentLevel == InsultRecordsConstants.HIGH_MATURITY){
+                    ((RadioButton) mv.radiohead.getChildAt(0)).setText("Bitch Mode");
+                    ((RadioButton) mv.radiohead.getChildAt(1)).setText("Loser Mode");
+                    ((RadioButton) mv.radiohead.getChildAt(2)).setText("Abusive (Mature)");
+                    mv.contentDescription.setVisibility(View.VISIBLE);
+                    mv.contentDescription.setText("Contains profanity");
+                }else {
+                    ((RadioButton) mv.radiohead.getChildAt(0)).setText("Passive Aggressive");
+                    ((RadioButton) mv.radiohead.getChildAt(1)).setText("Abusive");
+                    ((RadioButton) mv.radiohead.getChildAt(2)).setText("Abusive (Mature)");
+                    mv.contentDescription.setVisibility(View.INVISIBLE);
+                }
+
+                mv.radiohead.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        View radioButton = mv.radiohead.findViewById(checkedId);
+                        int index = mv.radiohead.indexOfChild(radioButton);
+                        switch (index) {
+                            case 0:
+                                SharedPrefUtil.putInt(_context, Constants.MATURITY_LEVEL, InsultRecordsConstants.LOW_MATURITY);
+                                mv.contentDescription.setVisibility(View.INVISIBLE);
+                                break;
+                            case 1:
+                                SharedPrefUtil.putInt(_context, Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY);
+                                mv.contentDescription.setVisibility(View.INVISIBLE);
+                                break;
+                            case 2:
+                                SharedPrefUtil.putInt(_context, Constants.MATURITY_LEVEL, InsultRecordsConstants.HIGH_MATURITY);
+                                mv.contentDescription.setVisibility(View.VISIBLE);
+                                mv.contentDescription.setText("Contains profanity");
+                                break;
+                            default:
+                                break;
+                        }
+                        //notifyDataSetChanged();
+                    }
+                });
+
+                break;
+            case 1:
                 final NotificationTimeViewHolder dv = ((NotificationTimeViewHolder) holder);
                 dv.mPrefName.setText("Preferred Notification Time");
 
@@ -100,19 +157,21 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 });
 
                 break;
-            case 1:
+            case 2:
                 final OneButtonViewHolder obv = ((OneButtonViewHolder) holder);
                 obv.mPrefName.setText("Sanitize Dayrecords");
+                obv.subtitle.setText("Remove unreasonably long gym visits");
                 obv.button.setText("Go");
                 obv.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         List<DayRecord> days = StatsContent.getInstance().getAllDayRecords(true);
+                        int count = 0;
                         for (DayRecord d : days){
-                            d.sanitizeLastVisitTime(DayRecord.maxSaneVisitTime);
+                            if (d.sanitizeLastVisitTime(DayRecord.maxSaneVisitTime)) count++;
                         }
 
-                        Toast.makeText(v.getContext(), "Removed unreasonably long gym visits", Toast.LENGTH_SHORT);
+                        Toast.makeText(v.getContext(), "Removed " + count +  " visits", Toast.LENGTH_SHORT);
                     }
                 });
                 break;
@@ -139,10 +198,25 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
     public class OneButtonViewHolder extends PreferencesAdapter.ViewHolder{
         Button button;
+        TextView subtitle;
 
         public OneButtonViewHolder (View view){
             super(view);
             button = (Button) view.findViewById(R.id.prefbutton);
+            subtitle = (TextView) view.findViewById(R.id.prefsubtext);
+        }
+    }
+
+    public class MaturityViewHolder extends PreferencesAdapter.ViewHolder{
+        RadioGroup radiohead;
+        TextView subtitle;
+        TextView contentDescription;
+
+        public MaturityViewHolder(View view){
+            super(view);
+            radiohead = (RadioGroup) view.findViewById(R.id.radiogroup_notiftime);
+            subtitle = (TextView) view.findViewById(R.id.subtitle);
+            contentDescription = (TextView) view.findViewById(R.id.content_description);
         }
     }
 
@@ -165,7 +239,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 
     @Override

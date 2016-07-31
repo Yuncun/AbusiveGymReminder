@@ -220,12 +220,14 @@ public class StatsContent {
         STAT_MAP.put(longeststreak.id, longeststreak);
         ITEMS.add(longeststreak);
 
+        Stat weekofstreak = new Stat(WEEK_OF_RECORD_STREAK);
         if (endDay!=null && startDay!=null){
-            Stat weekofstreak = new Stat(WEEK_OF_RECORD_STREAK);
             weekofstreak.details = endDay.getDateString();
-            STAT_MAP.put(weekofstreak.id, weekofstreak);
-            ITEMS.add(weekofstreak);
+        }else{
+            weekofstreak.details = "No data";
         }
+        STAT_MAP.put(weekofstreak.id, weekofstreak);
+        ITEMS.add(weekofstreak);
     }
 
     /**

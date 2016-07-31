@@ -30,6 +30,7 @@ public class Constants {
     public static final String PREF_NOTIF_TIME = "prefnotificationtime";
     public static final String GYM_LIST = "gymlist";
     public static final String HIGHEST_PROXID = "highestproxid";
+    public static final String MATURITY_LEVEL = "maturitylevel";
     //Todo: I kind of stopped doing this halfway through there may be others out there
 
 

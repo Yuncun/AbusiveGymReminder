@@ -10,6 +10,6 @@
     <dimen name="textMedium">14sp</dimen>
     <dimen name="textSmall">10sp</dimen>
 
-    <dimen name="preferences_padding">8dp</dimen>
+    <dimen name="preferences_padding">16dp</dimen>
 
 </resources>

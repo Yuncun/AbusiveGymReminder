@@ -19,5 +19,22 @@ public class InsultRecordsConstants {
     public static final int NOT_ANGRY = 0;
     public static final int KINDA_ANNOYED = 1;
     public static final int ANGRY = 2;
+
+    //Body Shaming Types
+    public static final int NO_BODY_SHAME = 0;
+    public static final int IM_TOO_FAT = 1;
+    public static final int IM_TOO_SKINNY = 2;
+    public static final int IM_JUST_RIGHT = 3;
+
+    //Is targeted at a specific sex
+    public static final int NOT_GENDERED = 0;
+    public static final int USER_MALE = 1;
+    public static final int USER_FEMALE = 2;
+
+    //Maturity Level
+    public static final int LOW_MATURITY = 0;
+    public static final int MED_MATURITY = 1;
+    public static final int HIGH_MATURITY = 2;
+
 }
 

@@ -14,13 +14,13 @@
             android:id="@+id/was_gym_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="@style/primarytext_small"
             android:text="Gym Day"/>
         <TextView
             android:id="@+id/was_gym_day_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textAppearance="@style/secondarytext_small"
         />
     </LinearLayout>
 

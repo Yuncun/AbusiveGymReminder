@@ -23,6 +23,13 @@ public class Message {
     private int reason = NO_RECORD;
     private long repoid;
 
+    private boolean low_maturity;
+    private boolean med_maturity;
+    private boolean hi_maturity;
+    private int shametype;
+    private int gender;
+
+    //Message reasons
     public final static int NO_RECORD = -1;
     public final static int MISSED_YESTERDAY = 0;
     public final static int HIT_YESTERDAY = 1;

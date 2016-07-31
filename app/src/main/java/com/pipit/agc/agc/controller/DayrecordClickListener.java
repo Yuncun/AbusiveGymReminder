@@ -143,6 +143,6 @@ public class DayrecordClickListener implements View.OnClickListener {
             }
         }
     };
-    
+
 }
 
