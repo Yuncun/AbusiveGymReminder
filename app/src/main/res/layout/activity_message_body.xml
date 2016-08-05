@@ -3,5 +3,5 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.MessageBodyFragment">
+    tools:context="com.pipit.agc.fragment.MessageBodyFragment">
 </FrameLayout>

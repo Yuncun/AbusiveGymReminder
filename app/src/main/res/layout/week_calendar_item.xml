@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center" />
 
-    <com.pipit.agc.agc.views.CircleView
+    <com.pipit.agc.views.CircleView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/calendar_day_info"
         android:layout_width="30dp"

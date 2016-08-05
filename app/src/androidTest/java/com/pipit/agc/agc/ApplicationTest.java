@@ -1,4 +1,4 @@
-package com.pipit.agc.agc;
+package com.pipit.agc;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

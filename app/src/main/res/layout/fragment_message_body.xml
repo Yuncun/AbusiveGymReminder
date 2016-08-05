@@ -70,13 +70,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:text="TEST"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/textLarge"/>
 
             </LinearLayout>
         </LinearLayout>
-
     </ScrollView>
 </LinearLayout>

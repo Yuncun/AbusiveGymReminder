@@ -12,8 +12,9 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter your gym"
+            android:text="Second screen"
             android:gravity="center"
+            android:textColor="@android:color/black"
             android:layout_gravity="top|center"
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
@@ -21,19 +22,36 @@
             android:textSize="28sp"/>
 
         <ImageView
-            android:id="@+id/intro_pic"
+            android:id="@+id/phoneicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/notification_icon" />
+            android:src="@drawable/phoneicon" />
+
+        <io.codetail.widget.RevealFrameLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Put more views here if you want, it's stock frame layout  -->
+
+            <ImageView
+                android:id="@+id/yousuck_popup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/yousuck_popup"
+                />
+
+        </io.codetail.widget.RevealFrameLayout>
 
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter your gym"
+            android:text="Some text"
             android:gravity="center"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:layout_gravity="bottom|center"
             android:maxEms="18"
             android:layout_marginLeft="32dp"

@@ -27,7 +27,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.*;
 import android.view.*;
 
-import com.pipit.agc.agc.R;
+import com.pipit.agc.R;
 
 import java.text.*;
 import java.util.*;

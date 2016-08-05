@@ -10,14 +10,14 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerlist"
-        android:name="com.pipit.agc.agc.LocationListFragment"
+        android:name="com.pipit.agc.LocationListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".fragment.LocationListFragment"
+        tools:context="com.pipit.agc.fragment.LocationListFragment"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/location_item" />
 

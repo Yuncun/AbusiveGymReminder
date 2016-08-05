@@ -5,11 +5,11 @@ android {
     buildToolsVersion '23.0.2'
 
     defaultConfig {
-        applicationId "com.pipit.agc.agc"
+        applicationId "com.pipit.agc"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 5
-        versionName "1.4"
+        versionCode 6
+        versionName "1.5"
         multiDexEnabled true
     }
     buildTypes {
@@ -36,5 +36,8 @@ dependencies {
     compile 'com.robinhood.spark:spark:1.1.0'
     compile('com.afollestad:material-cab:0.1.11@aar') {
         transitive = true
+    }
+    compile ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
+        transitive = true;
     }
 }
