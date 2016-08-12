@@ -121,7 +121,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 ((RadioButton) dv.radiohead.getChildAt(0)).setText("Morning");
                 ((RadioButton) dv.radiohead.getChildAt(1)).setText("Afternoon");
                 ((RadioButton) dv.radiohead.getChildAt(2)).setText("Evening");
-                ((RadioButton) dv.radiohead.getChildAt(3)).setText("Yolo");
+                //((RadioButton) dv.radiohead.getChildAt(3)).setText("Yolo");
 
                 dv.radiohead.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
@@ -138,9 +138,9 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                             case 2:
                                 SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_EVENING);
                                 break;
-                            case 3:
+                            /*case 3:
                                 SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_YOLO);
-                                break;
+                                break;*/
                             default:
                                 break;
                         }

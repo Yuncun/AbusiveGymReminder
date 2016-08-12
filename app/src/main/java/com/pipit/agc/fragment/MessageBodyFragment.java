@@ -21,7 +21,7 @@ import com.pipit.agc.data.MsgAndDayRecords;
 
 /**
  * Displays message
- * TODO: Needs a bit of work to look nicer. We have unlimited potential here.
+ * TODO: Needs a bit of work to look nicer.
  */
 
 public class MessageBodyFragment extends Fragment {
@@ -92,7 +92,6 @@ public class MessageBodyFragment extends Fragment {
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
                     int scrollY = scrolly.getScrollY();
-                    Log.d(TAG, "ActionUP ScrollY " + scrollY);
                     int featureHeight = v.getMeasuredHeight();
                     //mActiveFeature = ((scrollY + (featureHeight / 2)) / featureHeight);
                     //int scrollTo = mActiveFeature * featureHeight;
@@ -104,13 +103,11 @@ public class MessageBodyFragment extends Fragment {
                        scrollTo = 0;
                     }
                     scrolly.smoothScrollTo(0, scrollTo);
-                    Log.d(TAG, "scrollTo " + scrollTo);
 
                     return true;
                 }
                 else if (event.getAction() == MotionEvent.ACTION_DOWN){
                     int scrollY = scrolly.getScrollY();
-                    Log.d(TAG, "ActionDown ScrollY " + scrollY);
                     return true;
                 }
                 else
@@ -125,7 +122,6 @@ public class MessageBodyFragment extends Fragment {
         }
         datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
-        Log.d(TAG, "getting frag id " + _id);
         _msg = datasource.getMessageById(_id);
         if (_msg==null){
             //Log.e(TAG, "Message ID " + _id + " was not found in database");

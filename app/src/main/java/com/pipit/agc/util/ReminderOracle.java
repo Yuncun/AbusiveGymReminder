@@ -21,6 +21,10 @@ import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.model.Message;
 import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,7 +78,7 @@ public class ReminderOracle {
                 if (id < 1){
                     Log.d(TAG, "No id's found, getting random message");
                     msg = messagerepo.getRandomMessageWithParams(type,
-                            InsultRecordsConstants.KINDA_ANNOYED);
+                            SharedPrefUtil.getInt(context, Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY));
                     msg.setReason(reason);
                 }else{
                     msg = messagerepo.getMessageById(id);
@@ -93,7 +97,6 @@ public class ReminderOracle {
         else{
             if (yesterday.beenToGym()) {
                 SharedPrefUtil.updateMainLog(context, "You went to the gym yesterday, so no notification will be shown");
-                //Currently do nohting
                 // Todo: Figure out if we want to leave a message here or not - am exploring the idea of leaving message immediately
                 // Todo: when user goes to the gym, which would make this redundant.
             }
@@ -101,7 +104,7 @@ public class ReminderOracle {
                 int type = InsultRecordsConstants.REMINDER_MISSEDYESTERDAY;
                 int reason = Message.MISSED_YESTERDAY;
                 msg = messagerepo.getRandomMessageWithParams(InsultRecordsConstants.REMINDER_MISSEDYESTERDAY,
-                        InsultRecordsConstants.KINDA_ANNOYED);
+                        SharedPrefUtil.getInt(context, Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY));
                 msg.setReason(Message.MISSED_YESTERDAY);
                 try{
                     //This whole mechanism prevents us from showing the same message over and over again
@@ -111,7 +114,7 @@ public class ReminderOracle {
                     if (id < 1){
                         Log.d(TAG, "No id's found, getting random message");
                         msg = messagerepo.getRandomMessageWithParams(type,
-                                InsultRecordsConstants.KINDA_ANNOYED);
+                                SharedPrefUtil.getInt(context, Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY));
                         msg.setReason(reason);
                     }else{
                         msg = messagerepo.getMessageById(id);
@@ -129,6 +132,7 @@ public class ReminderOracle {
         messagerepo.close();
 
         /*Calculate some noise to add to the time shown*/
+        //TODO: Make design decision as to if this is necessary
         Random rand = new Random();
         int hr_noise = rand.nextInt(POST_TIME_NOISE_HOURS);
         int min_noise = rand.nextInt(POST_TIME_NOISE_MINTUES);
@@ -138,54 +142,56 @@ public class ReminderOracle {
         }
 
         //Init Calendars
-        Calendar cal = Calendar.getInstance();
+        DateTime dt = new DateTime();
 
         //Find a time to display message depending on the notification preferences of the user
         int notifpref =  SharedPrefUtil.getInt(context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_AFTERNOON);
-        Log.d(TAG, "Preferred notification time is " + notifpref);
 
         switch (notifpref){
             case Constants.NOTIFTIME_MORNING:
-                cal.add(Calendar.HOUR_OF_DAY, MORNING_OFFSET);
+                dt = dt.plusHours(MORNING_OFFSET);
                 break;
             case Constants.NOTIFTIME_AFTERNOON:
-                cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET);
+                dt = dt.plusHours(AFTERNOON_OFFSET);
                 break;
             case Constants.NOTIFTIME_EVENING:
-                cal.add(Calendar.HOUR_OF_DAY, EVENING_OFFSET);
+                dt = dt.plusHours(EVENING_OFFSET);
                 break;
             case Constants.NOTIFTIME_YOLO:
-                long time_ms = SharedPrefUtil.getLong(context, "lastgymtime", -1);
+                /*long time_ms = SharedPrefUtil.getLong(context, "lastgymtime", -1);
 
                 if (time_ms>0){
+
                     Calendar c2 = Calendar.getInstance();
                     c2.setTimeInMillis(time_ms);
                     cal.set(Calendar.HOUR_OF_DAY, c2.get(Calendar.HOUR_OF_DAY));
                     cal.set(Calendar.MINUTE, c2.get(Calendar.MINUTE));
                     cal.add(Calendar.MINUTE, min_noise);
                     cal.add(Calendar.HOUR_OF_DAY, hr_noise);
+
+                    dt.withTime()
                 }
                 else{
                     cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET); //16 hours, a default (arbitrary) time to wait before showing message
                 }
+                */
                 break;
             default:
-                cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET);
+                dt = dt.plusHours(MORNING_OFFSET);
+                //cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET);
                 break;
         }
 
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int minutes = cal.get(Calendar.MINUTE);
+        Log.d(TAG, "Preferred notification time is " + dt.toString("MM-dd HH:mm:ss"));
 
         if (testmode && msg!=null){
-            setLeaveMessageAlarm(context, msg, 0, 3);
+            setLeaveMessageAlarm(context, msg, 0, 0);
         }
         else
         if (msg!=null){
-            DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
-            SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dateFormat.format(cal.getTime()) + " with setting  " + notifpref);
-            SharedPrefUtil.putLong(context, "nextnotificationtime", cal.getTimeInMillis());
-            setLeaveMessageAlarm(context, msg, hour, minutes);
+            SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dt.toString("MM-dd HH:mm:ss") + " with setting  " + notifpref);
+            SharedPrefUtil.putLong(context, "nextnotificationtime", dt.getMillis());
+            setLeaveMessageAlarm(context, msg, dt);
         }
     }
 
@@ -207,16 +213,15 @@ public class ReminderOracle {
      * AlarmManagerBroadcastReceiver will receive the alarm and call ReminderOracle.leaveMessage();
      * @param context
      */
-    private static void setLeaveMessageAlarm(Context context, Message m, Calendar calendar){
+    private static void setLeaveMessageAlarm(Context context, Message m, DateTime calendar){
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
         i.putExtra("purpose", "leavemessage");
         i.putExtra("message", m.toJson());
         PendingIntent pi = PendingIntent.getBroadcast(context, 3, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
-        String settime = dateFormat.format(calendar.getTime());
-        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
+        String settime =calendar.toString("MM-dd HH:mm:ss");
+        am.set(AlarmManager.RTC_WAKEUP, calendar.getMillis(), pi);
         Log.d(TAG, "setLeaveMessageAlarm " + System.currentTimeMillis()
                 + " alarm set for " + settime + " message " + m.getBody());
     }
@@ -224,14 +229,15 @@ public class ReminderOracle {
     /**
      * Same as setLeaveMessageAlarm(Context, Calendar) but does the math for you.
      * @param context
+     * @param m
+     * @param hours
      * @param minutes
      */
     private static void setLeaveMessageAlarm(Context context, Message m, int hours, int minutes){
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR_OF_DAY, hours);
-        calendar.add(Calendar.MINUTE, minutes);
-        calendar.add(Calendar.SECOND, 10);
-        setLeaveMessageAlarm(context, m, calendar);
+        DateTime dt = new DateTime();
+        dt.plusHours(hours);
+        dt.plusMinutes(minutes);
+        setLeaveMessageAlarm(context, m, dt);
     }
 
     /**
@@ -241,11 +247,14 @@ public class ReminderOracle {
      */
     public static void doLeaveOnGymArrivalMessage(Context context, boolean immediate){
         Log.d(TAG, "doLeaveOnGymArrivalMessage(Context, " + immediate + ")");
+        int maturity = SharedPrefUtil.getInt(context, Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY);
+        Log.d("Eric", "Maturity level == " + maturity);
+
         InsultsRecords databaseAccess = InsultsRecords.getInstance(context);
         databaseAccess.open();
         Message msg = null;
-        msg = databaseAccess.getRandomMessageWithParams(InsultRecordsConstants.REMINDER_HITYESTERDAY,
-                InsultRecordsConstants.KINDA_ANNOYED);
+        Log.d("Eric", "About to requests getRandomMessageWithParams");
+        msg = databaseAccess.getRandomMessageWithParams(InsultRecordsConstants.REMINDER_HITYESTERDAY, maturity);
         msg.setReason(Message.HIT_TODAY);
         databaseAccess.close();
 

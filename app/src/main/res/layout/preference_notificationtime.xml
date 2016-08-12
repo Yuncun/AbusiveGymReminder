@@ -32,11 +32,6 @@
             android:layout_height="wrap_content"
             android:text="Evening"
             />
-        <RadioButton android:id="@+id/radio_yolo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="yolo"
-            />
     </RadioGroup>
 
 </RelativeLayout>

@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,8 +38,8 @@ public class IntroDayPickerFragment  extends android.support.v4.app.Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
-    private TextView _finishButton;
-    private TextView _instructions_tv;
+    private Button continuebutton;
+    private TextView instructions_one;
     private LinearLayout finishbuttonlayout;
 
     public static IntroDayPickerFragment newInstance() {
@@ -72,29 +74,28 @@ public class IntroDayPickerFragment  extends android.support.v4.app.Fragment {
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv);
         mRecyclerView.setHasFixedSize(true);
-        _instructions_tv = (TextView) rootView.findViewById(R.id.daypicker_instructions);
-        _finishButton = (TextView) rootView.findViewById(R.id.placepicker_done);
+        instructions_one = (TextView) rootView.findViewById(R.id.daypicker_instructions);
+        continuebutton = (Button) rootView.findViewById(R.id.finishbutton_daypicker);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         /*Calculate the height of the daypicker buttons*/
         LinearLayout bodylayout = (LinearLayout) rootView.findViewById(R.id.bodylayout);
-        finishbuttonlayout = (LinearLayout) rootView.findViewById(R.id.continue_layout);
-        float recyclervieweight = ((LinearLayout.LayoutParams)bodylayout.getLayoutParams()).weight;
-        float instructionsheight = _instructions_tv.getHeight();
-        float startbuttonweight = 1;
+        finishbuttonlayout = (LinearLayout) rootView.findViewById(R.id.intro_bottombar);
+        float bottombarweight = ((LinearLayout.LayoutParams)finishbuttonlayout.getLayoutParams()).weight;
+        float recyclervieweight = ((LinearLayout.LayoutParams) bodylayout.getLayoutParams()).weight;
+        float instructionsweight = ((LinearLayout.LayoutParams)instructions_one.getLayoutParams()).weight;
         float screenheight = Math.round(Util.getScreenHeightMinusStatusBar(getContext()));
-        //float allocatedheight = screenheight*(recyclervieweight / (recyclervieweight+startbuttonweight)) - instructionsheight;
-        float allocatedheight = screenheight * 5 / 6;
+        float allocatedheight = screenheight*(recyclervieweight / (recyclervieweight+instructionsweight+bottombarweight));
 
-        Log.d("Eric", "recyclervieweight  " + recyclervieweight + " insructionsheight " + instructionsheight
-                + " allocatedheight " + allocatedheight);
+        Log.d(TAG, "recyclervieweight  " + recyclervieweight + " insructionsheight " + instructionsweight
+                + " bottombarweight " + bottombarweight + " allocatedheight " + allocatedheight);
         mAdapter = new DayOfWeekAdapter(new HashSet<Integer>(plannedDOW), this, (int) allocatedheight);
         mRecyclerView.setAdapter(mAdapter);
 
-        _instructions_tv.setText("Pick your gym days");
-        _finishButton.setText("Finish");
-        _finishButton.setOnClickListener(new View.OnClickListener() {
+        instructions_one.setText("Pick your gym days");
+        continuebutton.setText("Finish");
+        continuebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().finish();

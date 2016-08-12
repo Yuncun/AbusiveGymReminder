@@ -25,7 +25,7 @@ import io.codetail.animation.ViewAnimationUtils;
  * Created by Eric on 4/13/2016.
  */
 public class IntroViewPagerFragment extends Fragment {
-    private static final String TAG = "IntroViewPAgerFragment";
+    private static final String TAG = "IntroViewPagerFragment";
     private static final String BACKGROUND_COLOR = "backgroundColor";
     private static final String PAGE = "page";
 

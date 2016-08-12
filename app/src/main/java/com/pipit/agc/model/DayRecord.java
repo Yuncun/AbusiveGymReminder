@@ -105,7 +105,10 @@ public class DayRecord {
         return comment;
     }
 
-    public boolean compareToDate(Date otherdate){
+    //Returns true if dates are equal
+    public boolean equalsDate(Date otherdate){
+        //This seems like a stupid way of doing it, but it's actually an accepted method
+        //TODO: Use Jodatime
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
         return fmt.format(this.date).equals(fmt.format(otherdate));
     }

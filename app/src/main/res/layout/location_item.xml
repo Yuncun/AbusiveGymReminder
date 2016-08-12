@@ -20,18 +20,17 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent">
                 <TextView
-                    android:id="@+id/id"
+                    android:id="@+id/gym_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="@dimen/text_margin"
                     android:layout_marginBottom="6dp"
-                    android:text = "name" />
+                    />
                 <TextView
-                    android:id="@+id/name"
-                    android:layout_below="@id/id"
+                    android:id="@+id/gym_name"
+                    android:layout_below="@id/gym_id"
                     android:layout_marginLeft="16dp"
-                    android:text = "address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -40,12 +39,11 @@
 
                 <TextView
                     android:id="@+id/content"
-                    android:layout_below="@id/name"
+                    android:layout_below="@id/gym_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginBottom="8dp"
-                    android:text = "address"
                     android:textAppearance="?attr/textAppearanceListItemSmall" />
             </RelativeLayout>
 
@@ -57,6 +55,7 @@
                 <Button
                     android:id="@+id/removeButton"
                     android:text="x"
+                    android:textColor="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent" />

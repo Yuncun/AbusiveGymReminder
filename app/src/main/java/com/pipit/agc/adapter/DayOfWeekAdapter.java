@@ -68,7 +68,6 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         return vh;
     }
 
-
     @Override
     public void onBindViewHolder(final CardViewHolder holder, final int position) {
         holder.comment.setText(getDayOfWeekText(position + 1));

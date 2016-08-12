@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.controller.GeofenceController;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.fragment.DayPickerFragmentTwo;
@@ -75,17 +76,22 @@ public class AllinOneActivity extends AppCompatActivity {
         }
 
         /*Launch Intro Activity*/
-        if (true || SharedPrefUtil.getIsFirstTime(this)){
+        if (SharedPrefUtil.getIsFirstTime(this)){
             Intent intent = new Intent(this, IntroductionActivity.class);
             //intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
             startActivity(intent);
             SharedPrefUtil.setFirstTime(this, false);
             Message f = new Message();
             f.setReason(Message.WELCOME);
-            //f.setHeader("Welcome!");
             f.setHeader("In the future you will abusive messages here when you miss gym days");
             f.setBody("");
             ReminderOracle.leaveMessage(f);
+            new MaterialDialog.Builder(this)
+                    .title(R.string.firsttime_title)
+                    .content(R.string.firsttime_body)
+                    .positiveText(R.string.gotit)
+                    .show();
+
         }
 
         /*Paging for landing screen*/
@@ -256,10 +262,10 @@ public class AllinOneActivity extends AppCompatActivity {
                     day.setComment(getResources().getString(R.string.has_not_been));
                     day.checkAndSetIfGymDay(getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS));
                     datasource.createDayRecord(day);
-                } else if (!lastDate.compareToDate(todaysDate.getDate())) {
+                } else if (!lastDate.equalsDate(todaysDate.getDate())) {
                     if (lastDate.getDate().before(todaysDate.getDate())) {
                         //We skipped a day somehow
-                        while (!lastDate.compareToDate(todaysDate.getDate())) {
+                        while (!lastDate.equalsDate(todaysDate.getDate())) {
                             //If there are any visits on that day, we need to end them
                             boolean  flagStartNewVisit = false;
                             if (lastDate.isCurrentlyVisiting()){

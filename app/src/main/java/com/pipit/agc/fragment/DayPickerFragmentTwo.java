@@ -88,7 +88,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
                 _plannedDays.add(false);
             }
         }
-        setFeatureGraphic();
+        //setFeatureGraphic();
         ViewTreeObserver observer = wv.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
@@ -163,7 +163,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
                 }
 
                 SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, new ArrayList(dates));
-                setFeatureGraphic();
+                //setFeatureGraphic();
                 weekitem.invalidate();
             }
         });

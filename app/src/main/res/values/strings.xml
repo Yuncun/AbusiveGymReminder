@@ -36,12 +36,18 @@
     <string name="reason_missed_gym">Missed Gym</string>
     <string name="friendly_reminder">Dont forget to go to them gym today</string>
     <string name="pickdaysmsg">Select your gym days</string>
-
+    <string name="launchmap">Launching Map</string>
+    <string name="gym">Gym</string>
     <string name="hit">Hit</string>
     <string name="miss">Miss</string>
     <string name="rest">Rest</string>
     <string name="noinfo">N/A</string>
     <string name="questionmark">/?</string>
+    <string name="firsttime_title">Welcome!</string>
+    <string name="firsttime_body">Abusive Gym Reminder has been successfully configured. You will now receive messages when you miss gym days. \n \nYou can also adjust the level of abuse in settings</string>
+    <string name="gotit">Got it</string>
+
+
 
 
 </resources>

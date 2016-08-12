@@ -73,9 +73,14 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
                         break;
                     case Message.HIT_YESTERDAY:
                     case Message.HIT_TODAY:
-                        title = m.getHeader();
-                        firstLineBody = m.getBody();
-                        secondLineBody = context.getString(R.string.reason_hit_gym_today);
+                        if (m.getBody()==null || m.getBody().isEmpty()){
+                            title = context.getString(R.string.reason_hit_gym);
+                            firstLineBody = m.getHeader();
+                        }else{
+                            title = m.getHeader();
+                            firstLineBody = m.getBody();
+                            secondLineBody = context.getString(R.string.reason_hit_gym_today);
+                        }
                         reason = Message.HIT_TODAY;
                         msgid = m.getId();
                         break;
@@ -124,7 +129,8 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         //If the day was already updated by another mechanism, (like in onStart), then
         //we don't need to do this again.
         DayRecord yesterday = datasource.getLastDayRecord();
-        if (yesterday.compareToDate(new Date())){
+        if (!yesterday.equalsDate(new Date())){
+            ReminderOracle.doLeaveMessageBasedOnPerformance(context, false);
             return;
         }
 

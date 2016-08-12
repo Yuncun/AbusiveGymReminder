@@ -119,7 +119,7 @@ public class NewsfeedFragment extends android.support.v4.app.Fragment{
         }
         DayRecord latestDate = _allDayRecords.get(_allDayRecords.size()-1); //Todo: Right function to find or sort dayrecord by date
         Date systemDate = new Date();
-        if (latestDate.compareToDate(systemDate)){
+        if (latestDate.equalsDate(systemDate)){
             if (latestDate.beenToGym()){
                 return "You've been to the gym today";
             }

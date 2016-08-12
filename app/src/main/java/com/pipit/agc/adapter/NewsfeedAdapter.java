@@ -261,7 +261,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 default:
                     // If we got here, the user's action was not recognized.
                     // Invoke the superclass to handle it.
-
             }
             return true;
         }

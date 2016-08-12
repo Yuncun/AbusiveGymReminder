@@ -4,16 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,10 +35,12 @@ import com.pipit.agc.util.SharedPrefUtil;
  */
 public class IntroPlacePickerFragment extends Fragment {
     public final static String TAG = "IntroPlacePickerFrag";
-    private TextView _finishButton;
-    private TextView _instructions_tv;
-    private TextView _launchcircle;
-    private LinearLayout _gobuttonlayout;
+    private Button continuebutton;
+    private TextView instructions_one;
+    private LinearLayout pickerlauncher;
+    private TextView pickercardtext;
+    private TextView pickersubtitle;
+    private TextView skipbutton;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -48,54 +49,43 @@ public class IntroPlacePickerFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.intro_place_picker,
                 container, false);
-        _launchcircle = (TextView) view.findViewById(R.id.placepicker_card);
-        _launchcircle.setOnClickListener(new View.OnClickListener() {
+        pickerlauncher = (LinearLayout) view.findViewById(R.id.placepicker_card);
+        pickerlauncher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startPlacePicker();
             }
         });
-        _launchcircle.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                switch (arg1.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow_sel), PorterDuff.Mode.SRC_ATOP);
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP:
-                        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
-                        _launchcircle.performClick();
-                        break;
-                    case MotionEvent.ACTION_CANCEL: {
-                        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
-                        break;
-                    }
-                }
-                return true;
-            }
-        });
-        _launchcircle.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
-        /*_launchcircle.setImageDrawable(new TextDrawable(getContext(), "Touch to ", ColorStateList.valueOf(Color.WHITE),
+        //pickerlauncher.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.schemefour_darkerteal));
+        pickercardtext = (TextView) pickerlauncher.findViewById(R.id.gym_name);
+        pickercardtext.setText("Touch here to find your gym");
+        TextView removebutton = (TextView) pickerlauncher.findViewById(R.id.removeButton);
+        removebutton.setVisibility(View.GONE);
+
+        pickersubtitle = (TextView) pickerlauncher.findViewById(R.id.content);
+
+        /*pickerlauncher.setImageDrawable(new TextDrawable(getContext(), "Touch to ", ColorStateList.valueOf(Color.WHITE),
                 30, TextDrawable.VerticalAlignment.BASELINE));*/
-        _finishButton = (TextView) view.findViewById(R.id.placepicker_done);
-        _gobuttonlayout = (LinearLayout) view.findViewById(R.id.continue_layout);
+        continuebutton = (Button) view.findViewById(R.id.finishbutton_placepicker);
 
-        _instructions_tv = (TextView) view.findViewById(R.id.placepicker_instructions);
-        _instructions_tv.setText("Where is your gym?");
+        instructions_one = (TextView) view.findViewById(R.id.placepicker_instructions);
+        instructions_one.setText("Gym visits are automatically registered when you are near your gym");
 
-        _finishButton.setOnClickListener(new View.OnClickListener() {
+        continuebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((IntroductionActivity) getActivity()).selectFrag(3);
             }
         });
 
-        /*Set the "Continue" area to default mode when no gym is selected */
-        _finishButton.setText("Skip for now");
-        _finishButton.setTextColor((ContextCompat.getColor(getContext(), R.color.basewhite)));
-        _gobuttonlayout.setBackgroundColor((ContextCompat.getColor(getContext(), R.color.schemethree_teal)));
-        _finishButton.setTextSize(16);
+        //continuebutton.setVisibility(View.GONE);
+
+        skipbutton = (TextView) view.findViewById(R.id.skipbutton);
+        skipbutton.setText("Skip for now");
+        skipbutton.setVisibility(View.GONE);
+
+        LinearLayout bottomBar = (LinearLayout) view.findViewById(R.id.intro_bottombar);
+        bottomBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.basewhite));
 
         return view;
     }
@@ -154,23 +144,17 @@ public class IntroPlacePickerFragment extends Fragment {
                 addGeofenceFromListposition(gym);
 
                 /*Set the "Continue" area to default mode when no gym is selected */
-                _finishButton.setText("Next");
-                _finishButton.setTextSize(30);
-                _finishButton.setTextColor(getResources().getColor(android.R.color.primary_text_light));
-                _gobuttonlayout.setBackgroundColor((ContextCompat.getColor(getContext(), R.color.basewhite)));
+                continuebutton.setText("Pick your gym days");
                 String k = "";
                 if (gym.name!=null && !gym.name.isEmpty()){
                     k+=gym.name + "\n";
                 }
-                if (gym.address!=null && !gym.address.isEmpty()){
-                    k+=gym.address;
-                }
-                if (k=="" || k.isEmpty()){
-                    k+=location.toString();
-                }
-                /*_launchcircle.setImageDrawable(new TextDrawable(getContext(), k, ColorStateList.valueOf(Color.WHITE),
-                        30, TextDrawable.VerticalAlignment.BASELINE));*/
-                _launchcircle.setText(k);
+
+                continuebutton.setVisibility(View.VISIBLE);
+                skipbutton.setVisibility(View.GONE);
+                pickercardtext.setText(k);
+                pickersubtitle.setText(gym.address);
+                //pickerlauncher.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.basewhite));
                 getView();
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);

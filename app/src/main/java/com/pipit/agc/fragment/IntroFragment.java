@@ -17,6 +17,8 @@ import com.pipit.agc.R;
 import com.viewpagerindicator.CirclePageIndicator;
 
 /**
+ * This is the first fragment that is shown when the user launchs the app for the first time
+ * It holds a viewpager that contains n IntroViewPagerFragments.
  * Created by Eric on 12/13/2015.
  */
 public class IntroFragment extends Fragment {
@@ -40,6 +42,7 @@ public class IntroFragment extends Fragment {
 
         _indicator  = (CirclePageIndicator) view.findViewById(R.id.titles);
         _indicator.setStrokeColor(ContextCompat.getColor(getContext(), R.color.schemefour_darkerteal));
+        _indicator.setFillColor(ContextCompat.getColor(getContext(), R.color.schemefour_darkerteal));
         _indicator.setViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

@@ -1,53 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/basewhite"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:id="@+id/bodylayout"
-        android:layout_weight="7"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/schemefour_yellow"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/daypicker_instructions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Second screen"
-            android:gravity="center"
-            android:layout_gravity="top|center"
-            android:layout_margin="32dp"
-            android:textSize="28sp"/>
+        android:layout_weight="5"
+        >
+        <ImageView
+            android:id="@+id/intro_background_sky"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/intro_background_back"/>
+
+        <ImageView
+            android:id="@+id/intro_background_left"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/intro_background_left"/>
+
+        <ImageView
+            android:id="@+id/intro_background_right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/intro_background_right"/>
+
+        <ImageView
+            android:id="@+id/intro_background_gym"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/intro_background_mid"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:gravity="center">
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/daypicker_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_gravity="top|center"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginTop="32dp"
+                android:textSize="28sp"/>
 
-            <android.support.v7.widget.RecyclerView
+            <LinearLayout
+                android:id="@+id/bodylayout"
+                android:layout_height="0dp"
+                android:layout_weight="5"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/rv"
-            />
-
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/rv"
+                    />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </FrameLayout>
     <LinearLayout
-        android:id="@+id/continue_layout"
+        android:id="@+id/intro_bottombar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:background="@color/schemefour_yellow"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/placepicker_done"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:elevation="10dp">
+
+        <View
+            android:id="@+id/titles"
+            android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="4dp"/>
+
+        <Button
+            android:id="@+id/finishbutton_daypicker"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
             android:gravity="center"
-            android:textSize="30sp"
+            android:textSize="@dimen/textLarge"
+            style="@style/ColoredButtonStyle"
             android:text="Continue" />
     </LinearLayout>
 </LinearLayout>

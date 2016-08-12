@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.pipit.agc.model.Message;
+import com.pipit.agc.util.SharedPrefUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,23 +67,24 @@ public class InsultsRecords {
         String query = "SELECT * FROM " + InsultsDBHelper.TABLE_MESSAGES
                 + " WHERE " + InsultsDBHelper.COLUMN_TYPE + " = " + type;
 
+        Log.d("Eric", query);
         //Add maturity column flag
         switch (maturity){
             case InsultRecordsConstants.LOW_MATURITY:
-                query += ", " + InsultsDBHelper.COLUMN_LOW_MAT + " = 1";
+                query += " AND " + InsultsDBHelper.COLUMN_LOW_MAT + " = 1";
                 break;
             case InsultRecordsConstants.MED_MATURITY:
-                query += ", " + InsultsDBHelper.COLUMN_LOW_MAT + " = 1";
+                query += " AND " + InsultsDBHelper.COLUMN_MED_MAT + " = 1";
                 break;
             case InsultRecordsConstants.HIGH_MATURITY:
-                query += ", " + InsultsDBHelper.COLUMN_LOW_MAT + " = 1";
+                query += " AND " + InsultsDBHelper.COLUMN_HI_MAT + " = 1";
                 break;
             default:
                 break;
         }
 
-        Cursor cursorc = database.rawQuery(query, null);
         Log.d("Eric", query);
+        Cursor cursorc = database.rawQuery(query, null);
                 /*"SELECT * FROM " + InsultsDBHelper.TABLE_MESSAGES
                 + " WHERE " + //InsultsDBHelper.COLUMN_ANGER + " = " + anger + ", " +
                 InsultsDBHelper.COLUMN_TYPE + " = " + type, null);*/

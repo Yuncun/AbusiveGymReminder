@@ -20,7 +20,7 @@
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:elevation="5dp">
+        android:elevation="10dp">
 
         <com.viewpagerindicator.CirclePageIndicator
             android:id="@+id/titles"
@@ -45,6 +45,4 @@
             style="@style/ColoredButtonStyle"
             android:text="Start" />
     </LinearLayout>
-
-
 </LinearLayout>
