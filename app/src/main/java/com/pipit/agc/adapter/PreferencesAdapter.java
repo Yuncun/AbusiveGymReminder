@@ -118,10 +118,10 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 int index = SharedPrefUtil.getInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_AFTERNOON);
                 ((RadioButton) dv.radiohead.getChildAt(index)).setChecked(true);
 
-                ((RadioButton) dv.radiohead.getChildAt(0)).setText("Morning");
-                ((RadioButton) dv.radiohead.getChildAt(1)).setText("Afternoon");
-                ((RadioButton) dv.radiohead.getChildAt(2)).setText("Evening");
-                //((RadioButton) dv.radiohead.getChildAt(3)).setText("Yolo");
+                ((RadioButton) dv.radiohead.getChildAt(0)).setText("Wakeup");
+                ((RadioButton) dv.radiohead.getChildAt(1)).setText("Morning");
+                ((RadioButton) dv.radiohead.getChildAt(2)).setText("Afternoon");
+                ((RadioButton) dv.radiohead.getChildAt(3)).setText("Evening");
 
                 dv.radiohead.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
@@ -130,17 +130,17 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                         int index = dv.radiohead.indexOfChild(radioButton);
                         switch (index) {
                             case 0:
-                                SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_MORNING);
+                                SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_ON_WAKEUP);
                                 break;
                             case 1:
-                                SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_AFTERNOON);
+                                SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_MORNING);
                                 break;
                             case 2:
+                                SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_AFTERNOON);
+                                break;
+                            case 3:
                                 SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_EVENING);
                                 break;
-                            /*case 3:
-                                SharedPrefUtil.putInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_YOLO);
-                                break;*/
                             default:
                                 break;
                         }
@@ -176,7 +176,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
     /**
      * This is the radio group for Notification Time
-     * MORNING / AFTERNOON / EVENING
+     * WAKEUP / MORNING / AFTERNOON / EVENING
      */
     public class NotificationTimeViewHolder extends PreferencesAdapter.ViewHolder{
         RadioGroup radiohead;
@@ -230,7 +230,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 
     @Override

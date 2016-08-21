@@ -31,6 +31,8 @@ public class Constants {
     public static final String GYM_LIST = "gymlist";
     public static final String HIGHEST_PROXID = "highestproxid";
     public static final String MATURITY_LEVEL = "maturitylevel";
+    public static final String FLAG_WAKEUP_SHOW_NOTIF = "shownotification"; //Checked on phone wakeup to determine if notif is shown
+    public static final String CONTENT_WAKEUP_SHOW_NOTIF = "wakeupnotifcontent"; //Contains JSON of message to show on wakeup
     //Todo: I kind of stopped doing this halfway through there may be others out there
 
 
@@ -47,8 +49,8 @@ public class Constants {
     public static final int GRANTED_LOCATION_PERMISSIONS = 1;
 
     /*Some enums*/
-    public static final int NOTIFTIME_MORNING = 0;
-    public static final int NOTIFTIME_AFTERNOON = 1;
-    public static final int NOTIFTIME_EVENING = 2;
-    public static final int NOTIFTIME_YOLO = 3;
+    public static final int NOTIFTIME_ON_WAKEUP = 0;
+    public static final int NOTIFTIME_MORNING = 1;
+    public static final int NOTIFTIME_AFTERNOON = 2;
+    public static final int NOTIFTIME_EVENING = 3;
 }

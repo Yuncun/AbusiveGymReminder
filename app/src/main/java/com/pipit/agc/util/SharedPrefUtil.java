@@ -26,7 +26,13 @@ public class SharedPrefUtil {
         DateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         String mLastUpdateTime = dateFormat.format(cal.getTime());
-        String logUpdate = prefs.getString("locationlist", "none") + "\n" + mLastUpdateTime + ": " + s ;
+        String logUpdate = prefs.getString("locationlist", "none");
+
+        if (logUpdate.length() > 10000){
+            logUpdate=""; //Poor man's rolling logs
+        }
+
+        logUpdate += "\n" + mLastUpdateTime + ": " + s;
         editor.putString("locationlist", logUpdate);
         editor.commit();
 
@@ -36,6 +42,11 @@ public class SharedPrefUtil {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, val);
         editor.commit();
+    }
+
+    public static String getString(Context context, String key, String defaultValue){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        return prefs.getString(key, defaultValue);
     }
 
     public static void putInt(Context context, String key, int val){

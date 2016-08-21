@@ -22,27 +22,22 @@ import com.pipit.agc.model.Message;
 import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Suite of functions that delivers reminders based on gym behavior
  */
 public class ReminderOracle {
-    public static final int POST_TIME_NOISE_HOURS = 2;
-    public static final int POST_TIME_NOISE_MINTUES = 60;
+    private static final String TAG = "ReminderOracle";
+
+    //How many hours ahead to set alarm to show notification
+    public static final int WAKUP_OFFSET = 3;  //(Three hours offset then first time user opens phone)
     public static final int MORNING_OFFSET = 9;
     public static final int AFTERNOON_OFFSET = 16;
     public static final int EVENING_OFFSET = 20;
-    private static final String TAG = "ReminderOracle";
 
     /**
      * This function chooses a message and figures out a time to post it, based on gym attendance
@@ -97,8 +92,6 @@ public class ReminderOracle {
         else{
             if (yesterday.beenToGym()) {
                 SharedPrefUtil.updateMainLog(context, "You went to the gym yesterday, so no notification will be shown");
-                // Todo: Figure out if we want to leave a message here or not - am exploring the idea of leaving message immediately
-                // Todo: when user goes to the gym, which would make this redundant.
             }
             else if (!yesterday.beenToGym() && yesterday.isGymDay()) {
                 int type = InsultRecordsConstants.REMINDER_MISSEDYESTERDAY;
@@ -131,21 +124,11 @@ public class ReminderOracle {
         }
         messagerepo.close();
 
-        /*Calculate some noise to add to the time shown*/
-        //TODO: Make design decision as to if this is necessary
-        Random rand = new Random();
-        int hr_noise = rand.nextInt(POST_TIME_NOISE_HOURS);
-        int min_noise = rand.nextInt(POST_TIME_NOISE_MINTUES);
-        if (rand.nextBoolean()){
-            hr_noise*=-1;
-            min_noise*=-1;
-        }
-
         //Init Calendars
         DateTime dt = new DateTime();
 
         //Find a time to display message depending on the notification preferences of the user
-        int notifpref =  SharedPrefUtil.getInt(context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_AFTERNOON);
+        int notifpref =  SharedPrefUtil.getInt(context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_ON_WAKEUP);
 
         switch (notifpref){
             case Constants.NOTIFTIME_MORNING:
@@ -157,28 +140,9 @@ public class ReminderOracle {
             case Constants.NOTIFTIME_EVENING:
                 dt = dt.plusHours(EVENING_OFFSET);
                 break;
-            case Constants.NOTIFTIME_YOLO:
-                /*long time_ms = SharedPrefUtil.getLong(context, "lastgymtime", -1);
-
-                if (time_ms>0){
-
-                    Calendar c2 = Calendar.getInstance();
-                    c2.setTimeInMillis(time_ms);
-                    cal.set(Calendar.HOUR_OF_DAY, c2.get(Calendar.HOUR_OF_DAY));
-                    cal.set(Calendar.MINUTE, c2.get(Calendar.MINUTE));
-                    cal.add(Calendar.MINUTE, min_noise);
-                    cal.add(Calendar.HOUR_OF_DAY, hr_noise);
-
-                    dt.withTime()
-                }
-                else{
-                    cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET); //16 hours, a default (arbitrary) time to wait before showing message
-                }
-                */
-                break;
+            case Constants.NOTIFTIME_ON_WAKEUP:
             default:
-                dt = dt.plusHours(MORNING_OFFSET);
-                //cal.add(Calendar.HOUR_OF_DAY, AFTERNOON_OFFSET);
+                dt = dt.plusHours(WAKUP_OFFSET);
                 break;
         }
 
@@ -267,7 +231,49 @@ public class ReminderOracle {
     }
 
     /**
-     *
+     * Format the notification and call shownotification.
+     * This is subject to styling changes
+     * @param context
+     * @param m
+     */
+    public static void showNotificationFromMessage(Context context, Message m){
+        String firstLineBody = "";
+        String title = "";
+        String secondLineBody = "";
+        long msgid = -1;
+        int reason = Message.NO_RECORD;
+        //Construct notification message and show
+        switch (m.getReason()){
+            case Message.MISSED_YESTERDAY:
+                title = m.getHeader();
+                firstLineBody = m.getBody();
+                secondLineBody = "(Missed a gym day yesterday)";
+                msgid = m.getId();
+                reason = Message.MISSED_YESTERDAY;
+                break;
+            case Message.HIT_YESTERDAY:
+            case Message.HIT_TODAY:
+                if (m.getBody()==null || m.getBody().isEmpty()){
+                    title = context.getString(R.string.reason_hit_gym);
+                    firstLineBody = m.getHeader();
+                }else{
+                    title = m.getHeader();
+                    firstLineBody = m.getBody();
+                }
+                reason = Message.HIT_TODAY;
+                msgid = m.getId();
+                break;
+            case Message.NO_RECORD:
+            default:
+                title = m.getHeader();
+                firstLineBody = m.getBody();
+                msgid = m.getId();
+                reason = Message.NEW_MSG;
+        }
+        ReminderOracle.showNotification(context, title, firstLineBody, secondLineBody, msgid, reason);
+    }
+
+    /**
      * @param context
      * @param header Title (The first thing that is seen)
      * @param body First line of msg body
@@ -293,31 +299,33 @@ public class ReminderOracle {
 
         if (reason==Message.MISSED_YESTERDAY){
             builder.setSmallIcon(R.drawable.notification_icon)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.notification_icon))
-                //.setColor(Color.RED)
-                .setContentIntent(notificationPendingIntent)
-                .setContentTitle(header)
-                .setStyle(new Notification.BigTextStyle()
-                        .bigText(body))
-                .setContentText(body);
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                            R.drawable.notification_icon))
+                    //.setColor(Color.RED)
+                    .setVibrate(new long[]{1000, 1000})
+                    .setContentIntent(notificationPendingIntent)
+                    .setContentTitle(header)
+                    .setStyle(new Notification.BigTextStyle()
+                            .bigText(body))
+                    .setContentText(body);
         }
         else{
             builder.setSmallIcon(R.drawable.notification_icon)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.notification_icon))
-                    //.setColor(Color.GREEN)
-                .setContentTitle(header)
-                .setContentText(body)
-                .setStyle(new Notification.BigTextStyle()
+                    .setVibrate(new long[] { 1000, 1000})
+                    .setContentTitle(header)
+                    .setContentText(body)
+                    .setStyle(new Notification.BigTextStyle()
                             .bigText(body + "\n" + body2))
-                .setContentIntent(notificationPendingIntent);
+                    .setContentIntent(notificationPendingIntent);
         }
 
         // Dismiss notification once the user touches it.
         builder.setAutoCancel(true);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
     }

@@ -45,53 +45,30 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         SharedPrefUtil.updateMainLog(context, "Alarm woken with a broadcast for " + purpose);
         switch(purpose){
             case "daylogging" :
+                //Alarm went off to progress the day
                 doDayLogging(context);
                 break;
             case "leavemessage" :
+                //Alarm went off to show a notification!
                 String msgJson = intent.getStringExtra("message");
-                Log.d(TAG, "RECEIVER " + msgJson);
                 Message m = Message.fromJson(msgJson);
 
-                //Directly leave message in inbox
-                ReminderOracle.leaveMessage(m);
                 if (m.getRepoId()>0){
                     SharedPrefUtil.putStringIntoListIntoSharedPrefs(context, Constants.TAKEN_MESSAGE_IDS, Long.toString(m.getRepoId()));
                 }
-                String firstLineBody = "";
-                String title = "";
-                String secondLineBody = "";
-                long msgid = -1;
-                int reason = Message.NO_RECORD;
-                //Construct notification message and show
-                switch (m.getReason()){
-                    case Message.MISSED_YESTERDAY:
-                        title = m.getHeader();
-                        firstLineBody = m.getBody();
-                        secondLineBody = "(Missed a gym day yesterday)";
-                        msgid = m.getId();
-                        reason = Message.MISSED_YESTERDAY;
-                        break;
-                    case Message.HIT_YESTERDAY:
-                    case Message.HIT_TODAY:
-                        if (m.getBody()==null || m.getBody().isEmpty()){
-                            title = context.getString(R.string.reason_hit_gym);
-                            firstLineBody = m.getHeader();
-                        }else{
-                            title = m.getHeader();
-                            firstLineBody = m.getBody();
-                            secondLineBody = context.getString(R.string.reason_hit_gym_today);
-                        }
-                        reason = Message.HIT_TODAY;
-                        msgid = m.getId();
-                        break;
-                    case Message.NO_RECORD:
-                    default:
-                        title = m.getHeader();
-                        firstLineBody = m.getBody();
-                        msgid = m.getId();
-                        reason = Message.NEW_MSG;
+
+                //Directly leave message in inbox
+                ReminderOracle.leaveMessage(m);
+
+                //At this point, we can either show the notification directly, or set a flag and wait for the
+                //device to wake before showing.
+                if (SharedPrefUtil.getInt(context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_ON_WAKEUP)==Constants.NOTIFTIME_ON_WAKEUP){
+                    SharedPrefUtil.putInt(context, Constants.FLAG_WAKEUP_SHOW_NOTIF, 1);
+                    SharedPrefUtil.putString(context, Constants.CONTENT_WAKEUP_SHOW_NOTIF, m.toJson());
+                }else{
+                    //Show notification now
+                    ReminderOracle.showNotificationFromMessage(context, m);
                 }
-                ReminderOracle.showNotification(context, title, firstLineBody, secondLineBody, msgid, reason);
                 break;
             default:
                 break;

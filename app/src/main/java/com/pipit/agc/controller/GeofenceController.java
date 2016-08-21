@@ -31,7 +31,6 @@ import java.util.List;
  */
 public class GeofenceController {
     private final String TAG = "GeofenceController";
-
     private Context context;
 
     private ArrayList<Geofence> mGeofenceList;
