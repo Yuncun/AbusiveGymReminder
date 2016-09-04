@@ -47,8 +47,17 @@ public class IntroPlacePickerFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.intro_place_picker,
-                container, false);
+        View view;
+        try{
+            view =  inflater.inflate(R.layout.intro_place_picker,
+                    container, false);
+        }catch (Exception e){
+            //Likely peasant user can't afford the memory to load a few measly images
+            //Give them the peasant version
+            view =  inflater.inflate(R.layout.intro_place_picker_peasant,
+                    container, false);
+        }
+
         pickerlauncher = (LinearLayout) view.findViewById(R.id.placepicker_card);
         pickerlauncher.setOnClickListener(new View.OnClickListener() {
             @Override

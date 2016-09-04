@@ -167,6 +167,7 @@ public class LocationListFragment extends Fragment {
 
                 GeofenceController.getInstance().addGeofenceByGym(gym, mListener, true);
                 SharedPrefUtil.addGeofenceToSharedPrefs(getContext(), gym);
+                refresh();
             } else {
                 Log.d(TAG, "resultCode is wrong " + resultCode);
             }

@@ -93,6 +93,7 @@ public class GeofenceController {
     public void executeAddGeofence(){
         connectWithCallback(mAddConnectionCallback);
     }
+
     public void addGeofenceByGym(Gym gym, GeofenceControllerListener listener, boolean execute) {
         Log.d(TAG, "addGeoFenceFromListPosition n=" + gym.proxid + " : " + gym.name);
         if (mGeofenceList==null){

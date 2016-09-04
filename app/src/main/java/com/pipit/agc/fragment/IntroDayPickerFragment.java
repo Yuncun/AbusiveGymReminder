@@ -60,7 +60,12 @@ public class IntroDayPickerFragment  extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.intro_daypicker_layout, container, false);
+        View rootView;
+        try{
+             rootView = inflater.inflate(R.layout.intro_daypicker_layout, container, false);
+        } catch (Exception e){
+            rootView = inflater.inflate(R.layout.intro_daypicker_layout_peasant, container, false);
+        }
         synchronized (this) {
             datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();

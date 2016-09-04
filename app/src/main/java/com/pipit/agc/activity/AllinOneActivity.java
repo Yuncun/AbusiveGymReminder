@@ -2,6 +2,7 @@ package com.pipit.agc.activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -34,6 +35,7 @@ import com.pipit.agc.fragment.LocationListFragment;
 import com.pipit.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.R;
 import com.pipit.agc.fragment.StatisticsFragment;
+import com.pipit.agc.util.NotificationUtil;
 import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
@@ -91,10 +93,20 @@ public class AllinOneActivity extends AppCompatActivity {
             f.setHeader("In the future you will abusive messages here when you miss gym days");
             f.setBody("");
             ReminderOracle.leaveMessage(f);
+            final Context context = this;
             new MaterialDialog.Builder(this)
                     .title(R.string.firsttime_title)
                     .content(R.string.firsttime_body)
                     .positiveText(R.string.gotit)
+                    .dismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            NotificationUtil.showNotification(context, getResources().getString(R.string.firsttime_body),
+                                    "",
+                                    0,
+                                    Message.WELCOME);
+                        }
+                    })
                     .show();
 
         }
@@ -147,17 +159,7 @@ public class AllinOneActivity extends AppCompatActivity {
         });
 
         cab = new MaterialCab(this, R.id.cab_stub);
-
-        //Log.d(TAG, "remaking _alarmmanager " + _alarm);
-        /*
-        _alarm = new AlarmManagerBroadcastReceiver();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
-        calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
-        calendar.add(Calendar.DATE, 1);
-        _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
-        GeofenceController.getInstance().init(this);*/
+        GeofenceController.getInstance().init(this);
         checkPermissions();
     }
 
