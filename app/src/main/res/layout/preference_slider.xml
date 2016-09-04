@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/preferences_padding">
+
+    <TextView
+        android:id="@+id/prefkey"
+        android:textAppearance="@style/primarytext"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notification time"/>
+
+    <TextView
+        android:id="@+id/prefsubtext"
+        android:textAppearance="@style/secondarytext"
+        android:layout_below="@id/prefkey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subtext"/>
+
+    <LinearLayout
+        android:id="@+id/clickableprefval"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+        <TextView
+            android:id="@+id/prefradiusvalue"
+            android:text="NA"
+            android:layout_gravity="center"
+            android:textSize="@dimen/textLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </TextView>
+    </LinearLayout>
+
+
+</RelativeLayout>

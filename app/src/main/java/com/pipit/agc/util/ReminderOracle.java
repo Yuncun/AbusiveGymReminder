@@ -54,12 +54,12 @@ public class ReminderOracle {
         Message msg = null;
         if (yesterday==null){
             //First day
-            //msg = new Message();
+            //Do nothing for now
         }
         else if (testmode){
             int type = 0;
             int reason = 0;
-            if (yesterday.beenToGym()){
+            if (false && yesterday.beenToGym()){
                 type = InsultRecordsConstants.REMINDER_HITYESTERDAY;
                 reason = Message.HIT_TODAY;
             }else{
@@ -239,7 +239,6 @@ public class ReminderOracle {
     public static void showNotificationFromMessage(Context context, Message m){
         String firstLineBody = "";
         String title = "";
-        String secondLineBody = "";
         long msgid = -1;
         int reason = Message.NO_RECORD;
         //Construct notification message and show
@@ -247,7 +246,6 @@ public class ReminderOracle {
             case Message.MISSED_YESTERDAY:
                 title = m.getHeader();
                 firstLineBody = m.getBody();
-                secondLineBody = "(Missed a gym day yesterday)";
                 msgid = m.getId();
                 reason = Message.MISSED_YESTERDAY;
                 break;
@@ -270,64 +268,7 @@ public class ReminderOracle {
                 msgid = m.getId();
                 reason = Message.NEW_MSG;
         }
-        ReminderOracle.showNotification(context, title, firstLineBody, secondLineBody, msgid, reason);
-    }
-
-    /**
-     * @param context
-     * @param header Title (The first thing that is seen)
-     * @param body First line of msg body
-     * @param body2 Second line
-     * @param messageID
-     * @param reason Specifies if this is shown for missing/hitting a gym
-     */
-    public static void showNotification(Context context, String header, String body, String body2, long messageID, int reason){
-        Intent notificationIntent = new Intent(context, AllinOneActivity.class);
-        if (messageID>0){
-            notificationIntent = new Intent(context, AllinOneActivity.class);
-            notificationIntent.putExtra(Constants.MESSAGE_ID, messageID);
-        }
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(AllinOneActivity.class);
-        stackBuilder.addNextIntent(notificationIntent);
-
-        PendingIntent notificationPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Notification.Builder builder = new Notification.Builder(context);
-
-        if (reason==Message.MISSED_YESTERDAY){
-            builder.setSmallIcon(R.drawable.notification_icon)
-                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                            R.drawable.notification_icon))
-                    //.setColor(Color.RED)
-                    .setVibrate(new long[]{1000, 1000})
-                    .setContentIntent(notificationPendingIntent)
-                    .setContentTitle(header)
-                    .setStyle(new Notification.BigTextStyle()
-                            .bigText(body))
-                    .setContentText(body);
-        }
-        else{
-            builder.setSmallIcon(R.drawable.notification_icon)
-                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                            R.drawable.notification_icon))
-                    .setVibrate(new long[] { 1000, 1000})
-                    .setContentTitle(header)
-                    .setContentText(body)
-                    .setStyle(new Notification.BigTextStyle()
-                            .bigText(body + "\n" + body2))
-                    .setContentIntent(notificationPendingIntent);
-        }
-
-        // Dismiss notification once the user touches it.
-        builder.setAutoCancel(true);
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        NotificationUtil.showNotification(context, title, firstLineBody, msgid, reason);
     }
 
     public static long findANewMessageId(Context context, int type){

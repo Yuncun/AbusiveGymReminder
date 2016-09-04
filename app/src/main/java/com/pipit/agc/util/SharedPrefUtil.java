@@ -29,7 +29,8 @@ public class SharedPrefUtil {
         String logUpdate = prefs.getString("locationlist", "none");
 
         if (logUpdate.length() > 10000){
-            logUpdate=""; //Poor man's rolling logs
+            logUpdate=logUpdate.substring(1000, logUpdate.length()); //Poor man's rolling logs
+            //Todo: Implement rolling logs
         }
 
         logUpdate += "\n" + mLastUpdateTime + ": " + s;

@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
+ * Not being used
+ * @Todo: Delete this
  * Created by Eric on 2/21/2016.
  */
 public class GeofenceTransitionsIntentService extends IntentService {

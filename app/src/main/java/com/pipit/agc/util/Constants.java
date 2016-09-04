@@ -18,11 +18,14 @@ public class Constants {
     public static int DAY_RESET_HOUR = 0;
     public static int DAY_RESET_MINUTE = 0;
     public static final int DEFAULT_RADIUS = 200;
+    public static final int GEOFENCE_MIN_RADIUS = 50;
+    public static final int GEOFENCE_MAX_RADIUS = 400;
 
 
-    /*Shared PReference Keys*/
+    /*Shared Preference Keys*/
     public static final String SHAR_PREF_PLANNED_DAYS = "plannedDays"; //Remembers which of the seven days are gym days
     public static final String SHAR_PREF_EXCEPT_DAYS = "exceptionDays"; //Remembers all days that don't follow weekly cycle
+    public static final String SHAR_PREF_GYMRADIUS = "gymradius";
     public static final String DEST_LAT = "lat";
     public static final String DEST_LNG = "lng";
     public static final String GEOFENCES_ADDED_KEY= "geofenceadded";

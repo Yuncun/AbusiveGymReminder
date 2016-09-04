@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -75,9 +76,13 @@ public class WeekViewSwipeable extends LinearLayout {
         rightNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int tab = viewPager.getCurrentItem();
-                tab++;
-                viewPager.setCurrentItem(tab);
+                try{
+                    int tab = viewPager.getCurrentItem();
+                    tab++;
+                    viewPager.setCurrentItem(tab);
+                } catch (Exception e){
+                    Log.e(TAG, e.toString());
+                }
             }
         });
 

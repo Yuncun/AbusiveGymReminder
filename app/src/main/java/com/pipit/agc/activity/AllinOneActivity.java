@@ -44,6 +44,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Main Activity
+ *
+ * Holds the main view pager, status bar, etc.
+ */
 public class AllinOneActivity extends AppCompatActivity {
     private static String TAG = "AllinOneActivity";
 
@@ -75,7 +80,7 @@ public class AllinOneActivity extends AppCompatActivity {
             }
         }
 
-        /*Launch Intro Activity*/
+        /*Launch Intro Activity if required*/
         if (SharedPrefUtil.getIsFirstTime(this)){
             Intent intent = new Intent(this, IntroductionActivity.class);
             //intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
@@ -105,6 +110,7 @@ public class AllinOneActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
         }
 
+        /*Tab layout stuff*/
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.addTab(mTabLayout.newTab().setText("Stats"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Inbox"));
@@ -141,7 +147,9 @@ public class AllinOneActivity extends AppCompatActivity {
         });
 
         cab = new MaterialCab(this, R.id.cab_stub);
-        Log.d(TAG, "remaking _alarmmanager " + _alarm);
+
+        //Log.d(TAG, "remaking _alarmmanager " + _alarm);
+        /*
         _alarm = new AlarmManagerBroadcastReceiver();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -149,7 +157,7 @@ public class AllinOneActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
         calendar.add(Calendar.DATE, 1);
         _alarm.setAlarmForDayLog(getApplicationContext(), calendar);
-        GeofenceController.getInstance().init(this);
+        GeofenceController.getInstance().init(this);*/
         checkPermissions();
     }
 
@@ -245,7 +253,22 @@ public class AllinOneActivity extends AppCompatActivity {
         stats.refreshDayRecords();
         stats.refreshMessageRecords();
         stats.calculateStats();
+        updateDate(this);
+        super.onStart();
+    }
 
+    /**
+     * Used to update AbusiveGymReminder date. (Very important!)
+     *
+     * AbusiveGymReminder will periodically update it's date at midnight. However,
+     * there are various cases where this is not fully reliable. This function exists
+     * to make sure our latest dayrecords are up-to-date.
+     *
+     * This should be used before every user session.
+     *
+     * * @param context
+     */
+    public static void updateDate(Context context){
         /*Make sure that we are up to date*/
         try {
             MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
@@ -259,8 +282,8 @@ public class AllinOneActivity extends AppCompatActivity {
                 if (lastDate == null) {
                     //No days on record - Create today
                     DayRecord day = new DayRecord();
-                    day.setComment(getResources().getString(R.string.has_not_been));
-                    day.checkAndSetIfGymDay(getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS));
+                    day.setComment(context.getResources().getString(R.string.has_not_been));
+                    day.checkAndSetIfGymDay(context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS));
                     datasource.createDayRecord(day);
                 } else if (!lastDate.equalsDate(todaysDate.getDate())) {
                     if (lastDate.getDate().before(todaysDate.getDate())) {
@@ -281,13 +304,13 @@ public class AllinOneActivity extends AppCompatActivity {
                             cal.add(Calendar.DATE, 1); //minus number would decrement the days
                             lastDate.setDate(cal.getTime());
                             DayRecord day = new DayRecord();
-                            day.setComment(getResources().getString(R.string.no_record));
-                            day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(this, cal.get(Calendar.DAY_OF_WEEK)));
+                            day.setComment(context.getResources().getString(R.string.no_record));
+                            day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(context, cal.get(Calendar.DAY_OF_WEEK)));
                             datasource.createDayRecord(day);
                             if (flagStartNewVisit){
                                 day.startCurrentVisit();
                             }
-                            SharedPrefUtil.updateMainLog(this, "Updated day from onStart");
+                            SharedPrefUtil.updateMainLog(context, "Updated day from onStart");
 
                         }
                     } else if (lastDate.getDate().after(todaysDate.getDate())) {
@@ -298,6 +321,7 @@ public class AllinOneActivity extends AppCompatActivity {
                         //Todo: Save information - If correct day reappears, reapply old day records
                         Log.d(TAG, "Current system date is " + todaysDate.getDateString() + " but last day on record "
                                 + " is " + lastDate.getDateString());
+                        SharedPrefUtil.updateMainLog(context, "While doing a routine date update, noticed user has gone back in time (Did not update)");
                     }
                 }
             }
@@ -306,8 +330,6 @@ public class AllinOneActivity extends AppCompatActivity {
         } finally{
             MsgAndDayRecords.getInstance().closeDatabase();
         }
-
-        super.onStart();
     }
 
     protected void onStop() {
@@ -334,7 +356,6 @@ public class AllinOneActivity extends AppCompatActivity {
     }
 
     private void checkPermissions(){
-        // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {

@@ -178,7 +178,7 @@ public class IntroPlacePickerFragment extends Fragment {
                 .setCircularRegion(
                         gym.location.getLatitude(),
                         gym.location.getLongitude(),
-                        Constants.DEFAULT_RADIUS
+                        SharedPrefUtil.getInt(getContext(), Constants.SHAR_PREF_GYMRADIUS, Constants.DEFAULT_RADIUS)
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setLoiteringDelay(1000 * 60 * 1)

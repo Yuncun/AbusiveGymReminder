@@ -25,6 +25,12 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * This receiver is responsible for all the scheduled stuff.
+ *
+ * Right now, this means
+ * 1) Updating day at midnight
+ * 2) Scheduling messages
+ *
  * Created by Eric on 12/12/2015.
  */
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver

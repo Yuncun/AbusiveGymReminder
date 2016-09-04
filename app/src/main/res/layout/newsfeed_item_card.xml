@@ -43,7 +43,6 @@
                 android:id="@+id/reason"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@id/iconwrapper"
                 android:text="reason"
@@ -75,7 +74,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/textMedium"
                     android:textColor="@color/black"
-                    android:singleLine="true"
                     android:ellipsize="end"
                     android:text="HEADER"
                     />

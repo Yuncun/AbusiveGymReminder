@@ -13,7 +13,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 public class InsultsDBHelper extends SQLiteAssetHelper {
     public static final String DATABASE_NAME = "messagerepo.db";
     public static final String TABLE_MESSAGES = "Messages";
-    public static final int DATABASE_VERSION = 13;
+    public static final int DATABASE_VERSION = 14;
 
     //Column Names
     public static final String COLUMN_ANGER = "Anger";
@@ -44,6 +44,7 @@ public class InsultsDBHelper extends SQLiteAssetHelper {
 
     public InsultsDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        setForcedUpgrade(DATABASE_VERSION);
     }
 
     @Override

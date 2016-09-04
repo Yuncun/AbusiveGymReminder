@@ -24,7 +24,7 @@
     <string name="has_not_been">Youve not been to the gym</string>
     <string name="no_record">No Record</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="title_activity_setting_wrapper">SettingWrapperActivity</string>
+    <string name="title_activity_setting_wrapper">Preferences</string>
     <string name="no_address_default">No Address</string>
     <string name="reason_missed_gym_yesterday">Missed gym yesterday</string>
     <string name="reason_hit_gym_yesterday">You went to the gym yesterday</string>
@@ -46,6 +46,7 @@
     <string name="firsttime_title">Welcome!</string>
     <string name="firsttime_body">Abusive Gym Reminder has been successfully configured. You will now receive messages when you miss gym days. \n \nYou can also adjust the level of abuse in settings</string>
     <string name="gotit">Got it</string>
+    <string name="ok">Ok</string>
 
 
 

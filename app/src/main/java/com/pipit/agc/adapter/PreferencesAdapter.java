@@ -1,16 +1,20 @@
 package com.pipit.agc.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.R;
 import com.pipit.agc.data.InsultRecordsConstants;
 import com.pipit.agc.model.DayRecord;
@@ -48,6 +52,10 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_onebutton, parent, false);
                 return new OneButtonViewHolder(view);
+            case 3:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.preference_slider, parent, false);
+                return new RangePickerViewHolder(view);
             default:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_rowitem, parent, false);
@@ -166,6 +174,52 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                     }
                 });
                 break;
+            case 3:
+                final RangePickerViewHolder rnv = ((RangePickerViewHolder) holder);
+                rnv.mPrefName.setText("Geofence radius");
+                rnv.subtitle.setText("(Meters)");
+                rnv.value.setTextColor(ContextCompat.getColor(_context, R.color.schemefour_darkerteal));
+                final int currentRadius = SharedPrefUtil.getInt(_context, Constants.SHAR_PREF_GYMRADIUS, Constants.DEFAULT_RADIUS);
+                        rnv.value.setText("" + currentRadius);
+
+                rnv.clickableNumberLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MaterialDialog dialog = new MaterialDialog.Builder(v.getContext())
+                                .title("Geofence Radius")
+                                .customView(R.layout.numberpicker, true)
+                                .positiveText(R.string.ok)
+                                .show();
+
+                        View dv = dialog.getCustomView();
+                        NumberPicker numberPicker = (NumberPicker) dv.findViewById(R.id.numpicker);
+
+                        //Numberpicker step size
+                        final int STEPSIZE = 10;
+                        NumberPicker.Formatter formatter = new NumberPicker.Formatter() {
+                            @Override
+                            public String format(int value) {
+                                int temp = value * STEPSIZE;
+                                return "" + temp;
+                            }
+                        };
+                        numberPicker.setFormatter(formatter);
+
+                        numberPicker.setMinValue(Constants.GEOFENCE_MIN_RADIUS / STEPSIZE);
+                        numberPicker.setMaxValue(Constants.GEOFENCE_MAX_RADIUS / STEPSIZE);
+                        numberPicker.setValue(currentRadius / STEPSIZE);
+                        //Set a value change listener for NumberPicker
+                        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                            @Override
+                            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                                newVal *= STEPSIZE;
+                                //Toast.makeText(_context, "Radius changed", Toast.LENGTH_SHORT);
+                                SharedPrefUtil.putInt(_context, Constants.SHAR_PREF_GYMRADIUS, newVal);
+                                rnv.value.setText("" + newVal);
+                            }
+                        });
+                    }
+                });
             default:
                 break;
         }
@@ -209,6 +263,20 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
             subtitle = (TextView) view.findViewById(R.id.subtitle);
             contentDescription = (TextView) view.findViewById(R.id.content_description);
         }
+    }
+
+    public class RangePickerViewHolder extends PreferencesAdapter.ViewHolder{
+        TextView subtitle;
+        TextView value;
+        LinearLayout clickableNumberLayout;
+
+        public RangePickerViewHolder(View view){
+            super(view);
+            subtitle = (TextView) view.findViewById(R.id.prefsubtext);
+            value = (TextView) view.findViewById(R.id.prefradiusvalue);
+            clickableNumberLayout = (LinearLayout) view.findViewById(R.id.clickableprefval);
+        }
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

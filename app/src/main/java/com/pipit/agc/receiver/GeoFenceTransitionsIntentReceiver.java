@@ -38,7 +38,7 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent)
     {
-        Log.d(TAG, "onRECEIVE");
+        Log.d(TAG, "Received a geofence event");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = Integer.toString(geofencingEvent.getErrorCode());
@@ -59,13 +59,11 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
                     triggeringGeofences
             );
 
-            // Send notification and log the transition details.
-            //sendNotification(geofenceTransitionDetails, context);
-            Log.i(TAG, geofenceTransitionDetails);
-            SharedPrefUtil.updateMainLog(context, "Geofence dwell");
+            //Log the transition details.
+            SharedPrefUtil.updateMainLog(context, "Geofence dwell") ;
 
             //Update gym status today
-            updateLastDayRecord();
+            updateLastDayRecord(context);
             rememberGymHabits(context);
             ReminderOracle.doLeaveOnGymArrivalMessage(context, true);
             //sendNotification("GEO FENCE FROM SERVICE", context);
@@ -188,9 +186,10 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
         }
     }
 
-    private void updateLastDayRecord(){
+    private void updateLastDayRecord(Context context){
         synchronized (this){
             MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
+            AllinOneActivity.updateDate(context);
             datasource.openDatabase();
             if (!datasource.getLastDayRecord().beenToGym()){
                 datasource.updateLatestDayRecordBeenToGym(true);
