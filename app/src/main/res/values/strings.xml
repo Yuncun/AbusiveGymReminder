@@ -29,7 +29,7 @@
     <string name="reason_missed_gym_yesterday">Missed gym yesterday</string>
     <string name="reason_hit_gym_yesterday">You went to the gym yesterday</string>
     <string name="reason_hit_gym_today">Gym Visit Registered!</string>
-    <string name="reason_hit_gym">Hit Gym</string>
+    <string name="reason_hit_gym">Gym Visit Registered</string>
     <string name="reason_new_msg">New Message from Abusive Gym Reminder!</string>
     <string name="welcome">Welcome!</string>
     <string name="new_msg">Message from Abusive Gym Reminder</string>

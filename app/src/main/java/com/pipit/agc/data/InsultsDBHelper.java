@@ -13,7 +13,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 public class InsultsDBHelper extends SQLiteAssetHelper {
     public static final String DATABASE_NAME = "messagerepo.db";
     public static final String TABLE_MESSAGES = "Messages";
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 15;
 
     //Column Names
     public static final String COLUMN_ANGER = "Anger";

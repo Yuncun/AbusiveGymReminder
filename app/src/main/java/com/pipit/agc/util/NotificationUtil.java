@@ -19,20 +19,22 @@ import com.pipit.agc.model.Message;
  */
 public class NotificationUtil {
 
-
     /**
      * @param context
      * @param header Title (The first thing that is seen)
      * @param body First line of msg body
-     * @param messageID
      * @param reason Specifies if this is shown for missing/hitting a gym
+     * @param reason_line Optional bottom left corner, offers explanation of message ("Tuesday, July 4th was a gym day")
+     * @param attr_line Optional bottom right corner, offers credit to author of message
      */
-    public static void showNotification(Context context, String header, String body, long messageID, int reason){
+    public static void showNotification(Context context, String header, String body, String reason_line, String attr_line, int reason){
         Intent notificationIntent = new Intent(context, AllinOneActivity.class);
+        /*
         if (messageID>0){
             notificationIntent = new Intent(context, AllinOneActivity.class);
             notificationIntent.putExtra(Constants.MESSAGE_ID, messageID);
         }
+        */
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(AllinOneActivity.class);
@@ -72,6 +74,8 @@ public class NotificationUtil {
         bigrmv.setTextViewText(R.id.title, "Abusive Gym Reminder");
         bigrmv.setTextViewText(R.id.lineone, header);
         bigrmv.setTextViewText(R.id.linetwo, body);
+        bigrmv.setTextViewText(R.id.reason_line, reason_line);
+        bigrmv.setTextViewText(R.id.attribution, attr_line);
         notification.bigContentView = bigrmv;
 
         //Vibrate

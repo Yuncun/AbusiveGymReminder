@@ -101,8 +101,9 @@ public class AllinOneActivity extends AppCompatActivity {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
                             NotificationUtil.showNotification(context, getResources().getString(R.string.firsttime_message),
-                                    "",
-                                    0,
+                                    "", //Second line
+                                    "", //Reason of message
+                                    "", //Attribution
                                     Message.WELCOME);
                         }
                     })
@@ -139,7 +140,6 @@ public class AllinOneActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override

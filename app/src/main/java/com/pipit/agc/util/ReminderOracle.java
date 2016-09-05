@@ -22,6 +22,7 @@ import com.pipit.agc.model.Message;
 import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -234,14 +235,19 @@ public class ReminderOracle {
     /**
      * Format the notification and call shownotification.
      * This is subject to styling changes
+     *
+     * If this is for a Missed Yesterday, it should be called on the day after the missed day
      * @param context
      * @param m
      */
     public static void showNotificationFromMessage(Context context, Message m){
         String firstLineBody = "";
         String title = "";
+        String reason_line = "";
         long msgid = -1;
         int reason = Message.NO_RECORD;
+        String attribution = "";
+        LocalDate today = new LocalDate();
         //Construct notification message and show
         switch (m.getReason()){
             case Message.MISSED_YESTERDAY:
@@ -249,6 +255,10 @@ public class ReminderOracle {
                 firstLineBody = m.getBody();
                 msgid = m.getId();
                 reason = Message.MISSED_YESTERDAY;
+
+                //Get yesterday's date string
+                LocalDate yesterday = today.minusDays(1);
+                reason_line = yesterday.toString("E, MMM d") + " was a gym day";
                 break;
             case Message.HIT_YESTERDAY:
             case Message.HIT_TODAY:
@@ -261,6 +271,17 @@ public class ReminderOracle {
                 }
                 reason = Message.HIT_TODAY;
                 msgid = m.getId();
+                /*
+                try{
+                    firstLineBody = "Today,  " + today.toString("E, MM d") + " is ";
+                    if (StatsContent.getInstance().getToday(true).isGymDay()){
+                        firstLineBody += "a gym day";
+                    }else{
+                        firstLineBody += "not a gym day";
+                    }
+                } catch (Exception e){
+                    Log.e(TAG, e.toString());
+                }*/
                 break;
             case Message.NO_RECORD:
             default:
@@ -269,7 +290,7 @@ public class ReminderOracle {
                 msgid = m.getId();
                 reason = Message.NEW_MSG;
         }
-        NotificationUtil.showNotification(context, title, firstLineBody, msgid, reason);
+        NotificationUtil.showNotification(context, title, firstLineBody, reason_line, attribution, reason);
     }
 
     public static long findANewMessageId(Context context, int type){

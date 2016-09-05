@@ -137,7 +137,6 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
         //if (!m.getRead()){
         if (false) {
             //Todo: Add "read" field to databaseace(null, Typeface.BOLD);
-            Log.d("ERIC", "Position " + position + "Message" + m.getBody());
             holder.reason.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
             holder.reason.setTypeface(holder.reason.getTypeface(), Typeface.BOLD);
             holder.timestamp.setTextColor(ContextCompat.getColor(mFrag.getContext(), R.color.black));
@@ -256,6 +255,7 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                     _messages = StatsContent.getInstance().getAllMessagesReverse(true);
                     _selectedPos = new HashSet<>();
                     notifyDataSetChanged();
+                    mFrag.getCab().finish();
                     return true;
 
                 default:
