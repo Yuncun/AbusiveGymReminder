@@ -93,7 +93,7 @@ public class NotificationUtil {
         // Locate and set the Image into customnotificationtext.xml ImageViews
         notificationView.setImageViewResource(
                 R.id.imagenotileft,
-                R.drawable.common_ic_googleplayservices);
+                R.drawable.app_icon);
 
         return notificationView;
     }

@@ -82,6 +82,7 @@ public class TestDBFragmentMessages extends ListFragment {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "doDayLogging from test button");
+                //Warning: May cause user to receive a message in a few hours
                 AlarmManagerBroadcastReceiver.doDayLogging(getContext());
             }
         });

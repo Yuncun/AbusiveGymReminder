@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/common_ic_googleplayservices" />
+        android:src="@drawable/app_icon" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,38 +21,55 @@
         android:layout_toRightOf="@+id/imagenotileft"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@android:style/TextAppearance.StatusBar.Title"
-            />
+
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="12dp"
-            android:gravity="center"
+            android:padding="8dp"
+            android:gravity="center_vertical"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/lineone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:paddingBottom="8dp"
-                android:textStyle="bold"
-                />
 
             <TextView
-                android:id="@+id/linetwo"
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="italic"
-                android:textSize="16sp"
-                android:textColor="@color/black"
+                style="@android:style/TextAppearance.StatusBar.Title"
+                android:text="Abusive Gym Reminder"
+                android:layout_marginBottom="8dp"
                 />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/rounded_corners"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/lineone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp"
+                    android:text="Line One"
+                    />
+
+                <TextView
+                    android:id="@+id/linetwo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic|bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp"
+                    android:text="Line Two"
+                    />
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

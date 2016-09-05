@@ -74,4 +74,6 @@
     <color name="grey_875">#282828</color>
     <color name="grey_900">#212121</color>
     <color name="grey_950">#101010</color>
+
+    <color name="app_icon_yellow">#FDF7D5</color>
 </resources>

@@ -153,7 +153,8 @@ public class ReminderOracle {
         }
         else
         if (msg!=null){
-            SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dt.toString("MM-dd HH:mm:ss") + " with setting  " + notifpref);
+            SharedPrefUtil.updateMainLog(context, "Notification set to show at " + dt.toString("MM-dd HH:mm:ss")
+                    + " with notif pref  " + notifpref);
             SharedPrefUtil.putLong(context, "nextnotificationtime", dt.getMillis());
             setLeaveMessageAlarm(context, msg, dt);
         }
