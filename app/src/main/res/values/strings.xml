@@ -47,6 +47,7 @@
     <string name="firsttime_body">Abusive Gym Reminder has been successfully configured. You will now receive messages when you miss gym days. \n \nYou can also adjust the level of abuse in settings</string>
     <string name="gotit">Got it</string>
     <string name="ok">Ok</string>
+    <string name="firsttime_message">In the future you will abusive messages here when you miss gym days</string>
 
 
 

@@ -59,7 +59,7 @@ public class ReminderOracle {
         else if (testmode){
             int type = 0;
             int reason = 0;
-            if (false && yesterday.beenToGym()){
+            if (yesterday.beenToGym()){
                 type = InsultRecordsConstants.REMINDER_HITYESTERDAY;
                 reason = Message.HIT_TODAY;
             }else{

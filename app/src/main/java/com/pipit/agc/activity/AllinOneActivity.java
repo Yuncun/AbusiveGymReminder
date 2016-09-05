@@ -55,7 +55,6 @@ public class AllinOneActivity extends AppCompatActivity {
     private static String TAG = "AllinOneActivity";
 
     SectionsPagerAdapter mSectionsPagerAdapter;
-    private AlarmManagerBroadcastReceiver _alarm;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private MaterialCab cab;
@@ -90,7 +89,7 @@ public class AllinOneActivity extends AppCompatActivity {
             SharedPrefUtil.setFirstTime(this, false);
             Message f = new Message();
             f.setReason(Message.WELCOME);
-            f.setHeader("In the future you will abusive messages here when you miss gym days");
+            f.setHeader(getString(R.string.firsttime_message));
             f.setBody("");
             ReminderOracle.leaveMessage(f);
             final Context context = this;
@@ -101,7 +100,7 @@ public class AllinOneActivity extends AppCompatActivity {
                     .dismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
-                            NotificationUtil.showNotification(context, getResources().getString(R.string.firsttime_body),
+                            NotificationUtil.showNotification(context, getResources().getString(R.string.firsttime_message),
                                     "",
                                     0,
                                     Message.WELCOME);

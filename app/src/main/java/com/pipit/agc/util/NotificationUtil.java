@@ -69,11 +69,13 @@ public class NotificationUtil {
 
         //Set the expanded view (For some reason we can't do this in the builder
         RemoteViews bigrmv = getComplexNotificationView(context, R.layout.expanded_notification);
-
         bigrmv.setTextViewText(R.id.title, "Abusive Gym Reminder");
         bigrmv.setTextViewText(R.id.lineone, header);
         bigrmv.setTextViewText(R.id.linetwo, body);
         notification.bigContentView = bigrmv;
+
+        //Vibrate
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
 
         // Issue the notification
         mNotificationManager.notify(0, notification);
