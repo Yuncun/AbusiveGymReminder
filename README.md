@@ -2,13 +2,13 @@
 
 <a href='https://play.google.com/store/apps/details?id=com.pipit.agc&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="75px"/></a>
 
-Abusive Gym Reminder automatically keeps track of your gym attendance using GPS, and sends you a loser when you miss gym days.
+Abusive Gym Reminder automatically keeps track of your gym attendance using GPS, and calls you a loser when you miss gym days.
 
 ## How it works
 
-* **Find you gym** Use geofences to automatically check if you've been near your gym
+* **Find you gym** Use a place picker to find your gym by name or by map
 * **Choose your gym days** Choose your goals for the week
-* **Get Abused** If you dont go to your gym on a given day, you'll receive an abusive message the next morning
+* **Get Abused** If you dont go near your gym on a gym day, you'll receive an abusive notification the next morning
 
 **Warning** Abusive Gym Reminder may contain offensive messages. You can adjust the abuse mode in the app.
 
@@ -25,7 +25,7 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 
 * **Submit your own insults** The insults in this app are crowdsourced. The database is regularly updated, so use this link to submit your own insult. https://goo.gl/forms/HbYTUr3kRDZtQ7N22
 
-* **Write code** Hit me up if you want to do a collab
+* **Write code** Feel free to propose features, or make a pull request. I'm also always interested in working on other projects, so if you want to do a collab, hit me up. 
 
 ## License
 
