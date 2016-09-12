@@ -21,19 +21,6 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 [![Edit][edit_screen_th]][edit_screen]
 [![Gyms][gym_screen_th]][gym_screen]
 
-[stat_screen_1]: screenshots/full/stat_screen_1.png
-[stat_screen_1_th]: screenshots/thumb/stat_screen_1.png
-[stat_screen_2]: screenshots/full/stat_screen_2.png
-[stat_screen_2_th]: screenshots/thumb/stat_screen_2.png
-[edit_screen]: screenshots/full/edit_screen.png
-[edit_screen_th]: screenshots/thumb/edit_screen.png
-[inbox]: screenshots/full/inbox.png
-[inbox_th]: screenshots/thumb/inbox.png
-[message_screen]: screenshots/full/message_screen.png
-[message_screen_th]: screenshots/thumb/message_screen.png
-[gym_screen]: screenshots/full/gym_screen.png
-[gym_screen_th]: screenshots/thumb/gym_screen.png
-
 ## Contributing
 
 * **Submit your own insults** The insults in this app are crowdsourced. The database is regularly updated, so use this link to submit your own insult. https://goo.gl/forms/HbYTUr3kRDZtQ7N22
@@ -58,3 +45,17 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+    
+[stat_screen_1]: screenshots/full/stat_screen_1.png
+[stat_screen_1_th]: screenshots/thumbs/stat_screen_1.png
+[stat_screen_2]: screenshots/full/stat_screen_2.png
+[stat_screen_2_th]: screenshots/thumbs/stat_screen_2.png
+[edit_screen]: screenshots/full/edit_screen.png
+[edit_screen_th]: screenshots/thumbs/edit_screen.png
+[inbox]: screenshots/full/inbox.png
+[inbox_th]: screenshots/thumbs/inbox.png
+[message_screen]: screenshots/full/message_screen.png
+[message_screen_th]: screenshots/thumbs/message_screen.png
+[gym_screen]: screenshots/full/gym_screen.png
+[gym_screen_th]: screenshots/thumbs/gym_screen.png
