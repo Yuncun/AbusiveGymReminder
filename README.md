@@ -6,8 +6,8 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 
 ## How it works
 
-* **Find you gym** Use a place picker to find your gym by name or by map
-* **Choose your gym days** Choose your goals for the week
+* **Find you gym** Use a place picker to find your gym by name or location
+* **Choose your gym days** You can change these anytime
 * **Get Abused** If you dont go near your gym on a gym day, you'll receive an abusive notification the next morning
 
 **Warning** Abusive Gym Reminder may contain offensive messages. You can adjust the abuse mode in the app.
@@ -20,6 +20,17 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 [![Inbox][inbox_th]][inbox]
 [![Edit][edit_screen_th]][edit_screen]
 [![Gyms][gym_screen_th]][gym_screen]
+
+## FAQ
+
+* **GPS? Will this drain my battery?** No. Geofences use a combination of magic to locate the user without maintaining a persistent gps connection
+
+* **These messages are too abusive/not abusive enough** Try adjusting the abuse level in settings. AGR comes in three abuse levels, from 'passive aggressive' to 'abusive mature'
+
+* **The app didn't register my visit!"** You can try to increase the geofence radius under settings. The default radius is 50 meters. Meanwhile, you can edit your attendance history by clicking on a day in the weekview or the history chart. 
+
+* **What if I live directly on top of my gym?** This app will not work correctly. But at least you have that going for you.
+
 
 ## Contributing
 
