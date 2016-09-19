@@ -29,12 +29,6 @@ public class NotificationUtil {
      */
     public static void showNotification(Context context, String header, String body, String reason_line, String attr_line, int reason){
         Intent notificationIntent = new Intent(context, AllinOneActivity.class);
-        /*
-        if (messageID>0){
-            notificationIntent = new Intent(context, AllinOneActivity.class);
-            notificationIntent.putExtra(Constants.MESSAGE_ID, messageID);
-        }
-        */
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(AllinOneActivity.class);

@@ -259,7 +259,7 @@ public class AllinOneActivity extends AppCompatActivity {
     }
 
     /**
-     * Used to update AbusiveGymReminder date. (Very important!)
+     * Used to update AbusiveGymReminder date if necessary
      *
      * AbusiveGymReminder will periodically update it's date at midnight. However,
      * there are various cases where this is not fully reliable. This function exists
@@ -306,12 +306,13 @@ public class AllinOneActivity extends AppCompatActivity {
                             lastDate.setDate(cal.getTime());
                             DayRecord day = new DayRecord();
                             day.setComment(context.getResources().getString(R.string.no_record));
+                            day.setHasBeenToGym(false); //If the user went to the gym, it would've been updated
                             day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(context, cal.get(Calendar.DAY_OF_WEEK)));
                             datasource.createDayRecord(day);
                             if (flagStartNewVisit){
                                 day.startCurrentVisit();
                             }
-                            SharedPrefUtil.updateMainLog(context, "Updated day from onStart");
+                            SharedPrefUtil.updateMainLog(context, "Updated day from onStart " + day.getDateString() + " wasGymDay==" + day.isGymDay());
 
                         }
                     } else if (lastDate.getDate().after(todaysDate.getDate())) {

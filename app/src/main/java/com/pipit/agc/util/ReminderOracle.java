@@ -49,7 +49,6 @@ public class ReminderOracle {
         SharedPrefUtil.updateMainLog(context, "doLeaveMessageBasedOnPerformance");
 
         DayRecord yesterday = StatsContent.getInstance().getYesterday(true);
-        DayRecord today = StatsContent.getInstance().getToday(false);
         InsultsRecords messagerepo = InsultsRecords.getInstance(context);
         messagerepo.open();
         Message msg = null;

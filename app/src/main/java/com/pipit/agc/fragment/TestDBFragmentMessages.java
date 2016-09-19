@@ -19,6 +19,7 @@ import com.pipit.agc.model.Message;
 import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
+import com.pipit.agc.util.StatsContent;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -90,14 +91,11 @@ public class TestDBFragmentMessages extends ListFragment {
         _deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayAdapter<Message> adapter = (ArrayAdapter<Message>) getListAdapter();
-                if (adapter.getCount() > 0) {
-                    Message message = (Message) adapter.getItem(0);
-                    datasource.deleteMessage(message);
-                    adapter.remove(message);
-                }
-                adapter.notifyDataSetChanged();
-
+                DayRecord today = (StatsContent.getInstance().getToday(false));
+                Log.d("Eric", "Today: " + today.getId());
+                datasource.deleteDayRecord(today);
+                Toast.makeText(getContext(), "Attempting to delete day ID:" + today.getId(), Toast.LENGTH_SHORT);
+                Log.d("Eric", "Today: " + today.getId());
             }
         });
         _testReceiverAddButton = (Button) view.findViewById(R.id.receivertestadd);
@@ -114,10 +112,6 @@ public class TestDBFragmentMessages extends ListFragment {
                 //Copy+pasted from AlarmManagerBroadcastReceiver
                 MsgAndDayRecords datasource;
                 datasource = MsgAndDayRecords.getInstance();
-                if (datasource==null){
-                    MsgAndDayRecords.initializeInstance(new MsgDBHelper(getActivity()));
-                    datasource = MsgAndDayRecords.getInstance();
-                }
                 datasource.openDatabase();
                 DayRecord day = new DayRecord();
                 day.setComment("You have not been to the gym");

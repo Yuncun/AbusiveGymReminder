@@ -78,6 +78,10 @@ public class MsgAndDayRecords {
         }
     }
 
+    public boolean isOpen(){
+        return mDatabase.isOpen();
+    }
+
     /**DAY RECORDS STUFF**/
     public DayRecord createDayRecord(DayRecord day) {
         String comment=day.getComment();
@@ -181,6 +185,10 @@ public class MsgAndDayRecords {
             return null;
         }
         return lastDayRecord;
+    }
+
+    public void deleteLastDayRecord(){
+        deleteDayRecord(getLastDayRecord());
     }
 
     private DayRecord cursorToDayRecord(Cursor cursor) {

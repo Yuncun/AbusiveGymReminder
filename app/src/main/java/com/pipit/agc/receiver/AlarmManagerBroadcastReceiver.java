@@ -10,6 +10,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.pipit.agc.R;
+import com.pipit.agc.activity.AllinOneActivity;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.Message;
 import com.pipit.agc.util.Constants;
@@ -17,6 +18,7 @@ import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.data.MsgDBHelper;
 import com.pipit.agc.util.SharedPrefUtil;
+import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.Util;
 
 import java.util.Calendar;
@@ -100,7 +102,17 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         Log.d(TAG, "Starting dayLogging");
         SharedPrefUtil.updateMainLog(context, "Doing day logging, adding a day");
 
+        //Update the date
+        AllinOneActivity.updateDate(context);
+
+        //If the day was already updated by another mechanism, (like in onStart), then
+        //we don't need to do this again.
+        //DayRecord yesterday = StatsContent.getInstance().getYesterday(true);
+        ReminderOracle.doLeaveMessageBasedOnPerformance(context, false);
+        return;
+
         //Progress current day - open db
+        /*
         MsgAndDayRecords datasource;
         datasource = MsgAndDayRecords.getInstance();
         if (datasource==null){
@@ -113,6 +125,8 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         //we don't need to do this again.
         DayRecord yesterday = datasource.getLastDayRecord();
         if (!yesterday.equalsDate(new Date())){
+            Log.d(TAG, "End daylogging - date was already good before doDayLogging");
+            datasource.closeDatabase();
             ReminderOracle.doLeaveMessageBasedOnPerformance(context, false);
             return;
         }
@@ -131,21 +145,29 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         day.setComment("You have not been to the gym");
         day.setDate(new Date());
         day.setHasBeenToGym(false);
-        day.setIsGymDay(isTheNewDayAGymDay(context));
+        day.setIsGymDay(isTheNewDayAGymDay(context, day.getDate()));
         datasource.createDayRecord(day);
         datasource.closeDatabase();
         if (flagStartNewVisit){
             day.startCurrentVisit();
         }
         ReminderOracle.doLeaveMessageBasedOnPerformance(context, false);
+        */
     }
 
-    private static boolean isTheNewDayAGymDay(Context context){
+    /**
+     * @deprecated Check out SharedPrefUtil.getGymStatusFromDayOfWeek()
+     * @param context
+     * @param date
+     * @return
+     */
+    private static boolean isTheNewDayAGymDay(Context context, Date date){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<String> plannedDOWstrs = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
         List<Integer> plannedDOW = Util.listOfStringsToListOfInts(plannedDOWstrs);
         HashSet<Integer> set = new HashSet<Integer>(plannedDOW);
         Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
         int DOW = cal.get(Calendar.DAY_OF_WEEK);
         DOW--;
         if (set.contains(DOW)){
