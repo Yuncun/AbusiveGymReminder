@@ -38,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
                         startActivity(i);
                         break;
                     case (1):
-                        i.putExtra("fragment", "TestDBFragmentMessages");
+                        i.putExtra("fragment", "DevTestingFragment");
                         startActivity(i);
                         break;
 

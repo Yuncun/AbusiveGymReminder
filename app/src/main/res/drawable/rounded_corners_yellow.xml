@@ -3,12 +3,12 @@
     android:shape="rectangle"   >
 
     <solid
-        android:color="@color/cardview_light_background" >
+        android:color="@color/app_icon_yellow" >
     </solid>
 
     <stroke
         android:width="2dp"
-        android:color="@color/cardview_light_background" >
+        android:color="@color/app_icon_yellow" >
     </stroke>
 
     <padding

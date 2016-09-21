@@ -19,7 +19,8 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 /**
- * Created by Eric on 9/18/2016.
+ * Still a learning-in-progress for me
+ * Please don't take this code for face value
  */
 public class MsgAndDayRecordsTest extends AndroidTestCase {
     private static final String TAG = "DBTest";

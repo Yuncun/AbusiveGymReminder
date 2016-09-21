@@ -24,7 +24,10 @@ import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -52,20 +55,13 @@ public class ReminderOracle {
         InsultsRecords messagerepo = InsultsRecords.getInstance(context);
         messagerepo.open();
         Message msg = null;
-        if (yesterday==null){
-            //First day
-            //Do nothing for now
-        }
-        else if (testmode){
-            int type = 0;
-            int reason = 0;
-            if (yesterday.beenToGym()){
-                type = InsultRecordsConstants.REMINDER_HITYESTERDAY;
-                reason = Message.HIT_TODAY;
-            }else{
-                type = InsultRecordsConstants.REMINDER_MISSEDYESTERDAY;
-                reason = Message.MISSED_YESTERDAY;
-            }
+
+        //Test mode shows a negative notification immediately. It is designed for testing, but is also used for
+        //showing sample messages
+        if (testmode){
+            int type = InsultRecordsConstants.REMINDER_MISSEDYESTERDAY;
+            int reason = Message.MISSED_YESTERDAY;
+
             try{
                 Log.d(TAG, "Attempting to get a new message type=" + type);
                 long id = findANewMessageId(context, type);
@@ -83,9 +79,13 @@ public class ReminderOracle {
                 Log.d(TAG, e.toString());
                 SharedPrefUtil.updateMainLog(context, "Failed to add new message:\n" +
                         "    " + e.toString());
-                Toast.makeText(context, "New Message failed",
+                Toast.makeText(context, "Failed to show notification",
                         Toast.LENGTH_LONG).show();
             }
+        }
+        else if (yesterday==null){
+            //First day
+            //Do nothing for now
         }
 
         /*Not test mode - Same code as above, but we do nothing for yesterday.beenToGym case, and does the waiting*/
@@ -149,7 +149,8 @@ public class ReminderOracle {
         Log.d(TAG, "Preferred notification time is " + dt.toString("MM-dd HH:mm:ss"));
 
         if (testmode && msg!=null){
-            setLeaveMessageAlarm(context, msg, 0, 0);
+            NotificationUtil.showNotification(context, msg.getHeader(), msg.getBody(), "Simulating a missed gym day", "", Message.WELCOME);
+            //setLeaveMessageAlarm(context, msg, 0, 0);
         }
         else
         if (msg!=null){
@@ -269,7 +270,9 @@ public class ReminderOracle {
                     firstLineBody = m.getBody();
                 }
                 reason = Message.HIT_TODAY;
-                msgid = m.getId();
+                DateFormat df = new SimpleDateFormat("HH:mm, E MMM ");
+                reason_line = context.getString(R.string.gym_register_prefix) + " " + df.format(Calendar.getInstance().getTime());
+
                 /*
                 try{
                     firstLineBody = "Today,  " + today.toString("E, MM d") + " is ";

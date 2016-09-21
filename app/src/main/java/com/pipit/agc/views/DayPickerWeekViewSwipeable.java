@@ -88,8 +88,8 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
                         cv.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));
                         /*
                         if (index == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                            if (mFrag instanceof DayOfWeekPickerFragment){
-                                ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(false);
+                            if (mFrag instanceof GymPickerVerticalFragment){
+                                ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(false);
                             }
                         }*/
                     } else {
@@ -99,8 +99,8 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
                         cv.setBackgroundColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
                         /*
                         if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                            if (mFrag instanceof DayOfWeekPickerFragment) {
-                                ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(true);
+                            if (mFrag instanceof GymPickerVerticalFragment) {
+                                ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(true);
                             }
                         }*/
 

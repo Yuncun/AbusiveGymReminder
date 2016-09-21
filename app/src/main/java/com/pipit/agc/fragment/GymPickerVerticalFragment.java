@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.util.Constants;
-import com.pipit.agc.adapter.DayOfWeekAdapter;
+import com.pipit.agc.adapter.DayPickerVerticalAdapter;
 import com.pipit.agc.R;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.Util;
@@ -24,11 +24,11 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * This is the vertical version of the GymPicker fragment
  * Created by Eric on 2/3/2016.
  */
-public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
+public class GymPickerVerticalFragment extends android.support.v4.app.Fragment{
     private static final String TAG = "DayPickerFragment";
-    DayOfWeekAdapter _adapter;
     private final static String ARG_SECTION_NUMBER = "section_number";
     private MsgAndDayRecords datasource;
     private List<DayRecord> _allPreviousDays;
@@ -37,13 +37,8 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
 
-    //This is used to update the "GYM DAY" cardview in the Newsfeed
-    public interface UpdateGymDayToday{
-        void todayIsGymDay(boolean isGymDay);
-    }
-
-    public static DayOfWeekPickerFragment newInstance(int sectionNumber) {
-        DayOfWeekPickerFragment fragment = new DayOfWeekPickerFragment();
+    public static GymPickerVerticalFragment newInstance(int sectionNumber) {
+        GymPickerVerticalFragment fragment = new GymPickerVerticalFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -55,7 +50,7 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
         super.onActivityCreated(savedInstanceState);
     }
 
-    public DayOfWeekPickerFragment() {
+    public GymPickerVerticalFragment() {
     }
 
     @Override
@@ -80,12 +75,11 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         int totalheight = Math.round(Util.getScreenHeightMinusStatusBar(getContext()));
-        mAdapter = new DayOfWeekAdapter( new HashSet<Integer>(plannedDOW), this, totalheight );
+        mAdapter = new DayPickerVerticalAdapter( new HashSet<Integer>(plannedDOW), this, totalheight );
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
     }
-
 
     @Override
     public void onPause() {
@@ -103,28 +97,6 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
         return dow;
     }
 
-
-
-    private Calendar getCalFromListPosition(int pos){
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, pos);
-        return cal;
-    }
-
-    //This was originally written to show some sort of notice in newsfeed if no days are selected
-    //TODO: Currently commented out
-    //TODO: Decide if necessary from a design standpoint
-    private void executeUpdateCallback(boolean isGymDay) {
-        /*
-        Log.d("Eric", "Execute callback");
-        Fragment registeredFrag = ((AllinOneActivity) getActivity()).getFragmentByKey(Constants.NEWSFEED_FRAG);
-        if (registeredFrag!=null){
-            UpdateGymDayToday update = (UpdateGymDayToday) registeredFrag;
-            update.todayIsGymDay(isGymDay);
-        }
-        */
-    }
-
     public void toggleCurrentGymDayData(boolean gymDay){
         if (datasource==null){
             datasource = MsgAndDayRecords.getInstance();
@@ -132,6 +104,5 @@ public class DayOfWeekPickerFragment extends android.support.v4.app.Fragment{
         datasource.openDatabase();
         datasource.updateLatestDayRecordIsGymDay(gymDay);
         MsgAndDayRecords.getInstance().closeDatabase();
-        executeUpdateCallback(false); //Update the newsfeed fragment
     }
 }

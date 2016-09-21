@@ -10,12 +10,10 @@ import com.pipit.agc.fragment.DayPickerFragment;
 import com.pipit.agc.fragment.LogFragment;
 import com.pipit.agc.R;
 import com.pipit.agc.fragment.PreferencesFragment;
-import com.pipit.agc.fragment.TestDBFragmentMessages;
+import com.pipit.agc.fragment.DevTestingFragment;
 
 /**
  * This class wraps the fragment that is shown for each indivudal setting
- * So
- *    SettingsActivity
  */
 public class IndividualSettingActivity extends AppCompatActivity  {
 
@@ -38,8 +36,8 @@ public class IndividualSettingActivity extends AppCompatActivity  {
                 case "LogFragment":
                     frag = LogFragment.newInstance(0);
                     break;
-                case "TestDBFragmentMessages":
-                    frag = TestDBFragmentMessages.newInstance(1);
+                case "DevTestingFragment":
+                    frag = DevTestingFragment.newInstance(1);
                     break;
                 case "PreferencesFragment":
                     frag = PreferencesFragment.newInstance();

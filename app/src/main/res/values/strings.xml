@@ -44,10 +44,14 @@
     <string name="noinfo">N/A</string>
     <string name="questionmark">/?</string>
     <string name="firsttime_title">Welcome!</string>
-    <string name="firsttime_body">Abusive Gym Reminder has been successfully configured. You will now receive messages when you miss gym days. \n \nYou can also adjust the level of abuse in settings</string>
+    <string name="firsttime_body">Abusive Gym Reminder has been configured. You will now receive messages when you miss gym days.
+        You can also configure abuse level in settings. \n \nCan\'t wait? Click below to simulate a missed day </string>
     <string name="gotit">Got it</string>
+    <string name="close">Close</string>
     <string name="ok">Ok</string>
+    <string name="gym_register_prefix">Went to the gym at </string>
     <string name="firsttime_message">In the future you will abusive messages here when you miss gym days</string>
+    <string name="sample_abuse">Send me a message</string>
 
 
 

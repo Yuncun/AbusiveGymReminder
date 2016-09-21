@@ -16,6 +16,7 @@ import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.Util;
 
 /**
+ * Handles the indiviual day dialog
  * Created by Eric on 7/24/2016.
  */
 public class DayrecordClickListener implements View.OnClickListener {
@@ -23,7 +24,6 @@ public class DayrecordClickListener implements View.OnClickListener {
     private Context context;
     private DayrecordObserver observer;
     private MaterialDialog dialog;
-
 
     public interface DayrecordObserver{
         void update();

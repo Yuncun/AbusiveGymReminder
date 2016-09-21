@@ -21,15 +21,16 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.afollestad.materialcab.MaterialCab;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.controller.GeofenceController;
 import com.pipit.agc.data.MsgAndDayRecords;
-import com.pipit.agc.fragment.DayPickerFragmentTwo;
+import com.pipit.agc.fragment.GymDayPickerFragment;
 import com.pipit.agc.model.Message;
-import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.util.Constants;
 import com.pipit.agc.fragment.LocationListFragment;
 import com.pipit.agc.fragment.NewsfeedFragment;
@@ -65,7 +66,7 @@ public class AllinOneActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_main_layout);
 
-        /*If opened from a notification, redirect to correct page*/
+        //If opened from a notification, redirect to correct page
         if (getIntent().hasExtra(Constants.MESSAGE_ID)){
             long id = getIntent().getLongExtra(Constants.MESSAGE_ID, -1);
             Log.d(TAG, "Received intent with message id " + id);
@@ -81,7 +82,7 @@ public class AllinOneActivity extends AppCompatActivity {
             }
         }
 
-        /*Launch Intro Activity if required*/
+        //Launch Intro Activity if required
         if (SharedPrefUtil.getIsFirstTime(this)){
             Intent intent = new Intent(this, IntroductionActivity.class);
             //intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
@@ -92,22 +93,32 @@ public class AllinOneActivity extends AppCompatActivity {
             f.setHeader(getString(R.string.firsttime_message));
             f.setBody("");
             ReminderOracle.leaveMessage(f);
-            final Context context = this;
-            new MaterialDialog.Builder(this)
+            final MaterialDialog d = new MaterialDialog.Builder(this)
                     .title(R.string.firsttime_title)
-                    .content(R.string.firsttime_body)
-                    .positiveText(R.string.gotit)
+                    .customView(R.layout.welcome_dialog_layout, true)
+                    .positiveText(R.string.close)
                     .dismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
-                            NotificationUtil.showNotification(context, getResources().getString(R.string.firsttime_message),
+                            /*NotificationUtil.showNotification(context, getResources().getString(R.string.firsttime_message),
                                     "", //Second line
                                     "", //Reason of message
                                     "", //Attribution
-                                    Message.WELCOME);
+                                    Message.WELCOME);*/
+                            //TODO: Make a design decision whether to show the welcome notif. It may be redundant with the "sample" notif
                         }
                     })
                     .show();
+            View dv = d.getCustomView();
+            Button sampleabuse = (Button) dv.findViewById(R.id.welcome_try_abuse_button);
+            sampleabuse.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ReminderOracle.doLeaveMessageBasedOnPerformance(v.getContext(), true);
+                    d.dismiss();
+                }
+            });
+
 
         }
 
@@ -211,7 +222,7 @@ public class AllinOneActivity extends AppCompatActivity {
                 case 1:
                     return NewsfeedFragment.newInstance();
                 case 2:
-                    return DayPickerFragmentTwo.newInstance(2);
+                    return GymDayPickerFragment.newInstance(2);
                 case 3:
                     return LocationListFragment.newInstance(1);
                 default:

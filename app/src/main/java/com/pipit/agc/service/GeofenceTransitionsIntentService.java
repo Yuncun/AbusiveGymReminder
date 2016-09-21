@@ -25,8 +25,7 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Not being used
- * @Todo: Delete this
+ * This class has been deprecated by the GeofenceController.
  * Created by Eric on 2/21/2016.
  */
 public class GeofenceTransitionsIntentService extends IntentService {

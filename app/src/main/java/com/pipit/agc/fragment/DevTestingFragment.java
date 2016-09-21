@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.pipit.agc.R;
 import com.pipit.agc.data.MsgAndDayRecords;
-import com.pipit.agc.data.MsgDBHelper;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.model.Message;
 import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
@@ -28,10 +27,10 @@ import java.util.List;
 /**
  * Created by Eric on 1/23/2016.
  */
-public class TestDBFragmentMessages extends ListFragment {
+public class DevTestingFragment extends ListFragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String TAG = "TestDBFragmentMessages";
+    private static final String TAG = "DevTestingFragment";
 
     private MsgAndDayRecords datasource;
     private TextView currentTime;
@@ -41,11 +40,10 @@ public class TestDBFragmentMessages extends ListFragment {
     private Button _deleteButton;
     private Button _addDay;
     private Button _startGymVisit;
-
     private Button _upgradeDbButton;
 
-    public static TestDBFragmentMessages newInstance(int sectionNumber) {
-        TestDBFragmentMessages fragment = new TestDBFragmentMessages();
+    public static DevTestingFragment newInstance(int sectionNumber) {
+        DevTestingFragment fragment = new DevTestingFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);

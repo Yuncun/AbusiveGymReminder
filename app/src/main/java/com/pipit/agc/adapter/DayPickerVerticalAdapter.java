@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.pipit.agc.fragment.GymPickerVerticalFragment;
 import com.pipit.agc.util.Constants;
 import com.pipit.agc.R;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.Util;
-import com.pipit.agc.fragment.DayOfWeekPickerFragment;
 import com.pipit.agc.model.DayRecord;
 
 import java.util.Calendar;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by Eric on 2/3/2016.
  */
-public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.CardViewHolder>{
+public class DayPickerVerticalAdapter extends RecyclerView.Adapter<DayPickerVerticalAdapter.CardViewHolder>{
     private final Context context;
     private final Fragment mFrag;
     public int count = 7;
@@ -52,7 +52,7 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         }
     }
 
-    public DayOfWeekAdapter( HashSet<Integer> weeklySchedule, Fragment frag, int sizeToFill) {
+    public DayPickerVerticalAdapter(HashSet<Integer> weeklySchedule, Fragment frag, int sizeToFill) {
         this.mFrag = frag;
         this.context = frag.getContext();
         this._screenheight=sizeToFill;
@@ -82,7 +82,7 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
         final String gymDay = context.getResources().getString(R.string.gym_day);
         final String restDay = context.getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(position)){
-            holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+            holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
             holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
             //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
             holder.statuscircle.setText(gymDay);
@@ -110,20 +110,20 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.Card
                     holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
                     //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                        if (mFrag instanceof DayOfWeekPickerFragment){
-                            ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(false);
+                        if (mFrag instanceof GymPickerVerticalFragment){
+                            ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(false);
                         }
                     }
                 } else {
                     dates.add(datestr);
                     Log.d(TAG, "Added day " + datestr + " to weekly gym days");
                     holder.statuscircle.setText(gymDay);
-                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
                     holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
                     //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
                     if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                        if (mFrag instanceof DayOfWeekPickerFragment) {
-                            ((DayOfWeekPickerFragment) mFrag).toggleCurrentGymDayData(true);
+                        if (mFrag instanceof GymPickerVerticalFragment) {
+                            ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(true);
                         }
                     }
 

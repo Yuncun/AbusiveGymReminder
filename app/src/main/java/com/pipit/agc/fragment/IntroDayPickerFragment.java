@@ -10,12 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.R;
-import com.pipit.agc.adapter.DayOfWeekAdapter;
+import com.pipit.agc.adapter.DayPickerVerticalAdapter;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
@@ -31,7 +30,6 @@ import java.util.List;
  */
 public class IntroDayPickerFragment  extends android.support.v4.app.Fragment {
     private static final String TAG = "DayPickerFragment";
-    DayOfWeekAdapter _adapter;
     private MsgAndDayRecords datasource;
     private List<DayRecord> _allPreviousDays;
 
@@ -95,7 +93,7 @@ public class IntroDayPickerFragment  extends android.support.v4.app.Fragment {
 
         Log.d(TAG, "recyclervieweight  " + recyclervieweight + " insructionsheight " + instructionsweight
                 + " bottombarweight " + bottombarweight + " allocatedheight " + allocatedheight);
-        mAdapter = new DayOfWeekAdapter(new HashSet<Integer>(plannedDOW), this, (int) allocatedheight);
+        mAdapter = new DayPickerVerticalAdapter(new HashSet<Integer>(plannedDOW), this, (int) allocatedheight);
         mRecyclerView.setAdapter(mAdapter);
 
         instructions_one.setText("Pick your gym days");

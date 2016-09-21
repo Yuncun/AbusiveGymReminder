@@ -29,7 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * DEPRECATED - ONLY USE AS A RESOURCE
+ * @Deprecated - ONLY USE AS A RESOURCE
+ * This was version one
  */
 public class DayPickerFragment extends ListFragment implements AbsListView.OnScrollListener {
     private static final String TAG = "DayPickerFragment";
@@ -49,7 +50,6 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
     public DayPickerFragment() {

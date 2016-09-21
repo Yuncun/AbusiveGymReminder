@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +33,11 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * This fragment is for the "Choose your days" tab
  * Created by Eric on 2/3/2016.
  */
-public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
-    private static final String TAG = "DayPickerFragmentTwo";
+public class GymDayPickerFragment extends android.support.v4.app.Fragment {
+    private static final String TAG = "GymDayPickerFragment";
     private final static String ARG_SECTION_NUMBER = "section_number";
 
     private SharedPreferences prefs;
@@ -44,13 +46,8 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
     private LinearLayout wv;
     private ImageView feat_graphic;
 
-    //This is used to update the "GYM DAY" cardview in the Newsfeed
-    public interface UpdateGymDayToday {
-        void todayIsGymDay(boolean isGymDay);
-    }
-
-    public static DayPickerFragmentTwo newInstance(int sectionNumber) {
-        DayPickerFragmentTwo fragment = new DayPickerFragmentTwo();
+    public static GymDayPickerFragment newInstance(int sectionNumber) {
+        GymDayPickerFragment fragment = new GymDayPickerFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -62,7 +59,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    public DayPickerFragmentTwo() {
+    public GymDayPickerFragment() {
     }
 
     @Override
@@ -137,7 +134,7 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
         cv.setFillColor(Color.GRAY);
 
         if (_plannedDays.get(index)) {
-            cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
+            cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
 
         } else {
             cv.setStrokeColor(ContextCompat.getColor(context, R.color.transparent));
@@ -159,23 +156,21 @@ public class DayPickerFragmentTwo extends android.support.v4.app.Fragment {
                     _plannedDays.set(index, true);
                     dates.add(Integer.toString(index));
                     //cv.setTitleText(gymDay);
-                    cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_red));
+                    cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
                 }
 
                 SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, new ArrayList(dates));
+                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
                 //setFeatureGraphic();
                 weekitem.invalidate();
             }
         });
-
-        /*
-        if (index == _allDayRecords.size() - 1) {
-            cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-            rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-            rfd.setText("Today");
-        }*/
     }
 
+    /**
+     * Sets a picture below the selected days.
+     * Currently not being used as a UI design decision
+     */
     private void setFeatureGraphic() {
         //Set the graphic
         Bitmap bMap;
