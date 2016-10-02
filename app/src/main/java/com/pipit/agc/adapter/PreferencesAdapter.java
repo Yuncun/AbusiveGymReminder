@@ -1,8 +1,13 @@
 package com.pipit.agc.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +16,15 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.R;
+import com.pipit.agc.activity.SettingsActivity;
 import com.pipit.agc.data.InsultRecordsConstants;
+import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
 import com.pipit.agc.util.SharedPrefUtil;
@@ -56,6 +64,10 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_slider, parent, false);
                 return new RangePickerViewHolder(view);
+            case 4:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.preference_onebutton, parent, false);
+                return new OneButtonViewHolder(view);
             default:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_rowitem, parent, false);
@@ -70,6 +82,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
         int type = getItemViewType(position);
         switch (type) {
             case 0:
+                //"Maturity level"
                 final MaturityViewHolder mv = (MaturityViewHolder) holder;
                 mv.mPrefName.setText("Maturity Level");
                 mv.subtitle.setText("Set abuse level of messages");
@@ -119,6 +132,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
                 break;
             case 1:
+                //"Notif pref time"
                 final NotificationTimeViewHolder dv = ((NotificationTimeViewHolder) holder);
                 dv.mPrefName.setText("Preferred Notification Time");
 
@@ -157,24 +171,31 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
                 break;
             case 2:
+                //"Sanitize days"
                 final OneButtonViewHolder obv = ((OneButtonViewHolder) holder);
                 obv.mPrefName.setText("Sanitize Dayrecords");
-                obv.subtitle.setText("Remove unreasonably long gym visits");
-                obv.button.setText("Go");
+                obv.subtitle.setText("Remove unreasonably long gym visits (>8 hours)");
                 obv.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.d(TAG, "Clicked to sanitize dayrecords");
                         List<DayRecord> days = StatsContent.getInstance().getAllDayRecords(true);
                         int count = 0;
                         for (DayRecord d : days){
-                            if (d.sanitizeLastVisitTime(DayRecord.maxSaneVisitTime)) count++;
+                            if (d.sanitizeLastVisitTime(DayRecord.maxSaneVisitTime)){
+                                MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
+                                datasource.openDatabase();
+                                datasource.updateDayRecordVisitsById(d.getId(), d.getSerializedVisitsList());
+                                datasource.closeDatabase();
+                                count++;
+                            }
                         }
-
-                        Toast.makeText(v.getContext(), "Removed " + count +  " visits", Toast.LENGTH_SHORT);
+                        Toast.makeText(v.getContext(), "Removed " + count +  " visits", Toast.LENGTH_SHORT).show();
                     }
                 });
                 break;
             case 3:
+                //"Geofence Radius"
                 final RangePickerViewHolder rnv = ((RangePickerViewHolder) holder);
                 rnv.mPrefName.setText("Geofence radius");
                 rnv.subtitle.setText("(Meters)");
@@ -220,6 +241,31 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                         });
                     }
                 });
+                break;
+            case 4:
+                //"About"
+                final OneButtonViewHolder abv = ((OneButtonViewHolder) holder);
+                String versNumber;
+
+                try{
+                    PackageInfo pInfo = _context.getPackageManager().getPackageInfo(_context.getPackageName(), 0);
+                    versNumber = pInfo.versionName;
+                } catch (PackageManager.NameNotFoundException e){
+                    Log.e(TAG, "Could not find package name. Vers. number will be unavailable ", e);
+                    versNumber = "?";
+                }
+
+                abv.mPrefName.setText("Version");
+                abv.subtitle.setText(versNumber);
+                abv.button.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                        Intent i = new Intent(v.getContext(), SettingsActivity.class);
+                        v.getContext().startActivity(i);
+                        return false;
+                    }
+                });
             default:
                 break;
         }
@@ -242,12 +288,12 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
     }
 
     public class OneButtonViewHolder extends PreferencesAdapter.ViewHolder{
-        Button button;
+        RelativeLayout button;
         TextView subtitle;
 
         public OneButtonViewHolder (View view){
             super(view);
-            button = (Button) view.findViewById(R.id.prefbutton);
+            button = (RelativeLayout) view.findViewById(R.id.prefbutton);
             subtitle = (TextView) view.findViewById(R.id.prefsubtext);
         }
     }
@@ -298,7 +344,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
     @Override
     public int getItemCount() {
-        return 4;
+        return 5;
     }
 
     @Override

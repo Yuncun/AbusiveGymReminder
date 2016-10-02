@@ -5,12 +5,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/currentTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/dayResetTime"
+        android:id="@+id/test_db_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -55,12 +50,12 @@
             android:text="Toggle Visit"
             android:onClick="onClick" />
 
+        <Button
+            android:id="@+id/showStartScreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toggle Visit"
+            android:onClick="onClick" />
+
     </LinearLayout>
-
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
 </LinearLayout>

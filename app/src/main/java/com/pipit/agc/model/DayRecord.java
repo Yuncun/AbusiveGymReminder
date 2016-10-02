@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class DayRecord {
     public static String TAG = "DayRecord";
-    public static final int maxSaneVisitTime = 60*12;
+    public static final int maxSaneVisitTime = 60*8; //Minutes
 
     public static class Visit implements Serializable{
         public LocalDateTime in;
@@ -278,6 +278,11 @@ public class DayRecord {
     /**
      * This function can be used to clean up dayrecords that never ended their last visit. This bug may have been fixed
      * but in any case this function will check the dayrecord and remove the last visit if it exceeds the max time.
+     *
+     * This function does NOT update the database; Updating database can be done with
+     * datasource.updateLatestDayRecordVisits();
+
+     *
      * @param maxTime
      */
     public boolean sanitizeLastVisitTime(int maxTime){

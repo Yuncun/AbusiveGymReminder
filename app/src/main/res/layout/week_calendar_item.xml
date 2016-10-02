@@ -37,7 +37,7 @@
         android:singleLine="true"
         android:textSize="@dimen/textSmall"
         android:visibility="invisible"
-        android:text="(Today)"/>
+        android:text=""/>
 
 
 </LinearLayout>

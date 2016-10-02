@@ -86,6 +86,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
     public void setAlarmForDayLog(Context context, Calendar calendar)
     {
+        Log.d(TAG, "Set daily alarm");
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
         i.putExtra("purpose", "daylogging");

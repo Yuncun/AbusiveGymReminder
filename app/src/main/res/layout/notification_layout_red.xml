@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/schemethree_teal"
+    android:background="@color/schemethree_red"
     >
 
     <ImageView
@@ -13,6 +13,7 @@
         android:layout_margin="8dp"
         android:contentDescription="@string/app_name"
         android:src="@drawable/common_ic_googleplayservices" />
+
 
     <LinearLayout
         android:layout_width="wrap_content"

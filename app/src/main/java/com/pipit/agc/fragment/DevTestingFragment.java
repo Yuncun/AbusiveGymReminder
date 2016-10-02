@@ -1,6 +1,9 @@
 package com.pipit.agc.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,10 +19,12 @@ import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.model.Message;
 import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
+import com.pipit.agc.util.Constants;
 import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,20 +32,17 @@ import java.util.List;
 /**
  * Created by Eric on 1/23/2016.
  */
-public class DevTestingFragment extends ListFragment {
-
+public class DevTestingFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "DevTestingFragment";
 
     private MsgAndDayRecords datasource;
-    private TextView currentTime;
-    private TextView resetTime;
     private Button _simulateMidnight;
     private Button _testReceiverAddButton;
     private Button _deleteButton;
     private Button _addDay;
     private Button _startGymVisit;
-    private Button _upgradeDbButton;
+    private Button _showStartScreen;
 
     public static DevTestingFragment newInstance(int sectionNumber) {
         DevTestingFragment fragment = new DevTestingFragment();
@@ -59,21 +61,13 @@ public class DevTestingFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.test_db_fragment, container, false);
         datasource = MsgAndDayRecords.getInstance();
-        datasource.openDatabase();
-        List<Message> values = datasource.getAllMessages();
-        ArrayAdapter<Message> adapter = new ArrayAdapter<Message>(getActivity(),
-                android.R.layout.simple_list_item_1, values);
         setButtons(contentView);
-        setListAdapter(adapter);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
 
-        currentTime = (TextView) contentView.findViewById(R.id.currentTime);
-        currentTime.setText("Messages DB");
+        TextView expl_txt = (TextView) contentView.findViewById(R.id.test_db_txt);
+        expl_txt.setText(R.string.test_db_txt);
 
         return contentView;
     }
-
 
     public void setButtons(View view) {
         _simulateMidnight = (Button) view.findViewById(R.id.add);
@@ -123,8 +117,8 @@ public class DevTestingFragment extends ListFragment {
             }
         });
 
-        final String gymVisitStart = "Start";
-        final String gymVisitEnd = "End";
+        final String gymVisitStart = "Start visit timer";
+        final String gymVisitEnd = "End visit timer";
         _startGymVisit = (Button) view.findViewById(R.id.startVisit);
 
         MsgAndDayRecords datasource;
@@ -165,6 +159,16 @@ public class DevTestingFragment extends ListFragment {
                 Log.d(TAG, "Today's visits" + today.printVisits());
             }
         });
+        _showStartScreen = (Button) view.findViewById(R.id.showStartScreen);
+        _showStartScreen.setText("Show Intro screen");
+        _showStartScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            /* This action forgets the key sharedpreferences except for gyms */
+                SharedPrefUtil.setFirstTime(v.getContext(), true);
+                SharedPrefUtil.putListToSharedPref(v.getContext(), Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
+            }
+        });
     }
 
     @Override
@@ -175,7 +179,7 @@ public class DevTestingFragment extends ListFragment {
 
     @Override
     public void onPause() {
-        MsgAndDayRecords.getInstance().closeDatabase();
+        datasource.closeDatabase();
         super.onPause();
     }
 

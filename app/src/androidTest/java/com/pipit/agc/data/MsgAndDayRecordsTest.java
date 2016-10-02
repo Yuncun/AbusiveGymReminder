@@ -19,8 +19,7 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 /**
- * Still a learning-in-progress for me
- * Please don't take this code for face value
+ * Basic tests for basic DB operations
  */
 public class MsgAndDayRecordsTest extends AndroidTestCase {
     private static final String TAG = "DBTest";
@@ -98,7 +97,7 @@ public class MsgAndDayRecordsTest extends AndroidTestCase {
         //Test updateDate did something if we were one day behind
         DayRecord testDayTwo = new DayRecord();
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -2);
         testDayTwo.setDate(cal.getTime());
         testDayTwo.setHasBeenToGym(false);
         testDayTwo.setIsGymDay(false);

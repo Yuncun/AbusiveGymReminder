@@ -24,7 +24,6 @@ public class IntroGoalsFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     public static IntroGoalsFragment newInstance() {
         IntroGoalsFragment fragment = new IntroGoalsFragment();
         return fragment;

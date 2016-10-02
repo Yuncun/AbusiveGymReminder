@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.pipit.agc.R;
@@ -19,6 +21,8 @@ import com.pipit.agc.model.Message;
  */
 public class NotificationUtil {
 
+    private static final String TAG = "NotificationUtil";
+
     /**
      * @param context
      * @param header Title (The first thing that is seen)
@@ -28,6 +32,9 @@ public class NotificationUtil {
      * @param attr_line Optional bottom right corner, offers credit to author of message
      */
     public static void showNotification(Context context, String header, String body, String reason_line, String attr_line, int reason){
+        int expanded_layoutid = R.layout.expanded_notification;
+        int notif_layoutid = R.layout.notification_layout;
+
         Intent notificationIntent = new Intent(context, AllinOneActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -44,18 +51,32 @@ public class NotificationUtil {
         .setAutoCancel(true)
         .setContentIntent(notificationPendingIntent);
 
+        //Some customization depending on reason for notif
+        if (reason == Message.MISSED_YESTERDAY){
+            Log.d(TAG, "Showing missed yesterday notification");
+            //Show red layouts
+            expanded_layoutid = R.layout.expanded_notification_red;
+            notif_layoutid = R.layout.notification_layout_red;
+            /*
+            builder.setSmallIcon(R.drawable.delete_icon);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.setColor(ContextCompat.getColor(context, R.color.schemethree_darkerred));
+            } */
+        }else{
+            Log.d(TAG, "Showing notification for reason number " + reason);
+            /*
+            builder.setSmallIcon(R.drawable.check_icon);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.setColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+            }*/
+        }
+
         //RemoveView allows us to further customize notification with a layout
-        RemoteViews rmv = getComplexNotificationView(context, R.layout.notification_layout);
+        RemoteViews rmv = getComplexNotificationView(context, notif_layoutid);
         //Set the ~two lines of text
         rmv.setTextViewText(R.id.title, "Abusive Gym Reminder");
         rmv.setTextViewText(R.id.lineone, header);
-        //rmv.setTextViewText(R.id.linetwo, body);
         builder.setContent(rmv);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // build a complex notification, with buttons and such
-            if (reason == Message.MISSED_YESTERDAY) builder.setColor(Color.RED);
-        }
 
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -64,7 +85,7 @@ public class NotificationUtil {
         Notification notification = builder.build();
 
         //Set the expanded view (For some reason we can't do this in the builder
-        RemoteViews bigrmv = getComplexNotificationView(context, R.layout.expanded_notification);
+        RemoteViews bigrmv = getComplexNotificationView(context, expanded_layoutid);
         bigrmv.setTextViewText(R.id.title, "Abusive Gym Reminder");
         bigrmv.setTextViewText(R.id.lineone, header);
         bigrmv.setTextViewText(R.id.linetwo, body);
@@ -79,8 +100,12 @@ public class NotificationUtil {
         mNotificationManager.notify(0, notification);
     }
 
-
-
+    /**
+     * A helper funciton for retrieving the remoteviews from the notification layout
+     * @param context
+     * @param layout
+     * @return
+     */
     private static RemoteViews getComplexNotificationView(Context context, int layout) {
         // Using RemoteViews to bind custom layouts into Notification
         RemoteViews notificationView = new RemoteViews(

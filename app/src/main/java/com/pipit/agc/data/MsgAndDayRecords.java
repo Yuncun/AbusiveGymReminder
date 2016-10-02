@@ -120,11 +120,26 @@ public class MsgAndDayRecords {
                 + " = " + id, null);
     }
 
+    /**
+     * Updates the gym visits array of the latest day
+     * @param s - Serialized list of visits
+     */
     public void updateLatestDayRecordVisits(String s){
-
         String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " + MsgDBHelper.COLUMN_VISITS + " = "
                 + "?" + " WHERE " + MsgDBHelper.COLUMN_ID + " = (SELECT MAX(_id) FROM " + MsgDBHelper.TABLE_DAYRECORDS
                 + ")";
+
+        mDatabase.execSQL(query, new String[]{s});
+    }
+
+    /**
+     * Update the gym visits array of a given day
+     * @param id
+     * @param s - Serialized list of visits
+     */
+    public void updateDayRecordVisitsById(long id, String s){
+        String query = "UPDATE " + MsgDBHelper.TABLE_DAYRECORDS + " SET " + MsgDBHelper.COLUMN_VISITS + " = "
+                + "?" + " WHERE " + MsgDBHelper.COLUMN_ID + " = " + id;
 
         mDatabase.execSQL(query, new String[]{s});
     }

@@ -118,8 +118,6 @@ public class AllinOneActivity extends AppCompatActivity {
                     d.dismiss();
                 }
             });
-
-
         }
 
         /*Paging for landing screen*/
@@ -164,7 +162,6 @@ public class AllinOneActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 
@@ -188,16 +185,6 @@ public class AllinOneActivity extends AppCompatActivity {
             i.putExtra("fragment", "PreferencesFragment");
             startActivityForResult(i, 0);
             return true;
-        }
-        else if (id == R.id.action_dev){
-            Intent i = new Intent(this, SettingsActivity.class);
-            startActivityForResult(i, 1);
-        }
-        else if (id == R.id.action_forget){
-            /* This action forgets the key sharedpreferences except for gyms */
-            SharedPreferences prefs = getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-            SharedPrefUtil.setFirstTime(this, true);
-            SharedPrefUtil.putListToSharedPref(this, Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -260,7 +247,7 @@ public class AllinOneActivity extends AppCompatActivity {
     }
 
     protected void onStart() {
-        /*Do stats */
+        //Update stats
         StatsContent stats = StatsContent.getInstance();
         stats.refreshDayRecords();
         stats.refreshMessageRecords();
@@ -280,7 +267,7 @@ public class AllinOneActivity extends AppCompatActivity {
      *
      * * @param context
      */
-    public static void updateDate(Context context){
+    public static synchronized void updateDate(Context context){
         /*Make sure that we are up to date*/
         try {
             MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
@@ -299,10 +286,12 @@ public class AllinOneActivity extends AppCompatActivity {
                     datasource.createDayRecord(day);
                 } else if (!lastDate.equalsDate(todaysDate.getDate())) {
                     if (lastDate.getDate().before(todaysDate.getDate())) {
+                        Log.d(TAG, "LastDate == " + lastDate.getDateString() + " todaysDate == " + todaysDate.getDateString());
+                        SharedPrefUtil.updateMainLog(context, "LastDate == " + lastDate.getDateString() + " todaysDate == " + todaysDate.getDateString());
                         //We skipped a day somehow
                         while (!lastDate.equalsDate(todaysDate.getDate())) {
                             //If there are any visits on that day, we need to end them
-                            boolean  flagStartNewVisit = false;
+                            boolean flagStartNewVisit = false;
                             if (lastDate.isCurrentlyVisiting()){
                                 datasource.closeDatabase();
                                 lastDate.endCurrentVisit();
@@ -318,6 +307,7 @@ public class AllinOneActivity extends AppCompatActivity {
                             DayRecord day = new DayRecord();
                             day.setComment(context.getResources().getString(R.string.no_record));
                             day.setHasBeenToGym(false); //If the user went to the gym, it would've been updated
+                            day.setDate(cal.getTime());
                             day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(context, cal.get(Calendar.DAY_OF_WEEK)));
                             datasource.createDayRecord(day);
                             if (flagStartNewVisit){
@@ -343,29 +333,6 @@ public class AllinOneActivity extends AppCompatActivity {
         } finally{
             MsgAndDayRecords.getInstance().closeDatabase();
         }
-    }
-
-    protected void onStop() {
-        super.onStop();
-    }
-
-    public Fragment getFragmentByKey(String key){
-        switch (key){
-            case Constants.STATS_FRAGMENT:
-                return mSectionsPagerAdapter.getRegisteredFragment(0);
-            case Constants.LOCATION_FRAG:
-                return mSectionsPagerAdapter.getRegisteredFragment(3);
-            case Constants.DAYOFWEEK_FRAG:
-                return mSectionsPagerAdapter.getRegisteredFragment(2);
-            case Constants.NEWSFEED_FRAG:
-                return mSectionsPagerAdapter.getRegisteredFragment(1);
-            default:
-                return null;
-        }
-    }
-
-    public void onListFragmentInteraction(StatsContent.Stat item){
-        Log.d(TAG, "onListFragmentInteraction");
     }
 
     private void checkPermissions(){

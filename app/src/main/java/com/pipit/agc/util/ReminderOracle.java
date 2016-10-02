@@ -149,7 +149,7 @@ public class ReminderOracle {
         Log.d(TAG, "Preferred notification time is " + dt.toString("MM-dd HH:mm:ss"));
 
         if (testmode && msg!=null){
-            NotificationUtil.showNotification(context, msg.getHeader(), msg.getBody(), "Simulating a missed gym day", "", Message.WELCOME);
+            NotificationUtil.showNotification(context, msg.getHeader(), msg.getBody(), "Simulating a missed gym day", "", Message.MISSED_YESTERDAY);
             //setLeaveMessageAlarm(context, msg, 0, 0);
         }
         else
