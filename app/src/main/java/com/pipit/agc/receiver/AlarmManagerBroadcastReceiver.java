@@ -84,15 +84,28 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
         wl.release();
     }
 
-    public void setAlarmForDayLog(Context context, Calendar calendar)
+    public static void setAlarmForDayLog(Context context, Calendar calendar)
     {
         Log.d(TAG, "Set daily alarm");
-        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmManagerBroadcastReceiver.class);
-        i.putExtra("purpose", "daylogging");
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pi);
+
+        boolean alarmUp = (PendingIntent.getBroadcast(context, 0,
+                i,
+                PendingIntent.FLAG_NO_CREATE) != null);
+        //Avoid setting alarm if it is already set
+        //Note - If you are messing around with alarm times, then you will not receive updated alarms unless you reboot
+        if (alarmUp)
+        {
+            Log.d("Eric", "Alarm is already active - Not setting an alarm");
+        }
+        else{
+            Log.d("Eric", "Alarm not active - Setting alarm manager");
+            AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            i.putExtra("purpose", "daylogging");
+            PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+            am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pi);
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ public class Constants {
     public static int timeBetweenLocationChecks = 1000 * 60 * 10; //Milliseconds
     public static int DAY_RESET_HOUR = 0;
     public static int DAY_RESET_MINUTE = 0;
+    public static int DAYS_TO_ADD = 1; //When setting our alarm manager, we want to set
     public static final int DEFAULT_RADIUS = 200;
     public static final int GEOFENCE_MIN_RADIUS = 50;
     public static final int GEOFENCE_MAX_RADIUS = 400;

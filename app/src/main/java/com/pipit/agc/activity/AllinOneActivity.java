@@ -31,6 +31,7 @@ import com.pipit.agc.controller.GeofenceController;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.fragment.GymDayPickerFragment;
 import com.pipit.agc.model.Message;
+import com.pipit.agc.receiver.AlarmManagerBroadcastReceiver;
 import com.pipit.agc.util.Constants;
 import com.pipit.agc.fragment.LocationListFragment;
 import com.pipit.agc.fragment.NewsfeedFragment;
@@ -60,6 +61,8 @@ public class AllinOneActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private MaterialCab cab;
     private FloatingActionButton mFab;
+    private AlarmManagerBroadcastReceiver _alarm = new AlarmManagerBroadcastReceiver();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +171,13 @@ public class AllinOneActivity extends AppCompatActivity {
         cab = new MaterialCab(this, R.id.cab_stub);
         GeofenceController.getInstance().init(this);
         checkPermissions();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
+        calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
+        calendar.add(Calendar.DATE, Constants.DAYS_TO_ADD);
+        AlarmManagerBroadcastReceiver.setAlarmForDayLog(getApplicationContext(), calendar);
     }
 
     @Override

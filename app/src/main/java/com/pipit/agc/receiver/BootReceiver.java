@@ -26,13 +26,13 @@ public class BootReceiver extends BroadcastReceiver {
         GeofenceController.getInstance().init(context);
 
         /*Set the daily update alarm*/
-        AlarmManagerBroadcastReceiver _alarm = new AlarmManagerBroadcastReceiver();
+        //AlarmManagerBroadcastReceiver _alarm = new AlarmManagerBroadcastReceiver();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
-        calendar.add(Calendar.DATE, 1);
-        _alarm.setAlarmForDayLog(context.getApplicationContext(), calendar);
+        calendar.add(Calendar.DATE, Constants.DAYS_TO_ADD);
+        AlarmManagerBroadcastReceiver.setAlarmForDayLog(context.getApplicationContext(), calendar);
     }
 
 

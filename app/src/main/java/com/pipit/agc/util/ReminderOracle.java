@@ -270,20 +270,9 @@ public class ReminderOracle {
                     firstLineBody = m.getBody();
                 }
                 reason = Message.HIT_TODAY;
-                DateFormat df = new SimpleDateFormat("HH:mm, E MMM ");
+                DateFormat df = new SimpleDateFormat("HH:mm, MMM d ");
                 reason_line = context.getString(R.string.gym_register_prefix) + " " + df.format(Calendar.getInstance().getTime());
 
-                /*
-                try{
-                    firstLineBody = "Today,  " + today.toString("E, MM d") + " is ";
-                    if (StatsContent.getInstance().getToday(true).isGymDay()){
-                        firstLineBody += "a gym day";
-                    }else{
-                        firstLineBody += "not a gym day";
-                    }
-                } catch (Exception e){
-                    Log.e(TAG, e.toString());
-                }*/
                 break;
             case Message.NO_RECORD:
             default:
