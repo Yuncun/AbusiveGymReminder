@@ -31,20 +31,9 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 
 ## Credit
 
-This application uses Open Source components. You can find the source code of their open source projects along with license information below.
+My thanks to iSoron, for his uHabits project (the HistoryChart view) https://github.com/iSoron/uhabits
 
-Project: uHabits (the HistoryChart view) https://github.com/iSoron/uhabits
-
-Author: iSoron
-
-License GPLV2
-
-
-Project: CircleView https://github.com/pavlospt/CircleView
-
-Author: pavlospt
-
-License Apache
+My thanks to pavlospt for his CircleView https://github.com/pavlospt/CircleView
 
 ## Contributing
 
