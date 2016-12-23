@@ -29,6 +29,11 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 
 * **What if I live directly on top of my gym?** This app will not work correctly. But at least you have that going for you.
 
+## Credit
+
+My thanks to iSoron, for his uHabits project (the HistoryChart view) https://github.com/iSoron/uhabits
+
+My thanks to pavlospt for his CircleView https://github.com/pavlospt/CircleView
 
 ## Contributing
 
