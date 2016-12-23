@@ -54,9 +54,12 @@ public class NotificationUtil {
         //Some customization depending on reason for notif
         if (reason == Message.MISSED_YESTERDAY){
             Log.d(TAG, "Showing missed yesterday notification");
-            //Show red layouts
-            expanded_layoutid = R.layout.expanded_notification_red;
-            notif_layoutid = R.layout.notification_layout_red;
+
+            //The following commented lines would allow us to show a different color for Missed days.
+            //Currently not being used as a design decision.
+            //expanded_layoutid = R.layout.expanded_notification_red;
+            //notif_layoutid = R.layout.notification_layout_red;
+
             /*
             builder.setSmallIcon(R.drawable.delete_icon);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
