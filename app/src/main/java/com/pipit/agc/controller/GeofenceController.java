@@ -27,6 +27,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * Handles geofences registrations
+ *
+ * Geofences are a Google API that alerts a client when it enters a location. What happens on our end is we
+ * register the API with the location and define the onConnected, etc. callbacks, which are here. The
+ * actual transition event callbacks are found in GeoFenceTransitionsInentReceiver
+ *
+ * I guess this isn't really a controller.
  * Created by Eric on 6/13/2016.
  */
 public class GeofenceController {
@@ -62,7 +69,6 @@ public class GeofenceController {
         populategeofencelist();
     }
 
-
     /**
      * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the LocationServices API.
      */
@@ -78,6 +84,7 @@ public class GeofenceController {
     public void populategeofencelist() {
         Log.d(TAG, "PopulateGeofenceList");
         if (mGeofenceMap != null && mGeofenceList != null) {
+            Log.d(TAG, "PopulateGeofenceList - Already populated, returning");
             return;
         }
         mGeofenceList = new ArrayList<Geofence>();
@@ -114,7 +121,7 @@ public class GeofenceController {
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setLoiteringDelay(1000 * 60 * 1)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT | Geofence.GEOFENCE_TRANSITION_ENTER)
                         //.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         //        Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();
@@ -210,14 +217,13 @@ public class GeofenceController {
                 "You need to use ACCESS_FINE_LOCATION with geofences", securityException);
     }
 
-
     /**
      * Builds and returns a GeofencingRequest. This just adds the current geofence in escrow
      * It can also accept an entire list, but we aren't using that now
      */
     private GeofencingRequest getGeofencingRequestForAdd() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
         builder.addGeofences(mGeofenceList);
         return builder.build();
     }
@@ -268,11 +274,13 @@ public class GeofenceController {
     private GoogleApiClient.ConnectionCallbacks mRemoveConnectionListener = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
+            SharedPrefUtil.updateMainLog(context, "GoogleApiClient onConnected");
             if (mRemoveList!=null && mRemoveList.size() > 0) {
                 PendingResult<Status> result = LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, mRemoveList);
                 result.setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
+                        SharedPrefUtil.updateMainLog(context, "GoogleApiClient removeGeofences API onresult");
                         Log.d(TAG, "cleared geofence list");
                         if (status.isSuccess()) {
                             for (int k = 0; k < mRemoveList.size(); k++) {
@@ -329,6 +337,7 @@ public class GeofenceController {
         public void onConnectionFailed(ConnectionResult result) {
             // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
             // onConnectionFailed.
+            SharedPrefUtil.updateMainLog(context, "GoogleApiClient for geofence connection failed: " + result.getErrorCode());
             Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
         }
     };

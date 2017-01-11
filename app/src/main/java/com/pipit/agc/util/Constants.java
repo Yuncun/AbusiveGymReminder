@@ -37,7 +37,9 @@ public class Constants {
     public static final String MATURITY_LEVEL = "maturitylevel";
     public static final String FLAG_WAKEUP_SHOW_NOTIF = "shownotification"; //Checked on phone wakeup to determine if notif is shown
     public static final String CONTENT_WAKEUP_SHOW_NOTIF = "wakeupnotifcontent"; //Contains JSON of message to show on wakeup
-    //Todo: I kind of stopped doing this halfway through there may be others out there
+    public static final String PREF_SHOW_NOTIF_ON_GYMHITS = "showhitgymswitch"; //Option for the user to see "gym day registered" notifications
+    public static final String PREF_SHOW_HIT_NOTIFS_TODAY = "showhitgymtoday"; //Flag to prevent multiple "gym registered" visits in case of fragmented geofencing
+    //Warning - This list of prefs may not account for all existing sharedprefs used
 
 
     /*Fragment Names*/
@@ -48,6 +50,12 @@ public class Constants {
     public static final String LOGS_FRAG = "logs_fragment";
     public static final String PLACEPICKER_FRAG = "placepicker_fragment";
     public static final String STATS_FRAGMENT = "stats_fragment";
+
+    /*Fragment order*/
+    public static final int STATS_FRAG_POS = 0;
+    public static final int NEWFEED_FRAG_POS = 1;
+    public static final int DAYPICKER_FRAG_POS = 2;
+    public static final int LOCATION_FRAG_POS = 3;
 
     /*Permissions requestcodes*/
     public static final int GRANTED_LOCATION_PERMISSIONS = 1;

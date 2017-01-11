@@ -73,6 +73,12 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         />
 
+    <Button
+        android:id="@+id/endvisit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End last visit"
+        android:onClick="onClick" />
 
 
 </LinearLayout>

@@ -11,9 +11,9 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
  * Created by Eric on 2/17/2016.
  */
 public class InsultsDBHelper extends SQLiteAssetHelper {
-    public static final String DATABASE_NAME = "messagerepo.db";
+    public static final String DATABASE_NAME = "messagerepo.db"; //Must match name of .db file in src/main/assets/databases/
     public static final String TABLE_MESSAGES = "Messages";
-    public static final int DATABASE_VERSION = 16;
+    public static final int DATABASE_VERSION = 18; //Update this every time we update messagerepo.db
 
     //Column Names
     public static final String COLUMN_ANGER = "Anger";

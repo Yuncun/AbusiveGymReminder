@@ -30,12 +30,14 @@ public class NotificationUtil {
      * @param reason Specifies if this is shown for missing/hitting a gym
      * @param reason_line Optional bottom left corner, offers explanation of message ("Tuesday, July 4th was a gym day")
      * @param attr_line Optional bottom right corner, offers credit to author of message
+     * @param id ID of message, if applicable
      */
-    public static void showNotification(Context context, String header, String body, String reason_line, String attr_line, int reason){
+    public static void showNotification(Context context, String header, String body, String reason_line, String attr_line, int reason, long id){
         int expanded_layoutid = R.layout.expanded_notification;
         int notif_layoutid = R.layout.notification_layout;
 
         Intent notificationIntent = new Intent(context, AllinOneActivity.class);
+        notificationIntent.putExtra(Constants.MESSAGE_ID, id);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(AllinOneActivity.class);

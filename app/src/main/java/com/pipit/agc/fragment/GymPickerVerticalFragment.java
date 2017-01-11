@@ -24,6 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * Update 1/8/17
+ * Pretty sure this isn't being used right now.
+ *
  * This is the vertical version of the GymPicker fragment
  * Created by Eric on 2/3/2016.
  */

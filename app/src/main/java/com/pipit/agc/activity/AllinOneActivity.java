@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -37,13 +36,11 @@ import com.pipit.agc.fragment.LocationListFragment;
 import com.pipit.agc.fragment.NewsfeedFragment;
 import com.pipit.agc.R;
 import com.pipit.agc.fragment.StatisticsFragment;
-import com.pipit.agc.util.NotificationUtil;
 import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.model.DayRecord;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -59,10 +56,9 @@ public class AllinOneActivity extends AppCompatActivity {
     SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
-    private MaterialCab cab;
-    private FloatingActionButton mFab;
+    private MaterialCab cab; //Contextual action bar - Used in removing messages in newsfeed
+    private FloatingActionButton mFab; //Floating action button - Used in place picker frag to add gym
     private AlarmManagerBroadcastReceiver _alarm = new AlarmManagerBroadcastReceiver();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +75,7 @@ public class AllinOneActivity extends AppCompatActivity {
                 List<Message> msgs = datasource.getAllMessages();
                 long index = msgs.get(msgs.size()-1).getId(); //This is a bit hacky, but we need to direct user to last msg
                 datasource.closeDatabase();
+
                 Intent intent = new Intent(this, MessageBodyActivity.class);
                 intent.putExtra(Constants.MESSAGE_ID, index);
                 startActivityForResult(intent, 0);
@@ -127,7 +124,7 @@ public class AllinOneActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(Constants.NEWFEED_FRAG_POS);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -156,7 +153,7 @@ public class AllinOneActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 3) {
+                if (position == Constants.LOCATION_FRAG_POS) {
                     mFab.show();
                 } else {
                     mFab.hide();
@@ -214,13 +211,13 @@ public class AllinOneActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             switch (position){
-                case 0:
+                case Constants.STATS_FRAG_POS:
                     return StatisticsFragment.newInstance(0);
-                case 1:
+                case Constants.NEWFEED_FRAG_POS:
                     return NewsfeedFragment.newInstance();
-                case 2:
+                case Constants.DAYPICKER_FRAG_POS:
                     return GymDayPickerFragment.newInstance(2);
-                case 3:
+                case Constants.LOCATION_FRAG_POS:
                     return LocationListFragment.newInstance(1);
                 default:
                     return NewsfeedFragment.newInstance();
@@ -278,13 +275,16 @@ public class AllinOneActivity extends AppCompatActivity {
      * * @param context
      */
     public static synchronized void updateDate(Context context){
+        //First, reset daily flags
+        //Todo: When ready, move this into the part of code that is called only when date is updated - Right now it gets reset constantly
+        SharedPrefUtil.putBoolean(context, Constants.PREF_SHOW_HIT_NOTIFS_TODAY, true); //This means it is okay to show a "hit gym" notification
+
         /*Make sure that we are up to date*/
         try {
             MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
             synchronized (datasource) {
                 DayRecord lastDate = datasource.getLastDayRecord();
-
                 DayRecord todaysDate = new DayRecord();
                 todaysDate.setDate(new Date());
 
@@ -382,7 +382,7 @@ public class AllinOneActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 0) {
-            Fragment f = mSectionsPagerAdapter.getRegisteredFragment(0);
+            Fragment f = mSectionsPagerAdapter.getRegisteredFragment(Constants.STATS_FRAG_POS);
             if (f instanceof StatisticsFragment){
                 ((StatisticsFragment) f).update();
             }
@@ -397,5 +397,3 @@ public class AllinOneActivity extends AppCompatActivity {
         return mFab;
     }
 }
-
-

@@ -4,14 +4,17 @@ import android.content.Context;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.R;
+import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
+import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.Util;
 
@@ -51,6 +54,33 @@ public class DayrecordClickListener implements View.OnClickListener {
         formatWasGymDayText(dv);
         formatWentToGymText(dv);
         formatTimesListText(dv);
+        formatToggleButton(dv);
+    }
+
+    private void formatToggleButton(View dv){
+        final Button button = (Button) dv.findViewById(R.id.endvisit);
+        if (!today.isCurrentlyVisiting()){
+            button.setVisibility(View.GONE);
+        }else{
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        MsgAndDayRecords datasource;
+                        datasource = MsgAndDayRecords.getInstance();
+                        datasource.openDatabase();
+                        today.endCurrentVisit();
+                        datasource.updateDayRecordVisitsById(today.getId(), today.getSerializedVisitsList());
+                        datasource.closeDatabase();
+                        Toast.makeText(context, "Updated visits", Toast.LENGTH_SHORT).show();
+                        button.setVisibility(View.GONE);
+                    }catch(Exception e){
+                        Toast.makeText(context, "Failed to update date", Toast.LENGTH_SHORT).show();
+                        SharedPrefUtil.updateMainLog(context, "Failed to update visits of date - Id " + today.getId());
+                    }
+                }
+            });
+        }
     }
 
     /**

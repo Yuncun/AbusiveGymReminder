@@ -14,7 +14,16 @@ import android.widget.Toast;
 
 import com.pipit.agc.R;
 
-
+/**
+ * This is a prototype page for a future feature to let the user define personal goals at startup.
+ * The goals will be in the form of three choices
+ *  'im too fat'
+ *  'im too skinny'
+ *  'im satisfied with my own self image'
+ *
+ *  These would be used to personalize insults (for example, choice 1 will send you fat insults)
+ *  If you pick choice 3, the card disappears and you see a notification saying 'dont kid yourself'
+ */
 public class IntroGoalsFragment extends Fragment {
     CardView choiceOne;
     CardView choiceTwo;

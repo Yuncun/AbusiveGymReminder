@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Suite of functions that delivers reminders based on gym behavior
+ * Suite of functions that delivers reminders based on gym attendance
  */
 public class ReminderOracle {
     private static final String TAG = "ReminderOracle";
@@ -56,6 +56,7 @@ public class ReminderOracle {
         messagerepo.open();
         Message msg = null;
 
+        long id = -1;
         //Test mode shows a negative notification immediately. It is designed for testing, but is also used for
         //showing sample messages
         if (testmode){
@@ -64,7 +65,7 @@ public class ReminderOracle {
 
             try{
                 Log.d(TAG, "Attempting to get a new message type=" + type);
-                long id = findANewMessageId(context, type);
+                id = findANewMessageId(context, type);
                 if (!messagerepo.isOpen()) { messagerepo.open(); }
                 if (id < 1){
                     Log.d(TAG, "No id's found, getting random message");
@@ -102,7 +103,7 @@ public class ReminderOracle {
                 try{
                     //This whole mechanism prevents us from showing the same message over and over again
                     Log.d(TAG, "Attempting to get a new message");
-                    long id = findANewMessageId(context, type);
+                    id = findANewMessageId(context, type);
                     if (!messagerepo.isOpen()) { messagerepo.open(); }
                     if (id < 1){
                         Log.d(TAG, "No id's found, getting random message");
@@ -149,8 +150,8 @@ public class ReminderOracle {
         Log.d(TAG, "Preferred notification time is " + dt.toString("MM-dd HH:mm:ss"));
 
         if (testmode && msg!=null){
-            NotificationUtil.showNotification(context, msg.getHeader(), msg.getBody(), "Simulating a missed gym day", "", Message.MISSED_YESTERDAY);
-            //setLeaveMessageAlarm(context, msg, 0, 0);
+            NotificationUtil.showNotification(context, msg.getHeader(), msg.getBody(), "Simulating a missed gym day", "", Message.MISSED_YESTERDAY, id);
+            ReminderOracle.leaveMessage(msg); //Comment this out if test messages shouldn't leave in inbox
         }
         else
         if (msg!=null){
@@ -281,7 +282,7 @@ public class ReminderOracle {
                 msgid = m.getId();
                 reason = Message.NEW_MSG;
         }
-        NotificationUtil.showNotification(context, title, firstLineBody, reason_line, attribution, reason);
+        NotificationUtil.showNotification(context, title, firstLineBody, reason_line, attribution, reason, msgid);
     }
 
     public static long findANewMessageId(Context context, int type){

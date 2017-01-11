@@ -19,7 +19,7 @@ public class MsgDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_BEENTOGYM = "beentogym";
     public static final String COLUMN_VISITS = "visits";
     private static final String DATABASE_NAME = "dayrecords.db";
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 16; //DONT FUCK WITH THIS AFTER PRODUCTION, IT'LL DROP EVERYBODY's RECORDS
 
     private static final String CREATE_TABLE_DAYRECORDS = "create table "
             + TABLE_DAYRECORDS + "(" + COLUMN_ID + " integer primary key autoincrement, "

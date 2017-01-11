@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class SharedPrefUtil {
 
+
+
     public static void updateMainLog(Context context, String s){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
@@ -82,6 +84,18 @@ public class SharedPrefUtil {
         return prefs.getLong(key, defaultlong);
     }
 
+    public static void putBoolean(Context context, String key, boolean val){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, val);
+        editor.commit();
+    }
+
+    public static boolean getBoolean(Context context, String key, boolean defaultbool){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+        return prefs.getBoolean(key, defaultbool);
+    }
+
     public static void setFirstTime(Context context, boolean firsttime){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
@@ -102,7 +116,7 @@ public class SharedPrefUtil {
      */
     public static String getLastVisitString(Context context, SimpleDateFormat sdf){
         if (sdf==null){
-            sdf = new SimpleDateFormat("MMM d h:mm a");
+            sdf = new SimpleDateFormat("MMM d h:mm a"); //Todo: Put these dateformats in constants
         }
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         Long timeinms =  prefs.getLong("last_visit_time", -1);
@@ -118,7 +132,6 @@ public class SharedPrefUtil {
     public static void updateLastVisitTime(Context context, Long time){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.commit();
         editor.putLong("last_visit_time", time);
         editor.commit();
     }

@@ -1,14 +1,9 @@
 package com.pipit.agc.receiver;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,7 +12,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import com.pipit.agc.activity.AllinOneActivity;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
-import com.pipit.agc.R;
+import com.pipit.agc.util.Constants;
 import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
 
@@ -42,12 +37,14 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = Integer.toString(geofencingEvent.getErrorCode());
+            SharedPrefUtil.updateMainLog(context, "Error in geofence transition - errorcode " + errorMessage);
             Log.e(TAG, errorMessage);
             return;
         }
 
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
+        Location loc = geofencingEvent.getTriggeringLocation();
 
         /* GYM DAY REGISTERED */
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL)
@@ -60,13 +57,23 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             );
 
             //Log the transition details.
-            SharedPrefUtil.updateMainLog(context, "Geofence dwell") ;
+            Log.d(TAG, "geofence dwell, geofenceTransitionDetails: " + geofenceTransitionDetails);
+            Log.d(TAG, "geofence dwell at \n Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
+            SharedPrefUtil.updateMainLog(context, "Geofence dwell at \n" +
+                    " Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
 
             //Update gym status today
             updateLastDayRecord(context);
             rememberGymHabits(context);
-            ReminderOracle.doLeaveOnGymArrivalMessage(context, true);
-            //sendNotification("GEO FENCE FROM SERVICE", context);
+
+            //In order to prevent spamming the user with "Gym Registered" notifications, we check a flag to see
+            //if we've recently sent one. This may happen because if geofences are unreliable (user will bounce in and out).
+            if (SharedPrefUtil.getBoolean(context, Constants.PREF_SHOW_HIT_NOTIFS_TODAY, true)){
+                ReminderOracle.doLeaveOnGymArrivalMessage(context, true);
+                SharedPrefUtil.putBoolean(context, Constants.PREF_SHOW_HIT_NOTIFS_TODAY, false); //Show no more registers today
+            }else{
+                SharedPrefUtil.updateMainLog(context, "Received a gym visit event but not sending another notification");
+            }
 
             //Update last visited time
             long time= System.currentTimeMillis();
@@ -90,7 +97,15 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             today.endCurrentVisit();
             datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
             datasource.closeDatabase();
-            SharedPrefUtil.updateMainLog(context, "Geofence exit");
+            Log.d(TAG, "geofence exit at \n Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
+            SharedPrefUtil.updateMainLog(context, "Geofence exit at \n" +
+                    " Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
+        }
+        else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER){
+            //This is only done for logging purposes.
+            Log.d(TAG, "geofence enter at \n Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
+            SharedPrefUtil.updateMainLog(context, "Geofence enter at \n" +
+                    " Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
         }
         else {
             Log.e(TAG, "geofenceTransition error");

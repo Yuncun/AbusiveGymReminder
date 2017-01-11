@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * This is the built in dev screen hidden under a longclick in the version setting
  * Created by Eric on 1/23/2016.
  */
 public class DevTestingFragment extends Fragment {
