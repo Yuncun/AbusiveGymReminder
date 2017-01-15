@@ -147,7 +147,7 @@ public class GymDayPickerFragment extends android.support.v4.app.Fragment {
                 HashSet<String> dates = new HashSet(SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
 
                 if (_plannedDays.get(index)) {
-                    //The clicked date was previously a Gym Day, and we need to toggle it off
+                    //The clicked date was previously a Gym Day, and we need to showTimePickers it off
                     _plannedDays.set(index, false);
                     dates.remove(Integer.toString(index)); //This is used to keep our sharedprefs records straight
                     //cv.setTitleText(restDay);

@@ -75,6 +75,7 @@
                     android:textSize="@dimen/textMedium"
                     android:textColor="@color/black"
                     android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="HEADER"
                     />
                 <TextView

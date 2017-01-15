@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.pipit.agc.R;
-import com.pipit.agc.controller.DayrecordClickListener;
+import com.pipit.agc.controller.DayrecordDialog;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Util;
 import com.pipit.agc.views.CircleView;
@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Eric on 7/23/2016.
  */
 class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
-    private DayrecordClickListener.DayrecordObserver observer;
+    private DayrecordDialog.DayrecordObserver observer;
 
     public CalendarWeekViewAdapter(Context context, List<DayRecord> allDayRecords, WeekViewSwipeable layout){
         super(context, allDayRecords, layout);
@@ -38,7 +38,7 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
         }
 
         rfd.setVisibility(View.VISIBLE);
-        DayrecordClickListener dcl = new DayrecordClickListener(_allDayRecords.get(index), context);
+        DayrecordDialog dcl = new DayrecordDialog(_allDayRecords.get(index), context);
         if (observer!=null){
             dcl.setObserver(observer);
         }
@@ -81,7 +81,7 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
         }
     }
 
-    public void setObserver(DayrecordClickListener.DayrecordObserver d){
+    public void setObserver(DayrecordDialog.DayrecordObserver d){
         observer = d;
     }
 }

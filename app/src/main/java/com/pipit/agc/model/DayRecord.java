@@ -50,6 +50,24 @@ public class DayRecord {
             }
             return Minutes.minutesBetween(in, out).getMinutes();
         }
+
+        public String print(){
+            String ret = "";
+            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("h:mm a");
+
+                if (in==null){
+                    return ret; //Should never happen
+                }
+                ret += dtfOut.print(in);
+                ret += " - ";
+                if (out == null){
+                    ret += " ? ";
+                }
+                else{
+                    ret += dtfOut.print(out);
+                }
+            return ret;
+        }
     }
 
     private long id;
@@ -207,9 +225,12 @@ public class DayRecord {
     }
 
     public boolean endCurrentVisit(LocalDateTime ldt){
+        //If last visit is open
         if (visits.size()>0 && visits.get(visits.size()-1).out==null){
+            //Get last visit
             Visit v = visits.get(visits.size()-1);
             if (ldt == null){
+                //End it
                 v.out = new LocalDateTime();
             }
             else{

@@ -133,7 +133,7 @@ public class DayPickerFragment extends ListFragment implements AbsListView.OnScr
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         List<String> dates = (SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
         if (dates.contains(datestr)){
-            //The clicked date was previously a Gym Day, and we need to toggle it off
+            //The clicked date was previously a Gym Day, and we need to showTimePickers it off
             dates.remove(datestr);
             Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
             ((TextView) v.findViewById(R.id.comment)).setText(getActivity().getResources().getText(R.string.rest_day));

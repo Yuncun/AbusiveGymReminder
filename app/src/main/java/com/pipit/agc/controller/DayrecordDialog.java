@@ -1,16 +1,20 @@
 package com.pipit.agc.controller;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.R;
+import com.pipit.agc.adapter.VisitsListAdapter;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
@@ -18,11 +22,15 @@ import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.Util;
 
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
 /**
- * Handles the indiviual day dialog
+ * Handles creation and showing of the dayrecord dialog (when you click a day).
  * Created by Eric on 7/24/2016.
  */
-public class DayrecordClickListener implements View.OnClickListener {
+public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.TimePickerCallback {
+    private final String TAG = "DayRecordDialog";
     private DayRecord today;
     private Context context;
     private DayrecordObserver observer;
@@ -32,7 +40,7 @@ public class DayrecordClickListener implements View.OnClickListener {
         void update();
     }
 
-    public DayrecordClickListener(DayRecord d, Context context) {
+    public DayrecordDialog(DayRecord d, Context context) {
         today = d;
         this.context = context;
     }
@@ -51,12 +59,17 @@ public class DayrecordClickListener implements View.OnClickListener {
                 .show();
 
         View dv = dialog.getCustomView();
+        formatTimePickersInit(dv);
         formatWasGymDayText(dv);
         formatWentToGymText(dv);
-        formatTimesListText(dv);
+        formatTimeSpentList(dv);
         formatToggleButton(dv);
     }
 
+    /**
+     * This button lets the user end a current visit
+     * @param dv
+     */
     private void formatToggleButton(View dv){
         final Button button = (Button) dv.findViewById(R.id.endvisit);
         if (!today.isCurrentlyVisiting()){
@@ -117,12 +130,11 @@ public class DayrecordClickListener implements View.OnClickListener {
     }
 
     /**
-     * Format textviews related to "Time Spent" in the Dialog
-     * Currently displays just one string containing all the times visited
-     * Todo: In the future, consider making the list of times editable
-     * @param dv Alert dialog view
+     * Creates the "time spent" section.
+     * Contains an editable list of visits.
+     * @param dv
      */
-    private void formatTimesListText(View dv){
+    private void formatTimeSpentList(View dv){
         TextView timespent = (TextView) dv.findViewById(R.id.timespent);
         timespent.setText("Total Time");
         TextView timespentresult = (TextView) dv.findViewById(R.id.timespent_result);
@@ -134,8 +146,28 @@ public class DayrecordClickListener implements View.OnClickListener {
 
         TextView visits = (TextView) dv.findViewById(R.id.visit_instances);
         visits.setText("Visits");
-        TextView visitsresult = (TextView) dv.findViewById(R.id.visit_instances_result);
-        visitsresult.setText(today.printVisits());
+        RecyclerView visitslist = (RecyclerView) dv.findViewById(R.id.timespent_list);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+        visitslist.setLayoutManager(mLayoutManager);
+        visitslist.setAdapter(new VisitsListAdapter(today.getVisits(), this));
+    }
+
+    /**
+     * The intial function for formatting the timepicker view
+     * @param dv
+     */
+    private void formatTimePickersInit(View dv){
+        //Start hidden, show when needed
+        dv.findViewById(R.id.timesection).setVisibility(View.GONE);
+
+        TextView backbutton =  (TextView) dv.findViewById(R.id.backbutton);
+        backbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "Back", Toast.LENGTH_SHORT);
+                showDefault();
+            }
+        });
     }
 
     private View.OnClickListener toggleWasGymDayListener  = new View.OnClickListener() {
@@ -173,6 +205,78 @@ public class DayrecordClickListener implements View.OnClickListener {
             }
         }
     };
+
+
+
+    /**
+     * TIME PICKER CODE
+     *
+     * This is invoked when we start to edit a visit.
+     * It will transact the layout to show the timepicker layout that is hidden by default
+     */
+    @Override
+    public void showTimePickers(final DayRecord.Visit visit){
+        View rootview = dialog.getCustomView();
+        View timesection = rootview.findViewById(R.id.timesection);
+        TextView oldtimetxt = (TextView) rootview.findViewById(R.id.oldtimetxt);
+        final TextView timetxt = (TextView) rootview.findViewById(R.id.newtimetext);
+
+        //Save an "oldvisit" that keeps the old visit.
+        final DayRecord.Visit oldvisit = new DayRecord.Visit();
+        oldvisit.in = visit.in; //Note: DateTimes are immutable, so clone is not necessary
+        oldvisit.out =  visit.out;
+
+        //Hide the main dialog
+        rootview.findViewById(R.id.sectionone).setVisibility(View.GONE);
+        //Show the timepickers
+        timesection.setVisibility(View.VISIBLE);
+        //Set the undo button behavior.
+        TextView undo =  (TextView) rootview.findViewById(R.id.backbutton);
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visit.in = oldvisit.in;
+                visit.out = oldvisit.out;
+                timetxt.setText("New Visit: " + visit.print());
+            }
+        });
+
+        timetxt.setText("New Visit: " + visit.print());
+        oldtimetxt.setText("Old Visit: " + oldvisit.print());
+
+        TimePicker fromtp = (TimePicker) timesection.findViewById(R.id.fromTime);
+        TimePicker totp = (TimePicker) timesection.findViewById(R.id.toTime);
+
+        fromtp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                visit.in.hourOfDay().setCopy(hourOfDay);
+                visit.in.minuteOfHour().setCopy(minute);
+                timetxt.setText("New Visit: " + visit.print());
+            }
+        });
+
+        totp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                visit.out.hourOfDay().setCopy(hourOfDay);
+                visit.out.minuteOfHour().setCopy(minute);
+                timetxt.setText("New Visit: " + visit.print());
+            }
+        });
+    }
+
+    /**
+     * Go back to main screen from the timepicker menu
+     */
+    @Override
+    public void showDefault(){
+        View rootview = dialog.getCustomView();
+        rootview.findViewById(R.id.sectionone).setVisibility(View.VISIBLE);
+        rootview.findViewById(R.id.timesection).setVisibility(View.GONE);
+    }
+
+
 
 }
 

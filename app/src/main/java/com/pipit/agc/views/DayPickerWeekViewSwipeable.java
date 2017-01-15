@@ -81,7 +81,7 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
                     List<String> dates = SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS);
 
                     if (_allDayRecords.get(index)) {
-                        //The clicked date was previously a Gym Day, and we need to toggle it off
+                        //The clicked date was previously a Gym Day, and we need to showTimePickers it off
                         _allDayRecords.set(index, false);
                         dates.remove(Integer.toString(index)); //This is used to keep our sharedprefs records straight
                         cv.setTitleText(restDay);

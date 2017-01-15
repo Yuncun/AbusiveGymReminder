@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pipit.agc.R;
-import com.pipit.agc.controller.DayrecordClickListener;
+import com.pipit.agc.controller.DayrecordDialog;
 import com.pipit.agc.fragment.StatisticsFragment;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.SharedPrefUtil;
@@ -30,7 +30,7 @@ import java.util.List;
 import iSoron.HistoryChart;
 
 public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.ViewHolder>
-    implements DayrecordClickListener.DayrecordObserver {
+    implements DayrecordDialog.DayrecordObserver {
     private final StatsContent mStats;
     private StatisticsFragment mFrag;
 
@@ -252,7 +252,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             List<DayRecord> days = new ArrayList( StatsContent.getInstance().getAllDayRecords(false));
             int index = days.size() - 1 - offset;
             if (index>=days.size() || index < 0) return;
-            DayrecordClickListener dcl = new DayrecordClickListener(days.get(index), mFrag.getContext());
+            DayrecordDialog dcl = new DayrecordDialog(days.get(index), mFrag.getContext());
             dcl.setObserver(getSelf());
             dcl.onClick(null);
         }

@@ -5,80 +5,95 @@
     android:orientation="vertical"
     >
     <LinearLayout
-        android:id="@+id/was_gym_day_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:id="@+id/sectionone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
-        <TextView
-            android:id="@+id/was_gym_day"
+        <LinearLayout
+            android:id="@+id/was_gym_day_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/primarytext_small"
-            android:text="Gym Day"/>
-        <TextView
-            android:id="@+id/was_gym_day_result"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/secondarytext_small"
-        />
-    </LinearLayout>
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/was_gym_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/primarytext_small"
+                android:text="Gym Day"/>
+            <TextView
+                android:id="@+id/was_gym_day_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/secondarytext_small"
+            />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/went_to_gym_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/went_to_gym_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/went_to_gym"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:text="Went to Gym"/>
+            <TextView
+                android:id="@+id/went_to_gym_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                />
+        </LinearLayout>
+
+
         <TextView
-            android:id="@+id/went_to_gym"
+            android:layout_marginTop="8dp"
+            android:id="@+id/timespent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:text="Went to Gym"/>
+            android:text="Total Time"/>
         <TextView
-            android:id="@+id/went_to_gym_result"
+            android:id="@+id/timespent_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             />
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:id="@+id/visit_instances"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:text="Visits"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/timespent_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/visit_instances_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            />
+
+        <Button
+            android:id="@+id/endvisit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="End last visit"
+            android:onClick="onClick" />
+
     </LinearLayout>
-
-
-    <TextView
-        android:layout_marginTop="8dp"
-        android:id="@+id/timespent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="Total Time"/>
-    <TextView
-        android:id="@+id/timespent_result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        />
-
-    <TextView
-        android:layout_marginTop="8dp"
-        android:id="@+id/visit_instances"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="Visits"/>
-    <TextView
-        android:id="@+id/visit_instances_result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        />
-
-    <Button
-        android:id="@+id/endvisit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="End last visit"
-        android:onClick="onClick" />
-
-
+    <include
+        android:id="@+id/timesection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/timerangepicker"/>
 </LinearLayout>
