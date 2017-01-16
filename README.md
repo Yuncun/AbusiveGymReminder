@@ -25,15 +25,15 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 
 * **GPS? Will this drain my battery?** No. The geofence does not require a persistent gps connection.
 
-* **The app didn't register my visit!** You can try to increase the geofence radius under settings. The default radius is 50 meters. Meanwhile, you can correct your attendance history by clicking on a day in the weekview or the history chart. 
+* **The app didn't register my visit!** Check if your GPS is enabled. You can also adjust gym radius in preferences. Unfortunately, location services can sometimes be inaccurate by nature. Please let me know if you can't get any gym visits at all. 
 
 * **What if I live directly on top of my gym?** This app will not work correctly. But at least you have that going for you.
 
 ## Credit
 
 My thanks to iSoron, for his uHabits project (the HistoryChart view) https://github.com/iSoron/uhabits
-
 My thanks to pavlospt for his CircleView https://github.com/pavlospt/CircleView
+My thanks to RobinHood for its sparkline (and a sick trading app in general) https://github.com/robinhood/spark
 
 ## Contributing
 
