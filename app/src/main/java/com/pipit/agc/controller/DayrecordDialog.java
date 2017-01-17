@@ -1,6 +1,7 @@
 package com.pipit.agc.controller;
 
 import android.content.Context;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,9 +22,6 @@ import com.pipit.agc.util.Constants;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.Util;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 
 /**
  * Handles creation and showing of the dayrecord dialog (when you click a day).
@@ -160,11 +158,11 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
         //Start hidden, show when needed
         dv.findViewById(R.id.timesection).setVisibility(View.GONE);
 
-        TextView backbutton =  (TextView) dv.findViewById(R.id.backbutton);
+        TextView backbutton =  (TextView) dv.findViewById(R.id.savebutton);
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "Back", Toast.LENGTH_SHORT);
+                Toast.makeText(v.getContext(), "Back", Toast.LENGTH_SHORT).show();
                 showDefault();
             }
         });
@@ -220,6 +218,7 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
         View timesection = rootview.findViewById(R.id.timesection);
         TextView oldtimetxt = (TextView) rootview.findViewById(R.id.oldtimetxt);
         final TextView timetxt = (TextView) rootview.findViewById(R.id.newtimetext);
+        TabLayout tabs = (TabLayout) rootview.findViewById(R.id.tptabs);
 
         //Save an "oldvisit" that keeps the old visit.
         final DayRecord.Visit oldvisit = new DayRecord.Visit();
@@ -231,10 +230,11 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
         //Show the timepickers
         timesection.setVisibility(View.VISIBLE);
         //Set the undo button behavior.
-        TextView undo =  (TextView) rootview.findViewById(R.id.backbutton);
+        TextView undo =  (TextView) rootview.findViewById(R.id.undobutton);
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(v.getContext(), "uNdo", Toast.LENGTH_SHORT).show();
                 visit.in = oldvisit.in;
                 visit.out = oldvisit.out;
                 timetxt.setText("New Visit: " + visit.print());
@@ -244,8 +244,11 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
         timetxt.setText("New Visit: " + visit.print());
         oldtimetxt.setText("Old Visit: " + oldvisit.print());
 
-        TimePicker fromtp = (TimePicker) timesection.findViewById(R.id.fromTime);
-        TimePicker totp = (TimePicker) timesection.findViewById(R.id.toTime);
+        final TimePicker fromtp = (TimePicker) timesection.findViewById(R.id.fromTime);
+        final TimePicker totp = (TimePicker) timesection.findViewById(R.id.toTime);
+        final LinearLayout fromtp_layout = (LinearLayout) timesection.findViewById(R.id.tp_one);
+        final LinearLayout totp_layout = (LinearLayout) timesection.findViewById(R.id.tp_two);
+        fromtp_layout.setVisibility(View.VISIBLE); //"From" time is initially set as visible
 
         fromtp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
@@ -262,6 +265,37 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
                 visit.out.hourOfDay().setCopy(hourOfDay);
                 visit.out.minuteOfHour().setCopy(minute);
                 timetxt.setText("New Visit: " + visit.print());
+            }
+        });
+
+        tabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition()==0){
+                    //Time start tab
+                    fromtp_layout.setVisibility(View.VISIBLE);
+                }else
+                if (tab.getPosition()==1){
+                    //Time end
+                    totp_layout.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                if (tab.getPosition()==0){
+                    //Time start tab
+                    fromtp_layout.setVisibility(View.GONE);
+                }else
+                if (tab.getPosition()==1){
+                    //Time end
+                    totp_layout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
     }
