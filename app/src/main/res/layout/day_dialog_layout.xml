@@ -64,13 +64,28 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             />
 
-        <TextView
-            android:layout_marginTop="8dp"
-            android:id="@+id/visit_instances"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:text="Visits"/>
+            android:orientation="horizontal">
+            <TextView
+                android:layout_marginTop="8dp"
+                android:id="@+id/visit_instances"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:text="Visits"/>
+            <ImageView
+                android:id="@+id/daydialog_overflow"
+                android:background="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"/>
+        </RelativeLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/timespent_list"
             android:layout_width="match_parent"
@@ -89,8 +104,20 @@
             android:layout_height="wrap_content"
             android:text="End last visit"
             android:onClick="onClick" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grey_400"
+                android:text="(Touch elements to edit)"/>
 
+        </LinearLayout>
     </LinearLayout>
+
     <include
         android:id="@+id/timesection"
         android:layout_width="match_parent"
