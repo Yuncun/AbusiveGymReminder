@@ -32,7 +32,9 @@ Abusive Gym Reminder automatically keeps track of your gym attendance using GPS,
 ## Credit
 
 My thanks to iSoron, for his uHabits project (the HistoryChart view) https://github.com/iSoron/uhabits
+
 My thanks to pavlospt for his CircleView https://github.com/pavlospt/CircleView
+
 My thanks to RobinHood for its sparkline (and a sick trading app in general) https://github.com/robinhood/spark
 
 ## Contributing
