@@ -6,17 +6,20 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +68,10 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                         .inflate(R.layout.preference_slider, parent, false);
                 return new RangePickerViewHolder(view);
             case 4:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.preference_togglebutton, parent, false);
+                return new ToggleButtonViewHolder(view);
+            case 5:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_onebutton, parent, false);
                 return new OneButtonViewHolder(view);
@@ -243,6 +250,19 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 });
                 break;
             case 4:
+                //"Toggle messages"
+                final ToggleButtonViewHolder tbv = ((ToggleButtonViewHolder) holder);
+                boolean onVisitMessageEnabled = SharedPrefUtil.getBoolean(_context, Constants.PREF_SHOW_NOTIF_ON_GYMHITS, true);
+                tbv.mPrefName.setText("Receive messages on visits");
+                tbv.switchbutton.setChecked(onVisitMessageEnabled);
+                tbv.switchbutton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SharedPrefUtil.putBoolean(_context, Constants.PREF_SHOW_NOTIF_ON_GYMHITS, isChecked);
+                    }
+                });
+                break;
+            case 5:
                 //"About"
                 final OneButtonViewHolder abv = ((OneButtonViewHolder) holder);
                 String versNumber;
@@ -322,7 +342,14 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
             value = (TextView) view.findViewById(R.id.prefradiusvalue);
             clickableNumberLayout = (LinearLayout) view.findViewById(R.id.clickableprefval);
         }
+    }
 
+    public class ToggleButtonViewHolder extends PreferencesAdapter.ViewHolder{
+        SwitchCompat switchbutton;
+        public ToggleButtonViewHolder(View view){
+            super(view);
+            switchbutton = (SwitchCompat) view.findViewById(R.id.on_off_toggle);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -344,7 +371,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
     @Override
     public int getItemCount() {
-        return 5;
+        return 6;
     }
 
     @Override

@@ -1,11 +1,15 @@
 package com.pipit.agc.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,7 +17,10 @@ import android.widget.Toast;
 import com.pipit.agc.R;
 import com.pipit.agc.controller.GeofenceController;
 import com.pipit.agc.fragment.LocationListFragment;
+import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.model.Gym;
+
+import org.joda.time.LocalDateTime;
 
 import java.util.List;
 
@@ -44,7 +51,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         //Show layout for empty gym
         if (_gymList.get(position).isEmpty){
-            holder.mRemoveButton.setVisibility(View.GONE);
+            holder.mOverFlow.setVisibility(View.GONE);
             holder.mIdView.setVisibility(View.GONE);
             holder.mContentView.setVisibility(View.GONE);
             holder.mNameTextView.setText("Touch to add gym");
@@ -54,7 +61,6 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             holder.mNameTextView.setLayoutParams(layoutParams);
         }else {
             holder.mItem = _gymList.get(position);
-            //holder.mIdView.setText("Gym " + Integer.toString(_gymList.get(position).proxid));
             holder.mIdView.setText(mFrag.getContext().getString(R.string.gym));
             holder.mNameTextView.setText(_gymList.get(position).name);
             if (_gymList.get(position).address.equals(mFrag.getResources().getString(R.string.no_address_default))) {
@@ -74,15 +80,13 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             }
         });
 
-        holder.mRemoveButton.setOnClickListener(new View.OnClickListener(){
+        holder.mOverFlow.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                Log.d(TAG, "Removing a gym");
-                GeofenceController.getInstance().removeGeofencesById(_gymList.get(position).proxid, mListener);
+            public void onClick(View v) {
+                showPopup(v, position);
                 //((AllinOneActivity) mFrag.getActivity()).removeGeofencesById(position + 1);
                 //_gymList.set(position, new Gym());
             }
-
         });
 
     }
@@ -98,7 +102,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         public final TextView mContentView;
         public final RelativeLayout mClickableLayout;
         public final TextView mNameTextView;
-        public final Button mRemoveButton;
+        public final ImageView mOverFlow;
 
         public Gym mItem;
 
@@ -108,7 +112,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             mIdView = (TextView) view.findViewById(R.id.gym_id);
             mContentView = (TextView) view.findViewById(R.id.content);
             mClickableLayout = (RelativeLayout) view.findViewById(R.id.location_description);
-            mRemoveButton = (Button) view.findViewById(R.id.removeButton);
+            mOverFlow = (ImageView) view.findViewById(R.id.location_overflow);
             mNameTextView = (TextView) view.findViewById(R.id.gym_name);
         }
 
@@ -119,4 +123,25 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     }
 
 
+    private void showPopup(View v, final int position) {
+        final Context context = v.getContext();
+        final PopupMenu popup = new PopupMenu(context, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.locationlist_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.remove_visit:
+                        Log.d(TAG, "Deleted gym position " + position);
+                        GeofenceController.getInstance().removeGeofencesById(_gymList.get(position).proxid, mListener);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+        popup.show();
+    }
 }

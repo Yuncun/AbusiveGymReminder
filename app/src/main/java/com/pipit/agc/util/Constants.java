@@ -13,7 +13,7 @@ public class Constants {
     public static final String MESSAGE_ID = "message_id";
     public static final double DEFAULT_COORDINATE = 0.0;
 
-    /*Settings*/
+    /*Settings and Heuristics*/
     public static int timeBetweenLocationChecks = 1000 * 60 * 10; //Milliseconds
     public static int DAY_RESET_HOUR = 0;
     public static int DAY_RESET_MINUTE = 0;
@@ -21,6 +21,7 @@ public class Constants {
     public static final int DEFAULT_RADIUS = 200;
     public static final int GEOFENCE_MIN_RADIUS = 50;
     public static final int GEOFENCE_MAX_RADIUS = 400;
+    public static final int MIN_TIME_BETWEEN_VISITS = 5; //in minutes
 
 
     /*Shared Preference Keys*/
@@ -38,7 +39,10 @@ public class Constants {
     public static final String FLAG_WAKEUP_SHOW_NOTIF = "shownotification"; //Checked on phone wakeup to determine if notif is shown
     public static final String CONTENT_WAKEUP_SHOW_NOTIF = "wakeupnotifcontent"; //Contains JSON of message to show on wakeup
     public static final String PREF_SHOW_NOTIF_ON_GYMHITS = "showhitgymswitch"; //Option for the user to see "gym day registered" notifications
-    public static final String PREF_SHOW_HIT_NOTIFS_TODAY = "showhitgymtoday"; //Flag to prevent multiple "gym registered" visits in case of fragmented geofencing
+    public static final String PREF_SHOW_CHANGEPAST_JOKE = "showstupidjoke";
+    public static final String PREF_GET_LAST_ENTER_TIME = "last_visit_time";
+    public static final String PREF_GET_LAST_EXIT_TIME = "last_exit_time";
+
     //Warning - This list of prefs may not account for all existing sharedprefs used
 
 

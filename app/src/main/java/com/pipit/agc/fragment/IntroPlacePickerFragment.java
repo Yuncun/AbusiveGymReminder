@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,11 +66,10 @@ public class IntroPlacePickerFragment extends Fragment {
                 startPlacePicker();
             }
         });
-        //pickerlauncher.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.schemefour_darkerteal));
         pickercardtext = (TextView) pickerlauncher.findViewById(R.id.gym_name);
         pickercardtext.setText("Touch here to find your gym");
-        TextView removebutton = (TextView) pickerlauncher.findViewById(R.id.removeButton);
-        removebutton.setVisibility(View.GONE);
+        //ImageView removebutton = (ImageView) pickerlauncher.findViewById(R.id.location_overflow);
+        //removebutton.setVisibility(View.GONE);
 
         pickersubtitle = (TextView) pickerlauncher.findViewById(R.id.content);
 

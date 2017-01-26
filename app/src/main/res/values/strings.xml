@@ -53,5 +53,10 @@
     <string name="firsttime_message">In the future you will abusive messages here when you miss gym days</string>
     <string name="sample_abuse">Send me a message</string>
     <string name="test_db_txt">This fragment holds functions for testing and modifying the database. Dont mess with this unless you know what you are doing</string>
+    <string name="gyms">Gyms</string>
+    <string name="days">Days</string>
+    <string name="stats">Stats</string>
+    <string name="inbox">Inbox</string>
+
 
 </resources>

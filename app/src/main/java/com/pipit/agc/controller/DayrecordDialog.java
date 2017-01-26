@@ -156,10 +156,13 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
         imv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(today.isCurrentlyVisiting() || today.getVisits().size() < 1 ||
+                        today.getVisits().get(today.getVisits().size()-1).out == null){
+                    return;
+                }
                 showPopup(v);
             }
         });
-
 
         TextView visits = (TextView) dv.findViewById(R.id.visit_instances);
         visits.setText("Visits");

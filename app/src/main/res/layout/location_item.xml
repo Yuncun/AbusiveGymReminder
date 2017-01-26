@@ -52,13 +52,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                <Button
-                    android:id="@+id/removeButton"
-                    android:text="x"
-                    android:textColor="@color/black"
+                <ImageView
+                    android:id="@+id/location_overflow"
+                    android:background="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+                    android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent" />
+                    android:layout_margin="8dp"
+                    android:layout_gravity="right"/>
             </LinearLayout>
         </LinearLayout>
 

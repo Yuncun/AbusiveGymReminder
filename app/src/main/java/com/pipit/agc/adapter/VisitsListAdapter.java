@@ -71,6 +71,10 @@ public class VisitsListAdapter extends RecyclerView.Adapter<VisitsListAdapter.Vi
         View.OnClickListener mRowClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (_day.isCurrentlyVisiting() || _day.getVisits().get(position).out==null){
+                    //Meaning a visit is in progress - do nothing
+                    return;
+                }
                 //Toggle to or from edit-mode. Since we can't store a flag in the view, use the
                 //visibility of the remove button to determine if curent mode is editable or not.
                 if (v.findViewById(R.id.removevisitbutton).getVisibility() == View.GONE

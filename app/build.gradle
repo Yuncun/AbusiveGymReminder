@@ -8,8 +8,8 @@ android {
         applicationId "com.pipit.agc"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 11
-        versionName "1.8"
+        versionCode 13
+        versionName "1.10"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

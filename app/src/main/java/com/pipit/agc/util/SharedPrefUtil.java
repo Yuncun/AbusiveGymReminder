@@ -7,6 +7,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.pipit.agc.model.Gym;
 
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 
 import java.text.DateFormat;
@@ -19,9 +21,6 @@ import java.util.List;
  * Created by Eric on 2/6/2016.
  */
 public class SharedPrefUtil {
-
-
-
     public static void updateMainLog(Context context, String s){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
@@ -119,7 +118,7 @@ public class SharedPrefUtil {
             sdf = new SimpleDateFormat("MMM d h:mm a"); //Todo: Put these dateformats in constants
         }
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-        Long timeinms =  prefs.getLong("last_visit_time", -1);
+        Long timeinms =  prefs.getLong(Constants.PREF_GET_LAST_ENTER_TIME, -1);
         if (timeinms<0){
             return null;
         }
@@ -132,7 +131,7 @@ public class SharedPrefUtil {
     public static void updateLastVisitTime(Context context, Long time){
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("last_visit_time", time);
+        editor.putLong(Constants.PREF_GET_LAST_ENTER_TIME, time);
         editor.commit();
     }
 
@@ -160,7 +159,6 @@ public class SharedPrefUtil {
         strs.add(s);
         return putListToSharedPref(prefs.edit(), key, strs);
     }
-
 
     public static boolean putListToSharedPref(Context context, final String key, final List<String> list) {
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
@@ -228,6 +226,7 @@ public class SharedPrefUtil {
         List<Gym> g = getGeofenceList(context);
         g.add(gym);
         putGeofenceList(context, g);
-
     }
+
+
 }

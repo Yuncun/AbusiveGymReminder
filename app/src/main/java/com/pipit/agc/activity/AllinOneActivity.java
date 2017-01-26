@@ -202,7 +202,10 @@ public class AllinOneActivity extends AppCompatActivity {
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
-        String[] title = {"Stats", "Inbox", "Days", "Gyms"};
+        String[] title = {getString(R.string.stats),
+                getString(R.string.inbox),
+                getString(R.string.days),
+                getString(R.string.gyms};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -275,10 +278,6 @@ public class AllinOneActivity extends AppCompatActivity {
      * * @param context
      */
     public static synchronized void updateDate(Context context){
-        //First, reset daily flags
-        //Todo: When ready, move this into the part of code that is called only when date is updated - Right now it gets reset constantly
-        SharedPrefUtil.putBoolean(context, Constants.PREF_SHOW_HIT_NOTIFS_TODAY, true); //This means it is okay to show a "hit gym" notification
-
         /*Make sure that we are up to date*/
         try {
             MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
