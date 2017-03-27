@@ -54,7 +54,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             holder.mOverFlow.setVisibility(View.GONE);
             holder.mIdView.setVisibility(View.GONE);
             holder.mContentView.setVisibility(View.GONE);
-            holder.mNameTextView.setText("Touch to add gym");
+            holder.mNameTextView.setText(mFrag.getContext().getString(R.string.touchtoaddgym));
             RelativeLayout.LayoutParams layoutParams =
                     (RelativeLayout.LayoutParams)holder.mNameTextView.getLayoutParams();
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);

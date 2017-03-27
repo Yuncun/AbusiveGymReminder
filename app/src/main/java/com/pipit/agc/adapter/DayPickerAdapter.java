@@ -59,12 +59,12 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
             DayRecord d = allPreviousDays.get(position);
             String primaryText = "";
             if (d.beenToGym()){
-                primaryText = "WENT TO GYM";
+                primaryText = context.getString(R.string.wenttogym);
             }else{
                 if (d.isGymDay()){
-                    primaryText = "MISSED GYM";
+                    primaryText = context.getString(R.string.missedgym);
                 }else{
-                    primaryText = "NO GYM - REST DAY";
+                    primaryText = context.getString(R.string.nogymrestday);
                 }
             }
 
@@ -85,10 +85,10 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
             dayOfWeekTV.setText(dayOfWeekTxt);
             dayOfMonthTV.setText(dayOfMonthTxt);
             if (position==allPreviousDays.size()-1){
-                primaryText+=" (Today)";
+                primaryText+=" " + context.getString(R.string.parantoday);
             }
             if (position==allPreviousDays.size()-2){
-                primaryText+=" (Yesterday)";
+                primaryText+=" " + context.getString(R.string.paranyesterday);
             }
             commentTV.setText(primaryText);
         }
@@ -154,19 +154,19 @@ public class DayPickerAdapter extends ArrayAdapter<String> {
     private String getDayOfWeekText(int n){
         switch(n){
             case 1:
-                return "Sun";
+                return context.getString(R.string.sun);
             case 2:
-                return "Mon";
+                return context.getString(R.string.mon);
             case 3:
-                return "Tue";
+                return context.getString(R.string.tue);
             case 4:
-                return "Wed";
+                return context.getString(R.string.wed);
             case 5:
-                return "Thu";
+                return context.getString(R.string.thur);
             case 6:
-                return "Fri";
+                return context.getString(R.string.fri);
             case 7:
-                return "Sat";
+                return context.getString(R.string.sat);
         }
         return null;
     }

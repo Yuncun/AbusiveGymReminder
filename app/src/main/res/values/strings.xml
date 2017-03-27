@@ -57,6 +57,52 @@
     <string name="days">Days</string>
     <string name="stats">Stats</string>
     <string name="inbox">Inbox</string>
-
+    <string name="pressbacktoexit">Press the back button again to exit app.</string>
+    <string name="today">Today</string>
+    <string name="wenttogym">WENT TO GYM</string>
+    <string name="missedgym">MISSED GYM</string>
+    <string name="nogymrestday">NO GYM - REST DAY</string>
+    <string name="parantoday">(Today)</string>
+    <string name="paranyesterday">(Yesterday)</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thur">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="sun">Sun</string>
+    <string name="touchtoaddgym">Touch to add gym</string>
+    <string name="maturitylevel">Maturity Level</string>
+    <string name="setabuselevel">Set abuse level of messages</string>
+    <string name="bitchmode">Bitch Mode</string>
+    <string name="losermode">Loser Mode</string>
+    <string name="abusiveprofane">Abusive (Mature)</string>
+    <string name="containsprofanity">Contains Profanity</string>
+    <string name="passiveaggressive">Passive Aggressive</string>
+    <string name="abusive">Abusive</string>
+    <string name="prefnotiftime">Preferred Notification Time</string>
+    <string name="wakeup">Wakeup</string>
+    <string name="morning">Morning</string>
+    <string name="afternoon">Afternoon</string>
+    <string name="evening">Evening</string>
+    <string name="sanitize">Sanitize Dayrecords</string>
+    <string name="removesallun">Remove unreasonably long gym visits (>8 hours)</string>
+    <string name="geofenceradius">Geofence Radius</string>
+    <string name="receivemessageonvisits">Receive message on visit</string>
+    <string name="version">Version</string>
+    <string name="gymday">GYM\nDAY</string>
+    <string name="restday">REST\nDAY</string>
+    <string name="recordedtoday">Gym visit recorded today</string>
+    <string name="recordedtodayat">Gym visit recorded today at </string>
+    <string name="norecordtoday">No gym visit recorded today</string>
+    <string name="lastvisit">Last Visit: </string>
+    <string name="lastsevendays">Last seven days</string>
+    <string name="history">History</string>
+    <string name="streaks">Streaks</string>
+    <string name="delsavedsel">Deleted Saved Selection.</string>
+    <string name="undo">Undo</string>
+    <string name="updatedvisits">Updated Visits</string>
+    <string name="failedtoupdate">Failed to update date</string>
 
 </resources>
+

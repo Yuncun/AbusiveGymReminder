@@ -77,7 +77,7 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
         if (index==_allDayRecords.size()-1){
             cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
             rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-            rfd.setText("Today");
+            rfd.setText(context.getString(R.string.today));
         }
     }
 

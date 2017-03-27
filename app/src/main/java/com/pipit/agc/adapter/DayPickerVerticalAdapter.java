@@ -96,40 +96,39 @@ public class DayPickerVerticalAdapter extends RecyclerView.Adapter<DayPickerVert
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        /*Remove or Add the date to the list*/
-                String datestr = (Integer.toString(position));
+            /*Remove or Add the date to the list*/
+            String datestr = (Integer.toString(position));
 
-                SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-                List<String> dates = (SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
-                if (dates.contains(datestr)) {
-                    //The clicked date was previously a Gym Day, and we need to showTimePickers it off
-                    dates.remove(datestr);
-                    Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
-                    holder.statuscircle.setText(restDay);
-                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));
-                    holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
-                    //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
-                    if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                        if (mFrag instanceof GymPickerVerticalFragment){
-                            ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(false);
-                        }
+            SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
+            List<String> dates = (SharedPrefUtil.getListFromSharedPref(prefs, Constants.SHAR_PREF_PLANNED_DAYS));
+            if (dates.contains(datestr)) {
+                //The clicked date was previously a Gym Day, and we need to showTimePickers it off
+                dates.remove(datestr);
+                Log.d(TAG, "Removed day " + datestr + " from weekly gym days");
+                holder.statuscircle.setText(restDay);
+                holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.basewhite));
+                holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
+                //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
+                if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
+                    if (mFrag instanceof GymPickerVerticalFragment){
+                        ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(false);
                     }
-                } else {
-                    dates.add(datestr);
-                    Log.d(TAG, "Added day " + datestr + " to weekly gym days");
-                    holder.statuscircle.setText(gymDay);
-                    holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
-                    holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
-                    //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
-                    if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                        if (mFrag instanceof GymPickerVerticalFragment) {
-                            ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(true);
-                        }
-                    }
-
                 }
-                SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
-                updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));
+            } else {
+                dates.add(datestr);
+                Log.d(TAG, "Added day " + datestr + " to weekly gym days");
+                holder.statuscircle.setText(gymDay);
+                holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
+                holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
+                //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+                if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
+                    if (mFrag instanceof GymPickerVerticalFragment) {
+                        ((GymPickerVerticalFragment) mFrag).toggleCurrentGymDayData(true);
+                    }
+                }
+            }
+            SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, dates);
+            updateData(null, null, new HashSet<Integer>(Util.listOfStringsToListOfInts(dates)));
             }
         });
 
@@ -187,14 +186,6 @@ public class DayPickerVerticalAdapter extends RecyclerView.Adapter<DayPickerVert
                 return "Saturday";
         }
         return null;
-    }
-
-    /*
-        Also styles the rowview
-     */
-    private void setDayStatus(int dayOfWeek, View rowview){
-
-
     }
 
     public void updateData(List<DayRecord> allPreviousDays, HashSet<String> exceptionDays,

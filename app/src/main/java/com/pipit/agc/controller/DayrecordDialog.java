@@ -93,10 +93,10 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
                         today.endCurrentVisit();
                         datasource.updateDayRecordVisitsById(today.getId(), today.getSerializedVisitsList());
                         datasource.closeDatabase();
-                        Toast.makeText(context, "Updated visits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.updatedvisits), Toast.LENGTH_SHORT).show();
                         button.setVisibility(View.GONE);
                     }catch(Exception e){
-                        Toast.makeText(context, "Failed to update date", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.failedtoupdate), Toast.LENGTH_SHORT).show();
                         SharedPrefUtil.updateMainLog(context, "Failed to update visits of date - Id " + today.getId());
                     }
                 }

@@ -65,8 +65,6 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.stats_row_item, parent, false);
             }
-
-
         return new ViewHolder(view);
     }
 
@@ -78,32 +76,32 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             case 0:
                 //daily stat card;
                 DayViewHolder dv = ((DayViewHolder) holder);
-                holder.mTitleView.setText("Today");
+                holder.mTitleView.setText(mFrag.getContext().getString(R.string.today));
                 DayRecord today = mStats.getToday(true);
                 dv.gymstate_circle.setShowSubtitle(false);
                 if (today.isGymDay()){
-                    dv.gymstate_circle.setTitleText("GYM\nDAY");
+                    dv.gymstate_circle.setTitleText(mFrag.getContext().getString(R.string.gymday));
                     dv.gymstate_circle.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
                             R.attr.missColor));
                 }else{
-                    dv.gymstate_circle.setTitleText("REST\nDAY");
+                    dv.gymstate_circle.setTitleText(mFrag.getContext().getString(R.string.restday));
                     dv.gymstate_circle.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
                             R.attr.explicitHitColor));
                 }
                 if (today.beenToGym()){
                     SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
                     String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), sdf);
-                    String prefix = "Gym visit recorded today at ";
+                    String prefix = mFrag.getContext().getString(R.string.recordedtodayat);
                     if (s==null || s.equals("")){
-                        dv.gymstate_text.setText("Gym visit recorded today");
+                        dv.gymstate_text.setText(mFrag.getContext().getString(R.string.recordedtoday));
                     }else{
                         dv.gymstate_text.setText(prefix + s);
                     }
                 }else{
-                    dv.gymstate_text.setText("No gym visit recorded today");
+                    dv.gymstate_text.setText(mFrag.getContext().getString(R.string.norecordtoday));
                     String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), null);
                     if (s!=null){
-                        dv.lastvisit_text.setText("Last visit: " + s);
+                        dv.lastvisit_text.setText((mFrag.getContext().getString(R.string.recordedtoday)) + s);
                         dv.lastvisit_text.setVisibility(View.VISIBLE);
                     }
                 }
@@ -112,7 +110,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
             case 1:
                 //weekly_stats_card;
-                holder.mTitleView.setText("Last seven days");
+                holder.mTitleView.setText(mFrag.getContext().getString(R.string.lastsevendays));
                 final WeeklyViewHolder wv = (WeeklyViewHolder) holder;
                 CalendarWeekViewAdapter cwva = new CalendarWeekViewAdapter(mFrag.getActivity(), allPreviousDays, wv.calendar);
                 cwva.setObserver(this);
@@ -151,7 +149,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 //wv.calendar.styleFromDayrecordsData(mFrag.getContext(), mStats.getAllDayRecords(false));
                 break;
             case 2:
-                holder.mTitleView.setText("History");
+                holder.mTitleView.setText(mFrag.getContext().getString(R.string.lastsevendays));
                 MonthViewHolder mv = (MonthViewHolder) holder;
 
                 /*Populate*/
@@ -173,7 +171,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 mHistoryChart = mv.historyChart;
                 break;
             case 3:
-                holder.mTitleView.setText("Streaks");
+                holder.mTitleView.setText(mFrag.getContext().getString(R.string.streaks));
                 MiscStatsViewHolder msv = (MiscStatsViewHolder) holder;
                 /* Text */
                 msv.stat_circle_1.setTitleText(mStats.STAT_MAP.get(StatsContent.CURRENT_STREAK).get() + "");

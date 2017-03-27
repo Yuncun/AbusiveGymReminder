@@ -133,10 +133,10 @@ public class AllinOneActivity extends AppCompatActivity {
 
         /*Tab layout stuff*/
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mTabLayout.addTab(mTabLayout.newTab().setText("Stats"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Inbox"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Days"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Gyms"));
+        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.stats)));
+        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.inbox)));
+        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.days)));
+        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.gyms)));
         mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.basewhite));
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.setupWithViewPager(mViewPager);
@@ -205,7 +205,7 @@ public class AllinOneActivity extends AppCompatActivity {
         String[] title = {getString(R.string.stats),
                 getString(R.string.inbox),
                 getString(R.string.days),
-                getString(R.string.gyms};
+                getString(R.string.gyms)};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);

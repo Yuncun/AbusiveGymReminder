@@ -79,8 +79,6 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.preference_rowitem, parent, false);
         }
-
-
         return new ViewHolder(view);
     }
 
@@ -91,8 +89,8 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
             case 0:
                 //"Maturity level"
                 final MaturityViewHolder mv = (MaturityViewHolder) holder;
-                mv.mPrefName.setText("Maturity Level");
-                mv.subtitle.setText("Set abuse level of messages");
+                mv.mPrefName.setText(_context.getString(R.string.maturitylevel));
+                mv.subtitle.setText(_context.getString(R.string.setabuselevel));
 
                 //Find the current selection
                 int mvindex = SharedPrefUtil.getInt(_context,  Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY);
@@ -100,15 +98,15 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
 
                 int currentLevel = SharedPrefUtil.getInt(_context, Constants.MATURITY_LEVEL, InsultRecordsConstants.MED_MATURITY);
                 if (currentLevel == InsultRecordsConstants.HIGH_MATURITY){
-                    ((RadioButton) mv.radiohead.getChildAt(0)).setText("Bitch Mode");
-                    ((RadioButton) mv.radiohead.getChildAt(1)).setText("Loser Mode");
-                    ((RadioButton) mv.radiohead.getChildAt(2)).setText("Abusive (Mature)");
+                    ((RadioButton) mv.radiohead.getChildAt(0)).setText(_context.getString(R.string.bitchmode));
+                    ((RadioButton) mv.radiohead.getChildAt(1)).setText(_context.getString(R.string.losermode));
+                    ((RadioButton) mv.radiohead.getChildAt(2)).setText(_context.getString(R.string.abusiveprofane));
                     mv.contentDescription.setVisibility(View.VISIBLE);
-                    mv.contentDescription.setText("Contains profanity");
+                    mv.contentDescription.setText(_context.getString(R.string.containsprofanity));
                 }else {
-                    ((RadioButton) mv.radiohead.getChildAt(0)).setText("Passive Aggressive");
-                    ((RadioButton) mv.radiohead.getChildAt(1)).setText("Abusive");
-                    ((RadioButton) mv.radiohead.getChildAt(2)).setText("Abusive (Mature)");
+                    ((RadioButton) mv.radiohead.getChildAt(0)).setText(_context.getString(R.string.passiveaggressive));
+                    ((RadioButton) mv.radiohead.getChildAt(1)).setText(_context.getString(R.string.abusive));
+                    ((RadioButton) mv.radiohead.getChildAt(2)).setText(_context.getString(R.string.abusiveprofane));
                     mv.contentDescription.setVisibility(View.INVISIBLE);
                 }
 
@@ -129,7 +127,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                             case 2:
                                 SharedPrefUtil.putInt(_context, Constants.MATURITY_LEVEL, InsultRecordsConstants.HIGH_MATURITY);
                                 mv.contentDescription.setVisibility(View.VISIBLE);
-                                mv.contentDescription.setText("Contains profanity");
+                                mv.contentDescription.setText(_context.getString(R.string.containsprofanity));
                                 break;
                             default:
                                 break;
@@ -141,16 +139,16 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
             case 1:
                 //"Notif pref time"
                 final NotificationTimeViewHolder dv = ((NotificationTimeViewHolder) holder);
-                dv.mPrefName.setText("Preferred Notification Time");
+                dv.mPrefName.setText(_context.getString(R.string.prefnotiftime));
 
                 //Find the current selection
                 int index = SharedPrefUtil.getInt(_context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_AFTERNOON);
                 ((RadioButton) dv.radiohead.getChildAt(index)).setChecked(true);
 
-                ((RadioButton) dv.radiohead.getChildAt(0)).setText("Wakeup");
-                ((RadioButton) dv.radiohead.getChildAt(1)).setText("Morning");
-                ((RadioButton) dv.radiohead.getChildAt(2)).setText("Afternoon");
-                ((RadioButton) dv.radiohead.getChildAt(3)).setText("Evening");
+                ((RadioButton) dv.radiohead.getChildAt(0)).setText(_context.getString(R.string.wakeup));
+                ((RadioButton) dv.radiohead.getChildAt(1)).setText(_context.getString(R.string.morning));
+                ((RadioButton) dv.radiohead.getChildAt(2)).setText(_context.getString(R.string.afternoon));
+                ((RadioButton) dv.radiohead.getChildAt(3)).setText(_context.getString(R.string.evening));
 
                 dv.radiohead.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
@@ -180,8 +178,8 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
             case 2:
                 //"Sanitize days"
                 final OneButtonViewHolder obv = ((OneButtonViewHolder) holder);
-                obv.mPrefName.setText("Sanitize Dayrecords");
-                obv.subtitle.setText("Remove unreasonably long gym visits (>8 hours)");
+                obv.mPrefName.setText(_context.getString(R.string.sanitize));
+                obv.subtitle.setText(_context.getString(R.string.removesallun));
                 obv.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -204,7 +202,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
             case 3:
                 //"Geofence Radius"
                 final RangePickerViewHolder rnv = ((RangePickerViewHolder) holder);
-                rnv.mPrefName.setText("Geofence radius");
+                rnv.mPrefName.setText(_context.getString(R.string.geofenceradius));
                 rnv.subtitle.setText("(Meters)");
                 rnv.value.setTextColor(ContextCompat.getColor(_context, R.color.schemefour_darkerteal));
                 final int currentRadius = SharedPrefUtil.getInt(_context, Constants.SHAR_PREF_GYMRADIUS, Constants.DEFAULT_RADIUS);
@@ -214,7 +212,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                     @Override
                     public void onClick(View v) {
                         MaterialDialog dialog = new MaterialDialog.Builder(v.getContext())
-                                .title("Geofence Radius")
+                                .title(_context.getString(R.string.geofenceradius))
                                 .customView(R.layout.numberpicker, true)
                                 .positiveText(R.string.ok)
                                 .show();
@@ -253,7 +251,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 //"Toggle messages"
                 final ToggleButtonViewHolder tbv = ((ToggleButtonViewHolder) holder);
                 boolean onVisitMessageEnabled = SharedPrefUtil.getBoolean(_context, Constants.PREF_SHOW_NOTIF_ON_GYMHITS, true);
-                tbv.mPrefName.setText("Receive messages on visits");
+                tbv.mPrefName.setText(_context.getString(R.string.receivemessageonvisits));
                 tbv.switchbutton.setChecked(onVisitMessageEnabled);
                 tbv.switchbutton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -275,7 +273,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                     versNumber = "?";
                 }
 
-                abv.mPrefName.setText("Version");
+                abv.mPrefName.setText(_context.getString(R.string.version));
                 abv.subtitle.setText(versNumber);
                 abv.button.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
@@ -290,7 +288,6 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 break;
         }
     }
-
 
     /* Preference Row Item Models */
 

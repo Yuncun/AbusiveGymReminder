@@ -108,8 +108,8 @@ public class VisitsListAdapter extends RecyclerView.Adapter<VisitsListAdapter.Vi
                 }
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, _day.getVisits().size());
-                Snackbar.make(v,"Deleted Saved Selection.", Snackbar.LENGTH_LONG).
-                        setAction("Undo", new View.OnClickListener() {
+                Snackbar.make(v, holder.mView.getContext().getString(R.string.delsavedsel), Snackbar.LENGTH_LONG).
+                        setAction(holder.mView.getContext().getString(R.string.undo), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 _day.addVisitAndMergeSubsets(justInCaseOfDelete);
