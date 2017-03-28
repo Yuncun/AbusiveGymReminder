@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.Locale;
+
 /**
  * Created by Eric on 1/10/2016.
  */
@@ -50,7 +52,7 @@ public class MsgDBHelper extends SQLiteOpenHelper {
 
     /**SQL Helper functions**/
     public MsgDBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME , null, DATABASE_VERSION);
     }
 
     @Override

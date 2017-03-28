@@ -105,7 +105,7 @@ public class WeekViewSwipeable extends LinearLayout {
             int viewid = r.getIdentifier("day_" + i, "id", name);
             View weekitem = findViewById(viewid);
             TextView tv = (TextView) weekitem.findViewById(R.id.calendar_day_name);
-            tv.setText(WeekViewAdapter.getDayOfWeekText((i + offset) % 7));
+            tv.setText(wvadapter.getDayOfWeekText((i + offset) % 7));
         }
     }
 

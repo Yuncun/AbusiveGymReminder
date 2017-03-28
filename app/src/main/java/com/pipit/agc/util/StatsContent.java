@@ -1,7 +1,9 @@
 package com.pipit.agc.util;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.pipit.agc.R;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.model.Message;
@@ -97,10 +99,10 @@ public class StatsContent {
         Collections.reverse(_allMessagesReverse);
     }
 
-    public void calculateStats(){
+    public void calculateStats(Context context){
         ITEMS=new ArrayList<Stat>();
-        updateCurrentStreak();
-        updateLongestStreak();
+        updateCurrentStreak(context);
+        updateLongestStreak(context);
         updateLastSevenDaysStats();
     }
 
@@ -162,7 +164,6 @@ public class StatsContent {
     }
 
     public synchronized void updateDayRecord(DayRecord day){
-        Log.d("Eric", "Day is gym day" + day.isGymDay());
         MsgAndDayRecords datasource;
         datasource = MsgAndDayRecords.getInstance();
         datasource.openDatabase();
@@ -170,7 +171,7 @@ public class StatsContent {
         MsgAndDayRecords.getInstance().closeDatabase();
     }
 
-    public void updateCurrentStreak(){
+    public void updateCurrentStreak(Context context){
         int count = 0;
         for (int i = _allDayRecords.size()-1; i>=0; i--){
             if (!_allDayRecords.get(i).beenToGym() && _allDayRecords.get(i).isGymDay()){
@@ -183,12 +184,12 @@ public class StatsContent {
         }
         Stat currentstreak = new Stat(CURRENT_STREAK);
         currentstreak.content = count;
-        currentstreak.details = "Current Streak";
+        currentstreak.details = context.getResources().getString(R.string.currentstreak);
         STAT_MAP.put(currentstreak.id, currentstreak);
         ITEMS.add(currentstreak);
     }
 
-    public void updateLongestStreak(){
+    public void updateLongestStreak(Context context){
         int longest = 0;
         int curr = 0;
         DayRecord tmpstartday = null;
@@ -216,7 +217,7 @@ public class StatsContent {
         }
         Stat longeststreak = new Stat(LONGEST_STREAK);
         longeststreak.content = new Integer(longest);
-        longeststreak.details = "Longest Streak";
+        longeststreak.details = context.getResources().getString(R.string.longeststreak);
         STAT_MAP.put(longeststreak.id, longeststreak);
         ITEMS.add(longeststreak);
 

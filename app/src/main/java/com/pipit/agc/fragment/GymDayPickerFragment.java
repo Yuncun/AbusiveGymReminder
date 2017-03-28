@@ -129,7 +129,7 @@ public class GymDayPickerFragment extends android.support.v4.app.Fragment {
         View cdn = weekitem.findViewById(R.id.calendar_day_name);
         cdn.setVisibility(View.GONE);
         rfd.setVisibility(View.GONE);
-        cv.setTitleText(WeekViewAdapter.getDayOfWeekText(index + 1));
+        cv.setTitleText(getDayOfWeekText(index + 1));
         cv.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent));
         cv.setFillColor(Color.GRAY);
 
@@ -247,6 +247,31 @@ public class GymDayPickerFragment extends android.support.v4.app.Fragment {
         datasource.updateLatestDayRecordIsGymDay(gymDay);
         MsgAndDayRecords.getInstance().closeDatabase();
         executeUpdateCallback(false); //Update the newsfeed fragment
+    }
+
+    public String getDayOfWeekText(int n){
+        Resources rs = getActivity().getResources();
+
+        switch(n){
+            case 0:
+                return rs.getString(R.string.sat);
+            case 1:
+                return rs.getString(R.string.sun);
+            case 2:
+                return rs.getString(R.string.mon);
+            case 3:
+                return rs.getString(R.string.tue);
+            case 4:
+                return rs.getString(R.string.wed);
+            case 5:
+                return rs.getString(R.string.thur);
+            case 6:
+                return rs.getString(R.string.fri);
+            case 7:
+                return rs.getString(R.string.sat);
+            default:
+                return Integer.toString(n);
+        }
     }
 
 

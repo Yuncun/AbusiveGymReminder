@@ -74,7 +74,7 @@
     <string name="touchtoaddgym">Touch to add gym</string>
     <string name="maturitylevel">Maturity Level</string>
     <string name="setabuselevel">Set abuse level of messages</string>
-    <string name="bitchmode">Bitch Mode</string>
+    <string name="bitchmode" translatable="false">Bitch Mode</string>
     <string name="losermode">Loser Mode</string>
     <string name="abusiveprofane">Abusive (Mature)</string>
     <string name="containsprofanity">Contains Profanity</string>
@@ -93,7 +93,7 @@
     <string name="gymday">GYM\nDAY</string>
     <string name="restday">REST\nDAY</string>
     <string name="recordedtoday">Gym visit recorded today</string>
-    <string name="recordedtodayat">Gym visit recorded today at </string>
+    <string name="recordedtodayat">Gym visit recorded on </string>
     <string name="norecordtoday">No gym visit recorded today</string>
     <string name="lastvisit">Last Visit: </string>
     <string name="lastsevendays">Last seven days</string>
@@ -103,6 +103,7 @@
     <string name="undo">Undo</string>
     <string name="updatedvisits">Updated Visits</string>
     <string name="failedtoupdate">Failed to update date</string>
-
+    <string name="currentstreak">Current Streak</string>
+    <string name="longeststreak">Longest Streak</string>
 </resources>
 

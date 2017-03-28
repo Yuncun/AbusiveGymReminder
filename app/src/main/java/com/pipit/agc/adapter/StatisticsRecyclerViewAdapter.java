@@ -95,7 +95,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     if (s==null || s.equals("")){
                         dv.gymstate_text.setText(mFrag.getContext().getString(R.string.recordedtoday));
                     }else{
-                        dv.gymstate_text.setText(prefix + s);
+                        dv.gymstate_text.setText(prefix + " " + s);
                     }
                 }else{
                     dv.gymstate_text.setText(mFrag.getContext().getString(R.string.norecordtoday));

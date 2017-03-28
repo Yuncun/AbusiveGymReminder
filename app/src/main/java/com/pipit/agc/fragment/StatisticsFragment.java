@@ -72,7 +72,7 @@ public class StatisticsFragment extends Fragment {
     private StatsContent getFreshStats(){
         StatsContent stats = StatsContent.getInstance();
         stats.refreshDayRecords();
-        stats.calculateStats();
+        stats.calculateStats(getActivity());
         return stats;
     }
 

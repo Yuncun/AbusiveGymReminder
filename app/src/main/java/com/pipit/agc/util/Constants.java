@@ -4,6 +4,7 @@ package com.pipit.agc.util;
  * Created by Eric on 12/13/2015.
  */
 public class Constants {
+
     /*Constants*/
     public static final String SHARED_PREFS = "AGR_SharedPrefs";
     public static final int REQUEST_PLACE_PICKER = 1;
@@ -12,6 +13,8 @@ public class Constants {
     public static final String DATE_FORMAT_TWO = "EEE, MMM d, yyyy";
     public static final String MESSAGE_ID = "message_id";
     public static final double DEFAULT_COORDINATE = 0.0;
+    public static final String LANG_SPANISH = "es"; //language id according to ISO 639-1 standard
+    public static final String LANG_ENGLISH = "en";
 
     /*Settings and Heuristics*/
     public static int timeBetweenLocationChecks = 1000 * 60 * 10; //Milliseconds

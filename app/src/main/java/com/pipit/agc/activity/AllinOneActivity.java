@@ -261,7 +261,7 @@ public class AllinOneActivity extends AppCompatActivity {
         StatsContent stats = StatsContent.getInstance();
         stats.refreshDayRecords();
         stats.refreshMessageRecords();
-        stats.calculateStats();
+        stats.calculateStats(this);
         updateDate(this);
         super.onStart();
     }

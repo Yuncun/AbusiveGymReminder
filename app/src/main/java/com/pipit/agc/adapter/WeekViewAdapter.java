@@ -23,7 +23,6 @@ import java.util.List;
  */
 public class WeekViewAdapter<T> extends PagerAdapter {
     private static final String TAG = "WeekViewAdapter";
-
     private Context mContext;
     protected List<T> _allDayRecords;
     private WeekViewSwipeable mlayout;
@@ -258,24 +257,26 @@ public class WeekViewAdapter<T> extends PagerAdapter {
         return _allDayRecords.get(index);
     }
 
-    public static String getDayOfWeekText(int n){
+    public String getDayOfWeekText(int n){
+        Resources rs = mContext.getResources();
+
         switch(n){
             case 0:
-                return "Sat";
+                return rs.getString(R.string.sat);
             case 1:
-                return "Sun";
+                return rs.getString(R.string.sun);
             case 2:
-                return "Mon";
+                return rs.getString(R.string.mon);
             case 3:
-                return "Tue";
+                return rs.getString(R.string.tue);
             case 4:
-                return "Wed";
+                return rs.getString(R.string.wed);
             case 5:
-                return "Thu";
+                return rs.getString(R.string.thur);
             case 6:
-                return "Fri";
+                return rs.getString(R.string.fri);
             case 7:
-                return "Sat";
+                return rs.getString(R.string.sat);
             default:
                 return Integer.toString(n);
         }
