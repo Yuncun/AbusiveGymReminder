@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.util.Constants;
 import com.pipit.agc.R;
 import com.pipit.agc.util.SharedPrefUtil;
+import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.Util;
 import com.pipit.agc.views.CircleView;
 import com.pipit.agc.views.WeekViewSwipeable;
@@ -134,7 +136,8 @@ public class GymDayPickerFragment extends android.support.v4.app.Fragment {
         cv.setFillColor(Color.GRAY);
 
         if (_plannedDays.get(index)) {
-            cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+            cv.setStrokeColor(Util.getStyledColor(context,
+                    R.attr.colorAccent));
 
         } else {
             cv.setStrokeColor(ContextCompat.getColor(context, R.color.transparent));
@@ -156,10 +159,25 @@ public class GymDayPickerFragment extends android.support.v4.app.Fragment {
                     _plannedDays.set(index, true);
                     dates.add(Integer.toString(index));
                     //cv.setTitleText(gymDay);
-                    cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+                    cv.setStrokeColor(Util.getStyledColor(context,
+                            R.attr.colorAccent));
                 }
 
                 SharedPrefUtil.putListToSharedPref(prefs.edit(), Constants.SHAR_PREF_PLANNED_DAYS, new ArrayList(dates));
+
+                //If the triggered day is today, then edit today's gym status too
+                Calendar c = Calendar.getInstance();
+                int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                Log.d("Yuncun", "DayOfWeek" + dayOfWeek + " index" + index);
+
+                if (dayOfWeek == index+1){
+                    try {
+                        toggleCurrentGymDayData(_plannedDays.get(index));
+                    }
+                    catch(Exception e){
+                        Log.e(TAG, e.toString());
+                    }
+                }
                 v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
                 //setFeatureGraphic();
                 weekitem.invalidate();

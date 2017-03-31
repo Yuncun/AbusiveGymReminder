@@ -6,55 +6,35 @@
     <item name="grey_lighter" type="color">#EEEEEE</item>
     <item name="grey_darker" type="color">#D4D4D4</item>525353
     <item name="grey_verydark" type="color">#525353</item>
-    <item name="green" type="color">#71B275</item>
     <item name="darkgreen" type="color">#FF669900</item>
     <item name="lightgreen" type="color">#E8F5E9</item>
     <item name="basewhite" type="color">#f9f9f9</item>
-    <item name="yellow" type="color">#FFEB3B</item>
     <item name="black" type="color">#000000</item>
     <item name="flat_red" type="color">#F44336</item>
-    <item name="neon_green" type="color">#69F0AE</item>
-    <item name="neon_red" type="color">#FF5252</item>
-    <item name="light_red" type="color">#FF8A80</item>
-    <item name="pinkish" type="color">#FDA2A4</item>
-    <item name="lightish_green" type="color">#91C494</item>
 
     <!--Experimental colors for msg background-->
-    <item name="schemeone_lightblue" type="color">#89AABB</item>
     <item name="schemeone_mediumblue" type="color">#28546C</item>
-    <item name="schemeone_tan" type="color">#FFDEB7</item>
-    <item name="schemeone_tan_two" type="color">#E7DED1</item>
 
-    <item name="schemetwo_yellow" type="color">#FFDD1C</item>
-    <item name="schemetwo_redpurple" type="color">#FF03AC</item>
-    <item name="schemetwo_teal" type="color">#17C6CC</item>
-
-    <item name="schemethree_yellow" type="color">#FFF15E</item>FF70A3
-    <item name="schemethree_red" type="color">#FF4586</item>
-    <item name="schemethree_lighterred" type="color">#FF70A3</item>
+    <item name="schemethree_red" type="color">#F7A3A2</item>
     <item name="schemethree_teal" type="color">#71BACC</item>
     <item name="schemethree_darkerred" type="color">#B21E52</item>
     <item name="schemethree_darkerteal" type="color">#2796B2</item>
 
     <item name="schemefour_yellow" type="color">#FFDB8A</item>
-    <item name="schemefour_yellow_sel" type="color">#FFF2D5</item>
     <item name="schemefour_red" type="color">#FF988A</item>
     <item name="schemefour_teal" type="color">#71BACC</item>
     <item name="schemefour_darkerred" type="color">#FF7A68</item>
     <item name="schemefour_darkerteal" type="color">#499AAD</item>
     <item name="schemefour_lighterteal" type="color">#A1D8E5</item>
-    <item name="schemefour_lighterred" type="color">#FFBBB0</item>
-    <item name="schemefour_green" type="color">#78DD93</item>7E90D4
-    <item name="schemefour_purple" type="color">#7E90D4</item>
-    <item name="schemefour_bluegrey" type="color">#607D8B</item>
+
+    <item name="flat_blue" type="color">#3498db</item>
 
 
-    <item name="nice_purple" type="color">#A4478D</item>
-    <item name="nice_blue" type="color">#03A9F4</item>
-    <item name="nice_green" type="color">#4CAF50</item>
-    <item name="lime" type="color">#B6D45B</item>
-    <item name="nice_purple2" type="color">#7F4394</item>
-    <item name="lime2" type="color">#D4DC5F</item>
+    <item name="pal_5_red" type="color">#FF7676</item>
+    <item name="pal_5_blue" type="color">#53BAF9</item>
+    <item name="pal_5_gold" type="color">#FFFAA6</item>
+    <item name="pal_5_baselight" type="color">#F8FCFF</item>
+
 
     <item name="robinhood_green" type="color">#21CE99</item>
     <item name="robinhood_gray" type="color">#303032</item>

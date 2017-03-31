@@ -33,7 +33,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginRight="40dp"
                 app:spark_scrubEnabled="true"
-                app:spark_lineWidth="6dp"
+                app:spark_lineWidth="4dp"
                 />
 
             <com.pipit.agc.views.CalendarWeekViewSwipeable

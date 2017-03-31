@@ -93,7 +93,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), sdf);
                     String prefix = mFrag.getContext().getString(R.string.recordedtodayat);
                     if (s==null || s.equals("")){
-                        dv.gymstate_text.setText(mFrag.getContext().getString(R.string.recordedtoday));
+                        dv.gymstate_text.setText(mFrag.getContext().getString(R.string.lastvisit));
                     }else{
                         dv.gymstate_text.setText(prefix + " " + s);
                     }
@@ -101,7 +101,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                     dv.gymstate_text.setText(mFrag.getContext().getString(R.string.norecordtoday));
                     String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), null);
                     if (s!=null){
-                        dv.lastvisit_text.setText((mFrag.getContext().getString(R.string.recordedtoday)) + s);
+                        dv.lastvisit_text.setText((mFrag.getContext().getString(R.string.lastvisit)) + " " + s);
                         dv.lastvisit_text.setVisibility(View.VISIBLE);
                     }
                 }
@@ -120,20 +120,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 wv.sparkgraph.setAdapter(new MySparkAdapter(data));
                 wv.sparkgraph.setAnimateChanges(true);
                 wv.sparkgraph.setScrubEnabled(true);
-                wv.sparkgraph.setCornerRadius(5.0f);
-                wv.sparkgraph.setLineColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
+                wv.sparkgraph.setCornerRadius(.125f);
+                wv.sparkgraph.setLineColor(Util.getStyledColor(mFrag.getContext(),
+                        R.attr.explicitHitColor));
                 wv.sparkgraph.setScrubListener(new SparkView.OnScrubListener() {
                     @Override
                     public void onScrubbed(Object value) {
-                        /*)
-                        if (d1 == true) {
-                            ((MySparkAdapter) wv.sparkgraph.getAdapter()).update(data2);
-                            d1 = false;
-                        } else {
-                            ((MySparkAdapter) wv.sparkgraph.getAdapter()).update(data);
-                            d1 = true;
-                        }
-                        */
+                        //Todo: Show time?
                     }
                 });
                 Paint baseLinePaint = wv.sparkgraph.getBaseLinePaint();
@@ -149,7 +142,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 //wv.calendar.styleFromDayrecordsData(mFrag.getContext(), mStats.getAllDayRecords(false));
                 break;
             case 2:
-                holder.mTitleView.setText(mFrag.getContext().getString(R.string.lastsevendays));
+                holder.mTitleView.setText(mFrag.getContext().getString(R.string.history));
                 MonthViewHolder mv = (MonthViewHolder) holder;
 
                 /*Populate*/
@@ -189,9 +182,11 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 msv.stat_circle_1.setShowSubtitle(false);
                 msv.stat_circle_2.setShowSubtitle(false);
 
-                msv.stat_circle_1.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
+                msv.stat_circle_1.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
+                        R.attr.explicitHitColor));
                 msv.stat_circle_1.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
-                msv.stat_circle_2.setStrokeColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal));
+                msv.stat_circle_2.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
+                        R.attr.explicitHitColor));
                 msv.stat_circle_2.setTitleColor(ContextCompat.getColor(mFrag.getContext(), R.color.basewhite));
                 break;
             default:

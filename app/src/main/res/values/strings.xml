@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">Abusive Gym Reminder</string>
     <string name="intro_label">Intro</string>
     <string name="message_label">Message</string>
@@ -10,7 +11,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="show_gym_status">Show Start Screen</string>
-    <string name="forget_messages">Forget Message History</string>
+    <string name="forget_messages" translatable="false">Forget Message History</string>
     <string name="show_calendar">Calendar</string>
     <string name="remove_geofences">Remove all gyms</string>
     <string name="remove_all_messages">Delete all messages</string>
@@ -34,7 +35,7 @@
     <string name="welcome">Welcome!</string>
     <string name="new_msg">Message from Abusive Gym Reminder</string>
     <string name="reason_missed_gym">Missed Gym</string>
-    <string name="friendly_reminder">Dont forget to go to them gym today</string>
+    <string name="friendly_reminder" translatable="false">Dont forget to go to them gym today</string>
     <string name="pickdaysmsg">Select your gym days</string>
     <string name="launchmap">Launching Map</string>
     <string name="gym">Gym</string>
@@ -46,8 +47,8 @@
     <string name="firsttime_title">Welcome!</string>
     <string name="firsttime_body">Abusive Gym Reminder has been configured. You will now receive messages when you miss gym days.
         You can also configure abuse level in settings. \n \nCan\'t wait? Click below to simulate a missed day </string>
-    <string name="gotit">Got it</string>
-    <string name="close">Close</string>
+    <string name="gotit" translatable="false">Got it</string>
+    <string name="close" translatable="false">Close</string>
     <string name="ok">Ok</string>
     <string name="gym_register_prefix">Went to the gym at </string>
     <string name="firsttime_message">In the future you will abusive messages here when you miss gym days</string>
@@ -77,32 +78,32 @@
     <string name="bitchmode" translatable="false">Bitch Mode</string>
     <string name="losermode">Loser Mode</string>
     <string name="abusiveprofane">Abusive (Mature)</string>
-    <string name="containsprofanity">Contains Profanity</string>
+    <string name="containsprofanity" translatable="false">Contains Profanity</string>
     <string name="passiveaggressive">Passive Aggressive</string>
     <string name="abusive">Abusive</string>
     <string name="prefnotiftime">Preferred Notification Time</string>
     <string name="wakeup">Wakeup</string>
     <string name="morning">Morning</string>
     <string name="afternoon">Afternoon</string>
-    <string name="evening">Evening</string>
+    <string name="evening" translatable="false">Evening</string>
     <string name="sanitize">Sanitize Dayrecords</string>
     <string name="removesallun">Remove unreasonably long gym visits (>8 hours)</string>
-    <string name="geofenceradius">Geofence Radius</string>
+    <string name="geofenceradius" translatable="false">Geofence Radius</string>
     <string name="receivemessageonvisits">Receive message on visit</string>
     <string name="version">Version</string>
     <string name="gymday">GYM\nDAY</string>
     <string name="restday">REST\nDAY</string>
-    <string name="recordedtoday">Gym visit recorded today</string>
-    <string name="recordedtodayat">Gym visit recorded on </string>
+    <string name="recordedtoday">Gym visit recorded today </string>
+    <string name="recordedtodayat">Gym visit recorded </string>
     <string name="norecordtoday">No gym visit recorded today</string>
     <string name="lastvisit">Last Visit: </string>
     <string name="lastsevendays">Last seven days</string>
     <string name="history">History</string>
     <string name="streaks">Streaks</string>
-    <string name="delsavedsel">Deleted Saved Selection.</string>
+    <string name="delsavedsel" translatable="false">Deleted Saved Selection.</string>
     <string name="undo">Undo</string>
     <string name="updatedvisits">Updated Visits</string>
-    <string name="failedtoupdate">Failed to update date</string>
+    <string name="failedtoupdate" translatable="false">Failed to update date</string>
     <string name="currentstreak">Current Streak</string>
     <string name="longeststreak">Longest Streak</string>
 </resources>

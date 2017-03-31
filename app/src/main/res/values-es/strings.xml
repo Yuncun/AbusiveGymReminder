@@ -13,8 +13,8 @@
     <string name="mon">L</string>
     <string name="fri">V</string>
     <string name="gym">Gym</string>
-    <string name="has_been">Has estado en el gimnasio hoy </string>
-    <string name="has_not_been">You have not been to the gym today</string>
+    <string name="has_been">Has estado en el gimnasio</string>
+    <string name="has_not_been">No has estado en el gimnasio</string>
     <string name="pickdaysmsg">Seleccione sus días de gimnasio</string>
     <string name="passiveaggressive">Pasivo agresivo </string>
     <string name="reason_hit_gym">Gimnasio Visita registrada</string>
@@ -43,13 +43,14 @@
     <string name="history">Historia</string>
     <string name="lastsevendays">Últimos siete días </string>
     <string name="nogymrestday">NO GYM  - DESCANO</string>
-    <string name="recordedtodayat">La última visita fue</string>
-    <string name="recordedtoday">La última visita fue hoy</string>
-    <string name="hit">éxito</string>
+    <string name="recordedtodayat">La última visita fue </string>
+    <string name="recordedtoday">La última visita fue </string>
+    <string name="hit">fuiste</string>
     <string name="reason_missed_gym">Olvidaste el gimnasio</string>
     <string name="reason_missed_gym_yesterday">Olvidaste el gimnasio ayer</string>
     <string name="missedgym">OLVIDASTE EL GIMNASIO</string>
     <string name="touchtoaddgym">Toca para añadir gimnasio</string>
     <string name="currentstreak">Racha Actual</string>
     <string name="longeststreak">Mejor racha</string>
+    <string name="firsttime_body">Abusive gym reminder está configurado. Ahora recibes mensajes cuando pierdes un día del gimnasio. No puedes esperar? Dale a este botón para simular un día perdido! </string>
 </resources>

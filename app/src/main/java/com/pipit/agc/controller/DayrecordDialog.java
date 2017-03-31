@@ -153,13 +153,19 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
                 Util.getStyledColor(context, R.attr.missColor));
 
         ImageView imv = (ImageView) dv.findViewById(R.id.daydialog_overflow);
+        if (today.isCurrentlyVisiting()){
+            imv.setVisibility(View.GONE);
+        }else{
+            imv.setVisibility(View.VISIBLE);
+        }
         imv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 if(today.isCurrentlyVisiting() || today.getVisits().size() < 1 ||
                         today.getVisits().get(today.getVisits().size()-1).out == null){
                     return;
-                }
+                }*/
                 showPopup(v);
             }
         });

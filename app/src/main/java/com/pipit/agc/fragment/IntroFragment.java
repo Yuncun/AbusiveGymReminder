@@ -14,6 +14,7 @@ import com.pipit.agc.activity.IntroductionActivity;
 import com.pipit.agc.adapter.IntroAdapter;
 import com.pipit.agc.adapter.IntroPageTransformer;
 import com.pipit.agc.R;
+import com.pipit.agc.util.Util;
 import com.viewpagerindicator.CirclePageIndicator;
 
 /**
@@ -41,8 +42,10 @@ public class IntroFragment extends Fragment {
         mViewPager.setPageTransformer(false, new IntroPageTransformer());
 
         _indicator  = (CirclePageIndicator) view.findViewById(R.id.titles);
-        _indicator.setStrokeColor(ContextCompat.getColor(getContext(), R.color.schemefour_darkerteal));
-        _indicator.setFillColor(ContextCompat.getColor(getContext(), R.color.schemefour_darkerteal));
+        _indicator.setStrokeColor(Util.getStyledColor(getContext(),
+                R.attr.colorAccent));
+        _indicator.setFillColor(Util.getStyledColor(getContext(),
+                R.attr.colorAccent));
         _indicator.setViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

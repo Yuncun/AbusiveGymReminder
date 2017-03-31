@@ -8,8 +8,8 @@ android {
         applicationId "com.pipit.agc"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 13
-        versionName "1.10"
+        versionCode 14
+        versionName "1.11"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -19,6 +19,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    apply plugin: 'com.google.gms.google-services'
 }
 
 dependencies {

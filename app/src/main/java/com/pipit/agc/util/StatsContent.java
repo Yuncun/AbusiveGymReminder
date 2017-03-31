@@ -163,6 +163,10 @@ public class StatsContent {
         MsgAndDayRecords.getInstance().closeDatabase();
     }
 
+    /**
+     * Updates the given dayrecord.
+     * @param day - Dayrecord is identified by id
+     */
     public synchronized void updateDayRecord(DayRecord day){
         MsgAndDayRecords datasource;
         datasource = MsgAndDayRecords.getInstance();

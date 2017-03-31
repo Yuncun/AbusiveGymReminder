@@ -96,7 +96,8 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
                         _allDayRecords.set(index, false);
                         dates.add(Integer.toString(index));
                         cv.setTitleText(gymDay);
-                        cv.setBackgroundColor(ContextCompat.getColor(context, R.color.schemethree_darkerteal));
+                        cv.setBackgroundColor(Util.getStyledColor(getContext(),
+                                R.attr.explicitHitColor));
                         /*
                         if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
                             if (mFrag instanceof GymPickerVerticalFragment) {
@@ -111,8 +112,10 @@ public class DayPickerWeekViewSwipeable extends WeekViewSwipeable {
 
 
             if (index == _allDayRecords.size() - 1) {
-                cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-                rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
+                cv.setStrokeColor(Util.getStyledColor(getContext(),
+                        R.attr.goldColor));
+                rfd.setTextColor(Util.getStyledColor(getContext(),
+                        R.attr.goldColor));
                 rfd.setText("Today");
             }
         }

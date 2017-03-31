@@ -29,11 +29,13 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
         //Check if it is a day for which we have records
         if (index >= _allDayRecords.size()){
 
-            cv.setFillColor(ContextCompat.getColor(context, R.color.grey_darker));
+            cv.setFillColor(Util.getStyledColor(context,
+                    R.attr.implicitHitColor));
             return;
         }else if (index < 0){
 
-            cv.setFillColor(ContextCompat.getColor(context, R.color.grey_darker));
+            cv.setFillColor(Util.getStyledColor(context,
+                    R.attr.implicitHitColor));
             return;
         }
 
@@ -75,8 +77,10 @@ class CalendarWeekViewAdapter extends WeekViewAdapter<DayRecord>{
             }
         }
         if (index==_allDayRecords.size()-1){
-            cv.setStrokeColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
-            rfd.setTextColor(ContextCompat.getColor(context, R.color.schemefour_yellow));
+            cv.setStrokeColor(Util.getStyledColor(context,
+                    R.attr.goldColor));
+            rfd.setTextColor(Util.getStyledColor(context,
+                    R.attr.goldColor));
             rfd.setText(context.getString(R.string.today));
         }
     }

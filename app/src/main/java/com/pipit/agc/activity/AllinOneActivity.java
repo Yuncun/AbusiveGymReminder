@@ -40,6 +40,7 @@ import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.model.DayRecord;
+import com.pipit.agc.util.Util;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -144,7 +145,8 @@ public class AllinOneActivity extends AppCompatActivity {
         //Deal with floating action button used in locationlist fragment. This must be done here because it syncs up
         //with the collapsing toolbar. We just choose to hide it when the wrong fragment is shown.
         mFab = (FloatingActionButton) findViewById(R.id.locationsFab);
-        mFab.setBackgroundColor(ContextCompat.getColor(this, R.color.schemethree_darkerteal));
+        mFab.setBackgroundColor(Util.getStyledColor(this,
+                R.attr.colorAccent));
         mFab.hide();
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

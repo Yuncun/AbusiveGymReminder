@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "741170772409",
+    "firebase_url": "https://abusivegymreminder.firebaseio.com",
+    "project_id": "abusivegymreminder",
+    "storage_bucket": "abusivegymreminder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741170772409:android:ea086d7151d3db1d",
+        "android_client_info": {
+          "package_name": "com.pipit.agc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741170772409-a85lgojr1fuhvdf0iorkicbjl56ubslt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5r-cENeHulzBWOPkxRptsKujv_VVFG54"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

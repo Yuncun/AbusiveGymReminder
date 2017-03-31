@@ -32,6 +32,7 @@ import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
+import com.pipit.agc.util.Util;
 
 import java.util.List;
 
@@ -204,7 +205,8 @@ public class PreferencesAdapter extends RecyclerView.Adapter<PreferencesAdapter.
                 final RangePickerViewHolder rnv = ((RangePickerViewHolder) holder);
                 rnv.mPrefName.setText(_context.getString(R.string.geofenceradius));
                 rnv.subtitle.setText("(Meters)");
-                rnv.value.setTextColor(ContextCompat.getColor(_context, R.color.schemefour_darkerteal));
+                rnv.value.setTextColor(Util.getStyledColor(_context,
+                        R.attr.colorAccent));
                 final int currentRadius = SharedPrefUtil.getInt(_context, Constants.SHAR_PREF_GYMRADIUS, Constants.DEFAULT_RADIUS);
                         rnv.value.setText("" + currentRadius);
 

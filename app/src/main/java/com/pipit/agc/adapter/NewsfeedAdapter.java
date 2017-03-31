@@ -104,13 +104,15 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
 
         if (m.getReason()== Message.HIT_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_hit_gym_yesterday));
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(Util.getStyledColor(mFrag.getContext(),
+                    R.attr.explicitHitColor), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
         }
         if (m.getReason()== Message.MISSED_YESTERDAY) {
             holder.reason.setText(r.getText(R.string.reason_missed_gym));
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_red), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(Util.getStyledColor(mFrag.getContext(),
+                    R.attr.missColor), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
         }
@@ -118,14 +120,17 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
             holder.reason.setText(r.getText(R.string.reason_hit_gym));
             holder.reason.setVisibility(View.VISIBLE);
             holder.icon.setVisibility(View.VISIBLE);
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(Util.getStyledColor(mFrag.getContext(),
+                    R.attr.explicitHitColor), PorterDuff.Mode.SRC_ATOP);
         }
         if (m.getReason() == Message.WELCOME) {
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(Util.getStyledColor(mFrag.getContext(),
+                    R.attr.goldColor), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setText(r.getText(R.string.welcome));
         }
         if (m.getReason() == Message.NEW_MSG){
-            holder.icon.getBackground().setColorFilter(ContextCompat.getColor(mFrag.getContext(), R.color.schemefour_yellow), PorterDuff.Mode.SRC_ATOP);
+            holder.icon.getBackground().setColorFilter(Util.getStyledColor(mFrag.getContext(),
+                    R.attr.goldColor), PorterDuff.Mode.SRC_ATOP);
             holder.reason.setText(r.getText(R.string.new_msg));
         }
 
@@ -167,7 +172,8 @@ public class NewsfeedAdapter extends RecyclerView.Adapter<NewsfeedAdapter.CardVi
                 mFrag.getCab()
                         .setMenu(R.menu.cab_menu)
                         .setTitle("Manage Inbox")
-                        .setBackgroundColor(ContextCompat.getColor(mFrag.getContext(), R.color.schemethree_darkerteal))
+                        .setBackgroundColor(Util.getStyledColor(mFrag.getContext(),
+                                R.attr.colorAccent))
                         .start(mCabCallback);
                 _selectedPos.add(position);
                 notifyItemChanged(position);

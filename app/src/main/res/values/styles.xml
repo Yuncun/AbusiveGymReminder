@@ -10,9 +10,10 @@
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
         <item name="colorAccent">@color/schemethree_darkerteal</item>
 
-        <item name="explicitHitColor">@color/schemethree_darkerteal</item>
+        <item name="explicitHitColor">@color/schemethree_teal</item>
         <item name="implicitHitColor">@color/grey_300</item>
-        <item name="missColor">@color/schemethree_darkerred</item>
+        <item name="missColor">@color/schemethree_red</item>
+        <item name="goldColor">@color/schemefour_yellow</item>
 
         <!--HistoryChart stuff-->
         <item name="spark_SparkViewStyle">@style/MySparkViewStyle</item>

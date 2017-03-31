@@ -82,7 +82,8 @@ public class DayPickerVerticalAdapter extends RecyclerView.Adapter<DayPickerVert
         final String gymDay = context.getResources().getString(R.string.gym_day);
         final String restDay = context.getResources().getString(R.string.rest_day);
         if (weeklySchedule.contains(position)){
-            holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
+            holder.cvlayout.setBackgroundColor(Util.getStyledColor(context,
+                    R.attr.explicitHitColor));
             holder.comment.setTextColor(ContextCompat.getColor(context, R.color.black));
             //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
             holder.statuscircle.setText(gymDay);
@@ -118,7 +119,8 @@ public class DayPickerVerticalAdapter extends RecyclerView.Adapter<DayPickerVert
                 dates.add(datestr);
                 Log.d(TAG, "Added day " + datestr + " to weekly gym days");
                 holder.statuscircle.setText(gymDay);
-                holder.cvlayout.setBackgroundColor(ContextCompat.getColor(context, R.color.schemefour_lighterteal));
+                holder.cvlayout.setBackgroundColor(Util.getStyledColor(context,
+                        R.attr.explicitHitColor));
                 holder.comment.setTextColor(ContextCompat.getColor(context, R.color.basewhite));
                 //holder.statuscircle.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.schemethree_teal), PorterDuff.Mode.SRC_ATOP);
                 if (position == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
