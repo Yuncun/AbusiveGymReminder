@@ -2,12 +2,15 @@ package com.pipit.agc.adapter;
 
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.os.CountDownTimer;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,6 +18,7 @@ import com.pipit.agc.R;
 import com.pipit.agc.controller.DayrecordDialog;
 import com.pipit.agc.fragment.StatisticsFragment;
 import com.pipit.agc.model.DayRecord;
+import com.pipit.agc.util.Constants;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.StatsContent.Stat;
@@ -31,6 +35,7 @@ import iSoron.HistoryChart;
 
 public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.ViewHolder>
     implements DayrecordDialog.DayrecordObserver {
+    private static final String TAG = "StatsAdapter";
     private final StatsContent mStats;
     private StatisticsFragment mFrag;
 
@@ -75,37 +80,52 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         switch (type){
             case 0:
                 //daily stat card;
-                DayViewHolder dv = ((DayViewHolder) holder);
+                final DayViewHolder dv = ((DayViewHolder) holder);
                 holder.mTitleView.setText(mFrag.getContext().getString(R.string.today));
                 DayRecord today = mStats.getToday(true);
+
+                //There are two possible states:
+                //  1) We are currently not visiting a gym
+                //  2) We are currently visiting a gym
+                if (!today.isCurrentlyVisiting()) {
+                    dv.gymstate_circle_layout.setVisibility(View.VISIBLE);
+
+
+                    if (today.beenToGym() || today.getTotalVisitsMinutes()>0) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+                        String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), sdf);
+                        String prefix = mFrag.getContext().getString(R.string.recordedtodayat);
+                        if (s == null || s.equals("")) {
+                            dv.gymstate_text.setText(mFrag.getContext().getString(R.string.lastvisit));
+                        } else {
+                            dv.gymstate_text.setText(prefix + " " + s);
+                        }
+                    } else {
+                        dv.gymstate_text.setText(mFrag.getContext().getString(R.string.norecordtoday));
+                        String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), null);
+                        if (s != null) {
+                            dv.lastvisit_text.setText((mFrag.getContext().getString(R.string.lastvisit)) + " " + s);
+                            dv.lastvisit_text.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }else{
+                    dv.gymstate_text.setText(R.string.youareatthegym);
+                    dv.gymstate_text.setTextColor(Util.getStyledColor(mFrag.getContext(),
+                            R.attr.colorAccent));
+
+                }
+                dv.gymstate_text.setTextSize(30);
+
                 dv.gymstate_circle.setShowSubtitle(false);
-                if (today.isGymDay()){
+                if (today.isGymDay() && !today.beenToGym()) {
                     dv.gymstate_circle.setTitleText(mFrag.getContext().getString(R.string.gymday));
                     dv.gymstate_circle.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
                             R.attr.missColor));
-                }else{
+                } else {
                     dv.gymstate_circle.setTitleText(mFrag.getContext().getString(R.string.restday));
                     dv.gymstate_circle.setStrokeColor(Util.getStyledColor(mFrag.getContext(),
                             R.attr.explicitHitColor));
                 }
-                if (today.beenToGym()){
-                    SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
-                    String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), sdf);
-                    String prefix = mFrag.getContext().getString(R.string.recordedtodayat);
-                    if (s==null || s.equals("")){
-                        dv.gymstate_text.setText(mFrag.getContext().getString(R.string.lastvisit));
-                    }else{
-                        dv.gymstate_text.setText(prefix + " " + s);
-                    }
-                }else{
-                    dv.gymstate_text.setText(mFrag.getContext().getString(R.string.norecordtoday));
-                    String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), null);
-                    if (s!=null){
-                        dv.lastvisit_text.setText((mFrag.getContext().getString(R.string.lastvisit)) + " " + s);
-                        dv.lastvisit_text.setVisibility(View.VISIBLE);
-                    }
-                }
-                dv.gymstate_text.setTextSize(30);
                 break;
 
             case 1:
@@ -201,6 +221,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     }
 
     public class DayViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
+        public final LinearLayout gymstate_circle_layout;
         public final CircleView gymstate_circle;
         public final TextView gymstate_text;
         public final TextView lastvisit_text;
@@ -209,6 +230,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         public DayViewHolder(View view){
             super(view);
             rootlayout = (CardView) view.findViewById(R.id.dailystatscard);
+            gymstate_circle_layout = (LinearLayout) view.findViewById(R.id.gymstate_circle_layout);
             gymstate_circle = (CircleView) view.findViewById(R.id.gymstate_circle);
             gymstate_text = (TextView) view.findViewById(R.id.gymstate_text);
             lastvisit_text = (TextView) view.findViewById(R.id.last_visit_txt);
@@ -312,5 +334,4 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         }
         notifyDataSetChanged();
     }
-
 }

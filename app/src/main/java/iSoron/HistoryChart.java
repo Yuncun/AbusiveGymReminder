@@ -385,7 +385,7 @@ public class HistoryChart extends ScrollableChart
             colors[0] = InterfaceUtils.getStyledColor(getContext(),
                     R.attr.implicitHitColor);
             colors[1] = InterfaceUtils.getStyledColor(getContext(),
-                    R.attr.missColor);
+                    R.attr.lightermissColor);
             colors[2] = InterfaceUtils.getStyledColor(getContext(),
                     R.attr.explicitHitColor);
 

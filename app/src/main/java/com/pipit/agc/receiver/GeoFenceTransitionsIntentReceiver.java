@@ -126,9 +126,11 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
         long lastVisitInMillis = SharedPrefUtil.getLong(context, Constants.PREF_GET_LAST_EXIT_TIME, 0);
         long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
         long diffInMinutes = (currentTimeInMillis  - lastVisitInMillis) / 60000;
-        if (lastVisitInMillis != 0 && (int) diffInMinutes < Constants.MIN_TIME_BETWEEN_VISITS ){
-            Log.d(TAG, "Gym Visit received, not sending a message "
-                + diffInMinutes);
+
+        Log.d("Eric", "Last visit " + lastVisitInMillis + " diffinminutes " + diffInMinutes);
+        if (lastVisitInMillis != 0 && diffInMinutes < ((long) Constants.MIN_TIME_BETWEEN_VISITS) ){
+            Log.d(TAG, "Gym Visit received, not sending a message because we sent one "
+                    + diffInMinutes + " minutes ago");
             SharedPrefUtil.updateMainLog(context, "Gym Visit received, not sending a message because we sent one "
              + diffInMinutes + " minutes ago");
             return false;

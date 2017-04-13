@@ -5,6 +5,7 @@
     <attr name="implicitHitColor" format="reference"/> <!--Color used to denote rest day no hit-->
     <attr name="missColor" format="reference"/> <!--Color used to denote gym day no hit-->
     <attr name="goldColor" format="reference"/> <!--Color gold, with uses including "today" font-->
+    <attr name="lightermissColor" format="reference"/>
 
     <declare-styleable name="WeekCalendarView">
         <attr name="wvTitleText" format="string" localization="suggested" />

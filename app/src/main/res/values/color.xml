@@ -17,7 +17,7 @@
 
     <item name="schemethree_red" type="color">#F7A3A2</item>
     <item name="schemethree_teal" type="color">#71BACC</item>
-    <item name="schemethree_darkerred" type="color">#B21E52</item>
+    <item name="schemethree_darkerred" type="color">#E91818</item>
     <item name="schemethree_darkerteal" type="color">#2796B2</item>
 
     <item name="schemefour_yellow" type="color">#FFDB8A</item>
@@ -26,6 +26,8 @@
     <item name="schemefour_darkerred" type="color">#FF7A68</item>
     <item name="schemefour_darkerteal" type="color">#499AAD</item>
     <item name="schemefour_lighterteal" type="color">#A1D8E5</item>
+
+    <item name="schemefive_red" type="color">#E15256</item>
 
     <item name="flat_blue" type="color">#3498db</item>
 

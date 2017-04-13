@@ -55,11 +55,11 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
 
         float[] times = new float[days.size()];
         for (int i = 0 ; i < days.size(); i++){
-            if (days.get(i) == null || days.get(i).calculateTotalVisitTime() <= 0){
+            if (days.get(i) == null || days.get(i).getTotalVisitsMinutes() <= 0){
                 times[i] = 0;
             }
             else{
-                times[i] = (float) days.get(i).calculateTotalVisitTime();
+                times[i] = (float) days.get(i).getTotalVisitsMinutes();
             }
         }
 

@@ -24,7 +24,7 @@ public class Constants {
     public static final int DEFAULT_RADIUS = 200;
     public static final int GEOFENCE_MIN_RADIUS = 50;
     public static final int GEOFENCE_MAX_RADIUS = 400;
-    public static final int MIN_TIME_BETWEEN_VISITS = 5; //in minutes
+    public static final int MIN_TIME_BETWEEN_VISITS = 30; //in minutes
 
 
     /*Shared Preference Keys*/
@@ -72,4 +72,7 @@ public class Constants {
     public static final int NOTIFTIME_MORNING = 1;
     public static final int NOTIFTIME_AFTERNOON = 2;
     public static final int NOTIFTIME_EVENING = 3;
+
+    /*Universal constants*/
+    public static final int MS_IN_A_MINUTE = 60000;
 }

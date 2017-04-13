@@ -78,8 +78,9 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
      * This button lets the user end a current visit
      * @param dv
      */
-    private void formatToggleButton(View dv){
+    private void formatToggleButton(final View dv){
         final Button button = (Button) dv.findViewById(R.id.endvisit);
+        button.setText(R.string.endcurrentvisit);
         if (!today.isCurrentlyVisiting()){
             button.setVisibility(View.GONE);
         }else{
@@ -95,6 +96,7 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
                         datasource.closeDatabase();
                         Toast.makeText(context, context.getString(R.string.updatedvisits), Toast.LENGTH_SHORT).show();
                         button.setVisibility(View.GONE);
+                        formatTimeSpentList(dv);
                     }catch(Exception e){
                         Toast.makeText(context, context.getString(R.string.failedtoupdate), Toast.LENGTH_SHORT).show();
                         SharedPrefUtil.updateMainLog(context, "Failed to update visits of date - Id " + today.getId());
@@ -146,7 +148,7 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
         TextView timespent = (TextView) dv.findViewById(R.id.timespent);
         timespent.setText("Total Time");
         TextView timespentresult = (TextView) dv.findViewById(R.id.timespent_result);
-        final int totalmins = today.calculateTotalVisitTime();
+        final int totalmins = today.getTotalVisitsMinutes();
         timespentresult.setText(Integer.toString(totalmins) + " min");
         timespentresult.setTextColor(totalmins > 0 ?
                 Util.getStyledColor(context, R.attr.explicitHitColor) :
@@ -361,7 +363,7 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
                 today.addVisitAndMergeSubsets(visit);
                 Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show();
                 formatTimeSpentList(dialog.getCustomView());
-                final int totalmins = today.calculateTotalVisitTime();
+                final int totalmins = today.getTotalVisitsMinutes();
 
                 //Update "timespent" calculation
                 TextView timespentresult = (TextView) dialog.getCustomView().findViewById(R.id.timespent_result);
@@ -417,7 +419,7 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
      */
     public void redrawTimeSpent(){
         TextView timespentresult = (TextView) dialog.getCustomView().findViewById(R.id.timespent_result);
-        final int totalmins = today.calculateTotalVisitTime();
+        final int totalmins = today.getTotalVisitsMinutes();
         timespentresult.setText(Integer.toString(totalmins) + " min");
         timespentresult.setTextColor(totalmins > 0 ?
                 Util.getStyledColor(context, R.attr.explicitHitColor) :

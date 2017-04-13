@@ -8,8 +8,8 @@ android {
         applicationId "com.pipit.agc"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 14
-        versionName "1.11"
+        versionCode 15
+        versionName "1.12"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -19,28 +19,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    apply plugin: 'com.google.gms.google-services'
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.google.android.gms:play-services-location:9.0.0'
-    compile 'com.google.android.gms:play-services-maps:9.0.0'
-    compile 'com.android.support:cardview-v7:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:support-v4:23.4.0'
-    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'joda-time:joda-time:2.9.2' // for joda
-    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
-    compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
-    compile 'com.robinhood.spark:spark:1.1.0'
+    // for joda
     compile('com.afollestad:material-cab:0.1.11@aar') {
         transitive = true
     }
-    compile ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
+    compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true;
     }
     androidTestCompile 'com.android.support.test:runner:0.4'
@@ -51,4 +37,20 @@ dependencies {
     // Set this dependency to build and run UI Automator tests
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     androidTestCompile 'com.android.support:support-annotations:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.google.android.gms:play-services-location:9.4.0'
+    compile 'com.google.android.gms:play-services-maps:9.4.0'
+    compile 'com.google.android.gms:play-services-places:9.4.0'
+    compile 'com.android.support:cardview-v7:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'joda-time:joda-time:2.9.2'
+    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
+    compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
+    compile 'com.robinhood.spark:spark:1.1.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

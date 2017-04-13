@@ -17,6 +17,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pipit.agc.adapter.WeekViewAdapter;
 import com.pipit.agc.data.MsgAndDayRecords;
@@ -168,11 +169,10 @@ public class GymDayPickerFragment extends android.support.v4.app.Fragment {
                 //If the triggered day is today, then edit today's gym status too
                 Calendar c = Calendar.getInstance();
                 int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-                Log.d("Yuncun", "DayOfWeek" + dayOfWeek + " index" + index);
-
                 if (dayOfWeek == index+1){
                     try {
                         toggleCurrentGymDayData(_plannedDays.get(index));
+                        Toast.makeText(context, R.string.updatedday, Toast.LENGTH_SHORT).show();
                     }
                     catch(Exception e){
                         Log.e(TAG, e.toString());
@@ -258,9 +258,12 @@ public class GymDayPickerFragment extends android.support.v4.app.Fragment {
         */
     }
 
+    /**
+     * A method to update layouts in stats fragment when the current gym day status is changed
+     * @param gymDay - True if today is now gym day
+     */
     public void toggleCurrentGymDayData(boolean gymDay) {
         MsgAndDayRecords datasource = MsgAndDayRecords.getInstance();
-
         datasource.openDatabase();
         datasource.updateLatestDayRecordIsGymDay(gymDay);
         MsgAndDayRecords.getInstance().closeDatabase();

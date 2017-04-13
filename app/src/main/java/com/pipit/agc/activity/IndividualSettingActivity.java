@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import com.pipit.agc.fragment.DayPickerFragment;
 import com.pipit.agc.fragment.LogFragment;
 import com.pipit.agc.R;
+import com.pipit.agc.fragment.ManualVisitFragment;
 import com.pipit.agc.fragment.PreferencesFragment;
 import com.pipit.agc.fragment.DevTestingFragment;
 
@@ -44,6 +45,10 @@ public class IndividualSettingActivity extends AppCompatActivity  {
                     break;
                 case "DayPickerFragment":
                     frag = DayPickerFragment.newInstance(3);
+                    break;
+                case "ManualVisitFragment":
+                    frag = ManualVisitFragment.newInstance();
+                    setTitle("Current Status");
                     break;
                 default:
                     finish();

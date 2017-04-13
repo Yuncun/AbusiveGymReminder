@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Abusive Gym Reminder</string>
     <string name="intro_label">Intro</string>
     <string name="message_label">Message</string>
@@ -106,5 +104,16 @@
     <string name="failedtoupdate" translatable="false">Failed to update date</string>
     <string name="currentstreak">Current Streak</string>
     <string name="longeststreak">Longest Streak</string>
+    <string name="endcurrentvisit">End Current Visit</string>
+    <string name="startnewvisit">Start a visit</string>
+    <string name="newvisitentry">New Entry</string>
+    <string name="updatedday">Updated today\'s gym status</string>
+    <string name="youareatthegym">You are currently at the gym</string>
+    <string name="manualtrackingmessage"></string>
+    <string name="gpsdisabled">Your GPS is disabled</string>
+    <string name="enablegpsprompt">Abusive Gym Reminder will not work if GPS is disabled \n\n
+        Do you want to enable GPS? (please restart after enabling)</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
 

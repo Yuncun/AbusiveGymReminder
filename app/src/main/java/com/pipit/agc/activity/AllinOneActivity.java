@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.pipit.agc.controller.GeofenceController;
 import com.pipit.agc.data.MsgAndDayRecords;
@@ -177,6 +181,13 @@ public class AllinOneActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, Constants.DAY_RESET_MINUTE);
         calendar.add(Calendar.DATE, Constants.DAYS_TO_ADD);
         AlarmManagerBroadcastReceiver.setAlarmForDayLog(getApplicationContext(), calendar);
+
+        /*Display GPS off warning*/
+
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }
     }
 
     @Override
@@ -192,6 +203,11 @@ public class AllinOneActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             final Intent i = new Intent(this, IndividualSettingActivity.class);
             i.putExtra("fragment", "PreferencesFragment");
+            startActivityForResult(i, 0);
+            return true;
+        }else if (id == R.id.action_startnewvisit){
+            final Intent i = new Intent(this, IndividualSettingActivity.class);
+            i.putExtra("fragment", "ManualVisitFragment");
             startActivityForResult(i, 0);
             return true;
         }
@@ -264,6 +280,10 @@ public class AllinOneActivity extends AppCompatActivity {
         stats.refreshDayRecords();
         stats.refreshMessageRecords();
         stats.calculateStats(this);
+        Fragment f = mSectionsPagerAdapter.getRegisteredFragment(Constants.STATS_FRAG_POS);
+        if (f instanceof StatisticsFragment){
+            ((StatisticsFragment) f).update();
+        }
         updateDate(this);
         super.onStart();
     }
@@ -388,6 +408,21 @@ public class AllinOneActivity extends AppCompatActivity {
                 ((StatisticsFragment) f).update();
             }
         }
+    }
+
+    private void buildAlertMessageNoGps() {
+        new MaterialDialog.Builder(this)
+                .title(R.string.gpsdisabled)
+                .content(R.string.enablegpsprompt)
+                .positiveText(R.string.yes)
+                .negativeText(R.string.no)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .show();
     }
 
     public MaterialCab getCab(){

@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * @Deprecated - ONLY USE AS A RESOURCE
+ * Currently not being used - See GymDayPickerFragment
  * This was version one
  */
 public class DayPickerFragment extends ListFragment implements AbsListView.OnScrollListener {

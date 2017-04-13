@@ -29,6 +29,7 @@
                 android:layout_marginBottom="8dp"
                 android:orientation="horizontal">
                 <LinearLayout
+                    android:id="@+id/gymstate_circle_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -51,20 +52,6 @@
                         app:fillColor="@color/grey_darker"
                         app:fillRadius=".9"
                         app:strokeWidthSize="5"/>
-                    <!--
-                    <TextView
-                        android:id="@+id/gymstate_circle"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:text="GYM\nDAY"
-                        android:textSize="36sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:elevation="10dp"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/circle"/>
-                    -->
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
@@ -77,7 +64,6 @@
                         android:id="@+id/gymstate_text"
                         android:layout_margin="10dp"
                         android:gravity="bottom"
-                        android:text="You haven't been today"
                         android:textSize="36sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
@@ -93,7 +79,10 @@
                         android:text="Your last visit was "/>
                 </LinearLayout>
             </LinearLayout>
-
+            <TextView
+                android:id="@+id/elapsedtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
