@@ -129,8 +129,13 @@ public class AllinOneActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setCurrentItem(Constants.NEWFEED_FRAG_POS);
 
+        if (getIntent().getBooleanExtra(Constants.SHOW_STATS_FLAG, false)){
+            getIntent().putExtra(Constants.SHOW_STATS_FLAG, true);
+            mViewPager.setCurrentItem(Constants.STATS_FRAG_POS);
+        }else{
+            mViewPager.setCurrentItem(Constants.NEWFEED_FRAG_POS);
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);

@@ -33,6 +33,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginRight="40dp"
                 app:spark_scrubEnabled="true"
+                app:spark_cornerRadius=".5dp"
                 app:spark_lineWidth="4dp"
                 />
 

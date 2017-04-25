@@ -149,7 +149,6 @@ public class MsgAndDayRecords {
                 MsgDBHelper.COLUMN_BEENTOGYM + " = \"" + ((day.beenToGym()) ? 1 : 0) +
                 "\", " + MsgDBHelper.COLUMN_ISGYMDAY + " = \"" +  ((day.isGymDay()) ? 1 : 0) +
                 "\" WHERE " +  MsgDBHelper.COLUMN_ID + " = " + day.getId()  ;
-        Log.d("Eric", "Executed query " + query);
         mDatabase.execSQL(query);
     }
 

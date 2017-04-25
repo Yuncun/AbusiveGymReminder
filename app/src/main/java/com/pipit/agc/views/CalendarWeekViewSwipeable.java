@@ -71,8 +71,4 @@ public class CalendarWeekViewSwipeable extends WeekViewSwipeable {
         }
         sparkAdapter.update(times);
     }
-
-
-
-
 }

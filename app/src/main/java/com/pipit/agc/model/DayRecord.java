@@ -270,8 +270,17 @@ public class DayRecord {
         }
         v.out = null; //Haven't finished yet
         this.visits.add(v);
+
+        //Also, mark today as "visited gym"
+        hasBeenToGym = true;
     }
 
+    /**
+     * Attempts to end a visit
+     * This does not do anything to the database; It only edits the visit of this record
+     * @param ldt
+     * @return True if a visit was ended, False if there was no visit to end
+     */
     public boolean endCurrentVisit(LocalDateTime ldt){
         //If last visit is open
         if (visits.size()>0 && visits.get(visits.size()-1).out==null){

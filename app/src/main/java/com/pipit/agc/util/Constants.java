@@ -15,6 +15,7 @@ public class Constants {
     public static final double DEFAULT_COORDINATE = 0.0;
     public static final String LANG_SPANISH = "es"; //language id according to ISO 639-1 standard
     public static final String LANG_ENGLISH = "en";
+    public static final String SHOW_STATS_FLAG = "showstatsflag";
 
     /*Settings and Heuristics*/
     public static int timeBetweenLocationChecks = 1000 * 60 * 10; //Milliseconds
@@ -24,7 +25,7 @@ public class Constants {
     public static final int DEFAULT_RADIUS = 200;
     public static final int GEOFENCE_MIN_RADIUS = 50;
     public static final int GEOFENCE_MAX_RADIUS = 400;
-    public static final int MIN_TIME_BETWEEN_VISITS = 30; //in minutes
+    public static final int MIN_TIME_BETWEEN_VISITS = 60; //in minutes
 
 
     /*Shared Preference Keys*/

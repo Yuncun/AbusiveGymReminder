@@ -164,7 +164,8 @@ public class StatsContent {
     }
 
     /**
-     * Updates the given dayrecord.
+     * Updates the given dayrecord
+     * Currently does not handle visits - Use MsgAndDayRecords.updateDayRecordVisits for this
      * @param day - Dayrecord is identified by id
      */
     public synchronized void updateDayRecord(DayRecord day){

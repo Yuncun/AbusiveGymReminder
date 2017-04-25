@@ -70,7 +70,9 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver
 
                 //At this point, we can either show the notification directly, or set a flag and wait for the
                 //device to wake before showing.
-                if (SharedPrefUtil.getInt(context, Constants.PREF_NOTIF_TIME, Constants.NOTIFTIME_ON_WAKEUP)==Constants.NOTIFTIME_ON_WAKEUP){
+                int showtimepref = SharedPrefUtil.getInt(context, Constants.PREF_NOTIF_TIME, -1);
+                Log.d("Yuncun", "showtimepref " + showtimepref + " and reason is " + m.getReason());
+                if (showtimepref ==Constants.NOTIFTIME_ON_WAKEUP && m.getReason() != Message.HIT_TODAY){
                     SharedPrefUtil.putInt(context, Constants.FLAG_WAKEUP_SHOW_NOTIF, 1);
                     SharedPrefUtil.putString(context, Constants.CONTENT_WAKEUP_SHOW_NOTIF, m.toJson());
                 }else{

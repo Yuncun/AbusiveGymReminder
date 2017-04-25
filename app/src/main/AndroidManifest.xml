@@ -86,8 +86,6 @@
             android:name="com.pipit.agc.activity.IndividualSettingActivity"
             android:label="@string/title_activity_setting_wrapper"
             android:theme="@style/AppTheme" />
-
-        <service android:name="com.pipit.agc.service.GeofenceTransitionsIntentService" />
     </application>
 
 </manifest>

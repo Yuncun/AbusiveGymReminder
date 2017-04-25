@@ -92,7 +92,7 @@
     <string name="gymday">GYM\nDAY</string>
     <string name="restday">REST\nDAY</string>
     <string name="recordedtoday">Gym visit recorded today </string>
-    <string name="recordedtodayat">Gym visit recorded </string>
+    <string name="recordedtodayat">Gym visit recorded at </string>
     <string name="norecordtoday">No gym visit recorded today</string>
     <string name="lastvisit">Last Visit: </string>
     <string name="lastsevendays">Last seven days</string>
@@ -109,11 +109,15 @@
     <string name="newvisitentry">New Entry</string>
     <string name="updatedday">Updated today\'s gym status</string>
     <string name="youareatthegym">You are currently at the gym</string>
+    <string name="recordingvisit">Recording a Gym Visit</string>
     <string name="manualtrackingmessage"></string>
     <string name="gpsdisabled">Your GPS is disabled</string>
     <string name="enablegpsprompt">Abusive Gym Reminder will not work if GPS is disabled \n\n
         Do you want to enable GPS? (please restart after enabling)</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="endinggymvisit">Ending gym visit</string>
+    <string name="nogymvisittoend">We are not currently at the gym - Refreshing</string>
+    <string name="since">Since:</string>
 </resources>
 

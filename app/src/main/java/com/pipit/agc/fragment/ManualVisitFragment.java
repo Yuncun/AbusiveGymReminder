@@ -12,12 +12,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pipit.agc.R;
+import com.pipit.agc.data.InsultRecordsConstants;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
+import com.pipit.agc.util.NotificationUtil;
+import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
+import com.pipit.agc.util.StatsContent;
 
 import java.util.ArrayList;
 
@@ -93,27 +98,39 @@ public class ManualVisitFragment extends Fragment {
                 datasource = MsgAndDayRecords.getInstance();
                 datasource.openDatabase();
                 DayRecord today = datasource.getLastDayRecord();
+                datasource.closeDatabase();
 
                 //Click to end
                 if (today.isCurrentlyVisiting()) {
-                    if (today.endCurrentVisit()) {
-                        datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
+                    if (today.endCurrentVisit()) { //Ends the visit
                         _startGymVisit.setText(gymVisitStart);
                         allvisits.setText(today.printVisits());
-                        simpleChronometer.stop();
-                    }
+                        NotificationUtil.endNotifications(getContext());
+                        //String m = ReminderOracle.findANewMessageId(getContext(), InsultRecordsConstants.))
+                        //NotificationUtil.showGymVisitingNotification(getContext(), );
+                    }else{
+                        Toast.makeText(getContext(),
+                                getContext().getString(R.string.nogymvisittoend),
+                                Toast.LENGTH_SHORT).show();                    }
                 }
                 //Click to start
                 else {
                     today.startCurrentVisit();
-                    today.setHasBeenToGym(true);
-                    datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
                     _startGymVisit.setText(gymVisitEnd);
                     SharedPrefUtil.updateLastVisitTime(getContext(), System.currentTimeMillis());
                     allvisits.setText(today.printVisits());
-                    simpleChronometer.start();
+                    today.setHasBeenToGym(true);
                 }
+                datasource.openDatabase();
+                datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
+                datasource.updateDayRecordGymStats(today);
                 datasource.closeDatabase();
+
+                //We do this outside of the first loop because we need to do database updates
+                //before we can show a notification (checks for visiting before showing).
+                if (today.isCurrentlyVisiting()){
+                    ReminderOracle.conditionalLeaveVisitingMessage(getContext());
+                }
             }
         });
         return rootview;

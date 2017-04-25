@@ -10,15 +10,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pipit.agc.R;
 import com.pipit.agc.controller.DayrecordDialog;
+import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.fragment.StatisticsFragment;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
+import com.pipit.agc.util.NotificationUtil;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.StatsContent.Stat;
@@ -80,19 +84,20 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         switch (type){
             case 0:
                 //daily stat card;
+                Log.d(TAG, "onBindView of daystats");
                 final DayViewHolder dv = ((DayViewHolder) holder);
                 holder.mTitleView.setText(mFrag.getContext().getString(R.string.today));
-                DayRecord today = mStats.getToday(true);
+                final DayRecord today = mStats.getToday(true);
 
                 //There are two possible states:
                 //  1) We are currently not visiting a gym
                 //  2) We are currently visiting a gym
                 if (!today.isCurrentlyVisiting()) {
                     dv.gymstate_circle_layout.setVisibility(View.VISIBLE);
-
+                    dv.endvisit_layout.setVisibility(View.GONE);
 
                     if (today.beenToGym() || today.getTotalVisitsMinutes()>0) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+                        SimpleDateFormat sdf = new SimpleDateFormat("h:mma");
                         String s = SharedPrefUtil.getLastVisitString(mFrag.getContext(), sdf);
                         String prefix = mFrag.getContext().getString(R.string.recordedtodayat);
                         if (s == null || s.equals("")) {
@@ -109,10 +114,25 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                         }
                     }
                 }else{
+                    //CURRENTLY VISITING GYM
                     dv.gymstate_text.setText(R.string.youareatthegym);
                     dv.gymstate_text.setTextColor(Util.getStyledColor(mFrag.getContext(),
                             R.attr.colorAccent));
+                    //Show end visit button
+                    dv.endvisit_layout.setVisibility(View.VISIBLE);
+                    String starttime = "";
 
+                    //This can throw exception, but it shouldn't.
+                    //If it does, we have problem
+                    try{
+                        DayRecord.Visit v = today.getVisits().get(today.getVisits().size()-1);
+                        starttime = v.in.toString("h:mm a");
+                    }catch (IndexOutOfBoundsException e){
+                        Log.e(TAG, "No visit found in day");
+                    }
+
+                    dv.visitingsince_text.setText(mFrag.getString(R.string.since) + " " + starttime);
+                    dv.endvisit_button.setOnClickListener(endVisitListener);
                 }
                 dv.gymstate_text.setTextSize(30);
 
@@ -222,10 +242,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
     public class DayViewHolder extends StatisticsRecyclerViewAdapter.ViewHolder{
         public final LinearLayout gymstate_circle_layout;
+        public final LinearLayout endvisit_layout;
         public final CircleView gymstate_circle;
         public final TextView gymstate_text;
         public final TextView lastvisit_text;
         public final CardView rootlayout;
+        public final TextView visitingsince_text;
+        public final Button endvisit_button;
 
         public DayViewHolder(View view){
             super(view);
@@ -234,6 +257,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             gymstate_circle = (CircleView) view.findViewById(R.id.gymstate_circle);
             gymstate_text = (TextView) view.findViewById(R.id.gymstate_text);
             lastvisit_text = (TextView) view.findViewById(R.id.last_visit_txt);
+            endvisit_layout = (LinearLayout) view.findViewById(R.id.endvisitlayout);
+            visitingsince_text = (TextView) view.findViewById(R.id.start_time_txt);
+            endvisit_button = (Button) view.findViewById(R.id.daystat_endvisit_button);
         }
     }
 
@@ -270,6 +296,43 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             DayrecordDialog dcl = new DayrecordDialog(days.get(index), mFrag.getContext());
             dcl.setObserver(getSelf());
             dcl.onClick(null);
+        }
+    };
+    private View.OnClickListener endVisitListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                DayRecord today = mStats.getToday(false);
+                MsgAndDayRecords datasource;
+                datasource = MsgAndDayRecords.getInstance();
+                datasource.openDatabase();
+                today.endCurrentVisit();
+                datasource.updateDayRecordVisitsById(today.getId(), today.getSerializedVisitsList());
+                datasource.closeDatabase();
+                NotificationUtil.endNotifications(mFrag.getContext());
+                notifyItemChanged(0);
+                Toast.makeText(mFrag.getContext(),
+                        mFrag.getContext().getString(R.string.endinggymvisit),
+                        Toast.LENGTH_SHORT).show();
+            }catch(Exception e){
+                Toast.makeText(mFrag.getContext(),
+                        mFrag.getContext().getString(R.string.nogymvisittoend),
+                        Toast.LENGTH_SHORT).show();
+            }
+            /*
+            DayRecord today = mStats.getToday(true);
+            if (today.isCurrentlyVisiting()) {
+                if (today.endCurrentVisit()) {
+
+                    Log.d(TAG, "Visit ended via StatsView");
+                }else{
+                    Toast.makeText(mFrag.getContext(),
+                            mFrag.getContext().getString(R.string.nogymvisittoend),
+                            Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Attempted to end visit in StatsView but nothing to end!");
+                }
+                notifyItemChanged(0);
+            }*/
         }
     };
 
@@ -332,6 +395,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         if (mHistoryChart!=null){
             mHistoryChart.postInvalidate();
         }
-        notifyDataSetChanged();
+        mStats.refreshDayRecords();
+        notifyItemChanged(0);
+        notifyDataSetChanged(); //Does this do anything? I dont have a dataset really
     }
 }

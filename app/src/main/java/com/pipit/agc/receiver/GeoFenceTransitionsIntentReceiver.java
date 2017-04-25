@@ -13,6 +13,7 @@ import com.pipit.agc.activity.AllinOneActivity;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
+import com.pipit.agc.util.NotificationUtil;
 import com.pipit.agc.util.ReminderOracle;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.Util;
@@ -66,7 +67,7 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             //Update gym status today
             updateLastDayRecord(context);
             rememberGymHabits(context);
-            conditionalLeaveMessage(context);
+            ReminderOracle.conditionalLeaveVisitingMessage(context);
 
             //Update last visited time
             long time= System.currentTimeMillis();
@@ -82,7 +83,7 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             datasource.closeDatabase();
         }
         else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
-            //Open a visiting counter on this day
+            //Update to database
             MsgAndDayRecords datasource;
             datasource = MsgAndDayRecords.getInstance();
             datasource.openDatabase();
@@ -90,6 +91,11 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             today.endCurrentVisit();
             datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
             datasource.closeDatabase();
+
+            //Remove notifications
+            NotificationUtil.endNotifications(context);
+
+            //Log
             Log.d(TAG, "geofence exit at \n Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
             SharedPrefUtil.updateMainLog(context, "Geofence exit at \n" +
                     " Lat: " + loc.getLatitude() + "\n Lng: " + loc.getLongitude());
@@ -103,44 +109,6 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
         else {
             Log.e(TAG, "geofenceTransition error");
         }
-    }
-
-    /**
-     * This is called to leave a message when we hit the gym. It is essentially a wrapper function for
-     * @ReminderOracle.doLeaveOnGymArrivalMessage with additional checks for settings and filtering.
-     * @param context
-     * @return
-     */
-    private boolean conditionalLeaveMessage(Context context){
-        SharedPrefUtil.updateMainLog(context, "Received a gym visit event");
-
-        //Check if gym visit notifications are enabled
-        if (!SharedPrefUtil.getBoolean(context, Constants.PREF_SHOW_NOTIF_ON_GYMHITS, true)){
-            Log.d(TAG, "Gym Visit received. Not sending message - gym arrival msgs disabled ");
-            SharedPrefUtil.updateMainLog(context, "Gym Visit received. Not sending message - gym arrival msgs disabled ");
-            return false;
-        }
-
-        //In order to prevent spamming the user with "Gym Registered" notifications, check if our last was
-        //less than some given time ago. If this is so, don't send another notification.
-        long lastVisitInMillis = SharedPrefUtil.getLong(context, Constants.PREF_GET_LAST_EXIT_TIME, 0);
-        long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
-        long diffInMinutes = (currentTimeInMillis  - lastVisitInMillis) / 60000;
-
-        Log.d("Eric", "Last visit " + lastVisitInMillis + " diffinminutes " + diffInMinutes);
-        if (lastVisitInMillis != 0 && diffInMinutes < ((long) Constants.MIN_TIME_BETWEEN_VISITS) ){
-            Log.d(TAG, "Gym Visit received, not sending a message because we sent one "
-                    + diffInMinutes + " minutes ago");
-            SharedPrefUtil.updateMainLog(context, "Gym Visit received, not sending a message because we sent one "
-             + diffInMinutes + " minutes ago");
-            return false;
-        }
-
-        //If all conditions are met, send the message
-        ReminderOracle.doLeaveOnGymArrivalMessage(context, true);
-        //Remember this
-        SharedPrefUtil.putLong(context, Constants.PREF_GET_LAST_EXIT_TIME, Calendar.getInstance().getTimeInMillis());
-        return true;
     }
 
     /**
