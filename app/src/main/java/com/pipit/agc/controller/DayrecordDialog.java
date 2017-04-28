@@ -24,6 +24,7 @@ import com.pipit.agc.adapter.VisitsListAdapter;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.util.Constants;
+import com.pipit.agc.util.NotificationUtil;
 import com.pipit.agc.util.SharedPrefUtil;
 import com.pipit.agc.util.StatsContent;
 import com.pipit.agc.util.Util;
@@ -97,6 +98,7 @@ public class DayrecordDialog implements View.OnClickListener, VisitsListAdapter.
                         Toast.makeText(context, context.getString(R.string.updatedvisits), Toast.LENGTH_SHORT).show();
                         button.setVisibility(View.GONE);
                         formatTimeSpentList(dv);
+                        NotificationUtil.endNotifications(context);
                     }catch(Exception e){
                         Toast.makeText(context, context.getString(R.string.failedtoupdate), Toast.LENGTH_SHORT).show();
                         SharedPrefUtil.updateMainLog(context, "Failed to update visits of date - Id " + today.getId());

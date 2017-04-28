@@ -46,6 +46,7 @@ public class Constants {
     public static final String PREF_SHOW_CHANGEPAST_JOKE = "showstupidjoke";
     public static final String PREF_GET_LAST_ENTER_TIME = "last_visit_time";
     public static final String PREF_GET_LAST_EXIT_TIME = "last_exit_time";
+    public static final String PREF_LAST_KNOWN_VERSION = "lastknownversion";
 
     //Warning - This list of prefs may not account for all existing sharedprefs used
 

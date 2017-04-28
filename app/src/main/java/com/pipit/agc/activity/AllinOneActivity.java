@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -124,6 +125,9 @@ public class AllinOneActivity extends AppCompatActivity {
                 }
             });
         }
+
+        //Check if and show a change log if necessary
+        checkAndShowChangeLog();
 
         /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -329,9 +333,9 @@ public class AllinOneActivity extends AppCompatActivity {
                             //If there are any visits on that day, we need to end them
                             boolean flagStartNewVisit = false;
                             if (lastDate.isCurrentlyVisiting()){
-                                datasource.closeDatabase();
+                                SharedPrefUtil.updateMainLog(context, "Ending an existing visit");
                                 lastDate.endCurrentVisit();
-                                datasource.openDatabase();
+                                datasource.updateDayRecordVisitsById(lastDate.getId(), lastDate.getSerializedVisitsList());
                                 flagStartNewVisit = true;
                             }
 
@@ -347,7 +351,9 @@ public class AllinOneActivity extends AppCompatActivity {
                             day.setIsGymDay(SharedPrefUtil.getGymStatusFromDayOfWeek(context, cal.get(Calendar.DAY_OF_WEEK)));
                             datasource.createDayRecord(day);
                             if (flagStartNewVisit){
+                                SharedPrefUtil.updateMainLog(context, "Carrying over a visit");
                                 day.startCurrentVisit();
+                                datasource.updateDayRecordVisitsById(day.getId(), day.getSerializedVisitsList());
                             }
                             SharedPrefUtil.updateMainLog(context, "Updated day from onStart " + day.getDateString() + " wasGymDay==" + day.isGymDay());
 
@@ -428,6 +434,50 @@ public class AllinOneActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    /**
+     * Shows a change log if a change message was added
+     *
+     * Change message comes from changelog.xml. We remember last known version
+     * in sharedpref, and check with new version to determine if change log is needed.
+     *
+     * Changelog.xml also has a field for current version that needs to updated in order
+     * to "activate" the accompanying message; Otherwise, I will forget to update the changelog
+     * at some point and it will show a stale log.
+     *
+     */
+    private void checkAndShowChangeLog(){
+        int oldVers = SharedPrefUtil.getInt(this, Constants.PREF_LAST_KNOWN_VERSION, 0);
+        int newVers = -1; //Don't show change log
+        try{
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            newVers = pInfo.versionCode;
+            Log.d(TAG, "Checking for a change log; new version is " + newVers + " and oldvers is " + oldVers);
+        } catch (PackageManager.NameNotFoundException e){
+            Log.e(TAG, "Could not find package name. Vers. number will be unavailable ", e);
+            return;
+        }
+        //Show if newVersion is older than last recorded version
+        if (newVers > oldVers){
+            int failsafe = getResources().getInteger(R.integer.versionOfLastUpdate);
+            if (failsafe != newVers){ //Check that changelog resource is uptodate
+                Log.d(TAG, "Changelog version in changelog.xml not up to date, found: " + failsafe);
+                return;
+            }
+            if (SharedPrefUtil.getIsFirstTime(this)){
+                return;
+            }
+
+            //Show a changelog dialog
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .title("Release Notes")
+                    .content(R.string.changeLogBody)
+                    .contentColor(ContextCompat.getColor(this, R.color.black))
+                    .positiveText("Got it")
+                    .show();
+            SharedPrefUtil.putInt(this, Constants.PREF_LAST_KNOWN_VERSION, newVers);
+        }
     }
 
     public MaterialCab getCab(){

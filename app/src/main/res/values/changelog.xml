@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="versionOfLastUpdate">16</integer>
+    <string name="changeLogBody" translatable="true">
+        <b>Version 1.13</b>
+        \n\n
+          <b>•</b> Gym visit notifications now continuously show while a gym visit is recorded.\n\n
+          <b>•</b> You can now manually start visits in options tab\n\n
+          <b>•</b> Added a cool change log
+        \n\n
+        <i>We strive every day to make our product less shitty.</i>
+    </string>
+</resources>
