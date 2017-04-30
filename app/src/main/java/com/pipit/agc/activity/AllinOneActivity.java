@@ -1,6 +1,7 @@
 package com.pipit.agc.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -88,6 +89,15 @@ public class AllinOneActivity extends AppCompatActivity {
             }
         }
 
+        //Todo:Firsttimecheck
+        GeofenceController.getInstance().init(this);
+        if (SharedPrefUtil.getIsFirstTime(this)){
+            GeofenceController.getInstance().reregisterSavedGeofences();
+        }
+
+        //Check if and show a change log if necessary
+        checkAndShowChangeLog();
+
         //Launch Intro Activity if required
         if (SharedPrefUtil.getIsFirstTime(this)){
             Intent intent = new Intent(this, IntroductionActivity.class);
@@ -125,9 +135,6 @@ public class AllinOneActivity extends AppCompatActivity {
                 }
             });
         }
-
-        //Check if and show a change log if necessary
-        checkAndShowChangeLog();
 
         /*Paging for landing screen*/
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -181,9 +188,6 @@ public class AllinOneActivity extends AppCompatActivity {
         });
 
         cab = new MaterialCab(this, R.id.cab_stub);
-        GeofenceController.getInstance().init(this);
-        checkPermissions();
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, Constants.DAY_RESET_HOUR);
@@ -192,7 +196,6 @@ public class AllinOneActivity extends AppCompatActivity {
         AlarmManagerBroadcastReceiver.setAlarmForDayLog(getApplicationContext(), calendar);
 
         /*Display GPS off warning*/
-
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps();
@@ -354,9 +357,8 @@ public class AllinOneActivity extends AppCompatActivity {
                                 SharedPrefUtil.updateMainLog(context, "Carrying over a visit");
                                 day.startCurrentVisit();
                                 datasource.updateDayRecordVisitsById(day.getId(), day.getSerializedVisitsList());
+                                datasource.updateDayRecordGymStats(day);
                             }
-                            SharedPrefUtil.updateMainLog(context, "Updated day from onStart " + day.getDateString() + " wasGymDay==" + day.isGymDay());
-
                         }
                     } else if (lastDate.getDate().after(todaysDate.getDate())) {
                         //A more nefarious case when we have dates ahead of system time
@@ -377,16 +379,16 @@ public class AllinOneActivity extends AppCompatActivity {
         }
     }
 
-    private void checkPermissions(){
-        if (ContextCompat.checkSelfPermission(this,
+    public static void checkPermissions(Activity context){
+        if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context,
                     Manifest.permission.READ_CONTACTS)) {
             } else {
-                ActivityCompat.requestPermissions(this,
+                ActivityCompat.requestPermissions(context,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                         Constants.GRANTED_LOCATION_PERMISSIONS);
             }
@@ -466,6 +468,7 @@ public class AllinOneActivity extends AppCompatActivity {
                 return;
             }
             if (SharedPrefUtil.getIsFirstTime(this)){
+                SharedPrefUtil.putInt(this, Constants.PREF_LAST_KNOWN_VERSION, newVers);
                 return;
             }
 

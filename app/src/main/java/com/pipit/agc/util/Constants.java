@@ -26,6 +26,7 @@ public class Constants {
     public static final int GEOFENCE_MIN_RADIUS = 50;
     public static final int GEOFENCE_MAX_RADIUS = 400;
     public static final int MIN_TIME_BETWEEN_VISITS = 60; //in minutes
+    public static final int REASONABLE_GYMTIME_UPPERLIMIT = 120; //in minutes
 
 
     /*Shared Preference Keys*/

@@ -156,6 +156,7 @@ public class NotificationUtil {
         }
         // Issue the notification
         mNotificationManager.notify(0, notification);
+        Log.d("Yuncun", "Notification should be shown");
     }
 
     public static void showGymVisitingNotification(Context context, String header, String body){

@@ -77,6 +77,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     public void update(){
+        Log.d("StatisticsFragment", "Updating statsfragment ");
         mRecyclerView.setAdapter(new StatisticsRecyclerViewAdapter(this));
     }
 }

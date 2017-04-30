@@ -371,12 +371,13 @@ public class ReminderOracle {
         Log.d(TAG, "Last gym visit was " + diffInMinutes + " minutes ago ");
         if (lastVisitInMillis != 0 && diffInMinutes < ((long) Constants.MIN_TIME_BETWEEN_VISITS) ){
             NotificationUtil.showGymVisitingNotification(context, context.getString(R.string.youareatthegym), "", false);
-            Log.d(TAG, "Gym Visit received, not sending a message because we sent one "
-                    + diffInMinutes + " minutes ago");
-            SharedPrefUtil.updateMainLog(context, "Gym Visit received, not sending a message because we sent one "
-                    + diffInMinutes + " minutes ago");
+            Log.d(TAG, "Throwing standard notification back up (No new message)"
+                            +  " because last visit was " + diffInMinutes + " ago" );
+            SharedPrefUtil.updateMainLog(context, "Throwing standard notification back up (Not new message)" +
+                    " because last visit was " + diffInMinutes + " ago" );
             return false;
         }
+        Log.d(TAG, "Throwing up a new gym visit message");
 
         //If all conditions are met, send the message
         ReminderOracle.doLeaveOnGymArrivalMessage(context, true);

@@ -23,7 +23,9 @@ public class BootReceiver extends BroadcastReceiver {
         SharedPrefUtil.updateMainLog(context, "BOOT RECEIVER");
 
         /*Initialize geofencecontroller*/
-        GeofenceController.getInstance().init(context);
+        GeofenceController gc = GeofenceController.getInstance();
+        gc.init(context);
+        gc.reregisterSavedGeofences();
 
         /*Set the daily update alarm*/
         //AlarmManagerBroadcastReceiver _alarm = new AlarmManagerBroadcastReceiver();

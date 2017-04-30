@@ -258,8 +258,20 @@ public class DayRecord {
         }
         if (!visits.isEmpty() && visits.get(visits.size()-1).out == null){
             //If we try to start a new session while the prev hasn't finished, then something went wrong.
-            //We will remove this entry.
-            visits.remove(visits.size()-1);
+            Log.e(TAG, "** Attempted to start a visit on an existing OPEN VISIT -" +
+                    "this may happen if geofences are replaced mid-visit");
+            //There isn't a perfect way of dealing with this, but we can estimate when this happens during
+            //a visit and when this happens for some other reason
+
+            LocalDateTime now = new LocalDateTime();
+            LocalDateTime then = visits.get(visits.size()-1).in;
+            int minutesbetween = Minutes.minutesBetween(then, now).getMinutes();
+            Log.d(TAG, "Last open visit was " + minutesbetween + " ago ");
+            if (minutesbetween > Constants.REASONABLE_GYMTIME_UPPERLIMIT){
+                visits.remove(visits.size()-1);
+            }else{
+                return; //We effectively are merging visits
+            }
         }
 
         Visit v = new Visit();

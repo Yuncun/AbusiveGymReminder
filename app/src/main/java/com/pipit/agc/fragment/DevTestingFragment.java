@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pipit.agc.R;
+import com.pipit.agc.controller.GeofenceController;
 import com.pipit.agc.data.MsgAndDayRecords;
 import com.pipit.agc.model.DayRecord;
 import com.pipit.agc.model.Message;
@@ -44,6 +45,7 @@ public class DevTestingFragment extends Fragment {
     private Button _addDay;
     private Button _startGymVisit;
     private Button _showStartScreen;
+    private Button _reInitGeofences;
 
     public static DevTestingFragment newInstance(int sectionNumber) {
         DevTestingFragment fragment = new DevTestingFragment();
@@ -170,6 +172,19 @@ public class DevTestingFragment extends Fragment {
                 SharedPrefUtil.putListToSharedPref(v.getContext(), Constants.TAKEN_MESSAGE_IDS, new ArrayList<String>());
             }
         });
+
+        _reInitGeofences = (Button) view.findViewById(R.id.reinitgeofences);
+        _reInitGeofences.setText("Reinitialize Geofences");
+        _reInitGeofences.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GeofenceController gc = GeofenceController.getInstance();
+                gc.init(getContext());
+                gc.reregisterSavedGeofences();
+            }
+        });
+
+
     }
 
     @Override

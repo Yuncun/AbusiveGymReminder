@@ -40,10 +40,10 @@ public class GeofenceController {
     private final String TAG = "GeofenceController";
     private Context context;
 
-    private ArrayList<Geofence> mGeofenceList;
+    private ArrayList<Geofence> mGeofenceList = new ArrayList<>();
     private Geofence mNextGeofenceToAdd;
     private ArrayList<String> mRemoveList;
-    private HashMap<Integer, Geofence> mGeofenceMap;
+    private HashMap<Integer, Geofence> mGeofenceMap = new HashMap<>();
     private PendingIntent mGeofencePendingIntent;
     private SharedPreferences prefs;
     private boolean updateGeofencesWhenReadyFlag = false;
@@ -62,11 +62,7 @@ public class GeofenceController {
 
     public void init(Context context) {
         this.context = context.getApplicationContext();
-
-        mGeofenceList = new ArrayList<Geofence>();
         prefs = context.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_MULTI_PROCESS);
-
-        populategeofencelist();
     }
 
     /**
@@ -83,10 +79,11 @@ public class GeofenceController {
 
     public void populategeofencelist() {
         Log.d(TAG, "PopulateGeofenceList");
+        /*
         if (mGeofenceMap != null && mGeofenceList != null) {
             Log.d(TAG, "PopulateGeofenceList - Already populated, returning");
             return;
-        }
+        }*/
         mGeofenceList = new ArrayList<Geofence>();
         mGeofenceMap = new HashMap<Integer, Geofence>();
 
@@ -94,10 +91,12 @@ public class GeofenceController {
         for (Gym g : gyms){
             addGeofenceByGym(g, null, false);
         }
-        executeAddGeofence();
     }
-
-    public void executeAddGeofence(){
+    /**
+     * Try not to call this willy-nilly. Only when geofences need to be registered
+     */
+    public void reregisterSavedGeofences(){
+        populategeofencelist();
         connectWithCallback(mAddConnectionCallback);
     }
 
@@ -223,7 +222,6 @@ public class GeofenceController {
      */
     private GeofencingRequest getGeofencingRequestForAdd() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
         builder.addGeofences(mGeofenceList);
         return builder.build();
     }

@@ -23,6 +23,7 @@ public class IntroductionActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.introduction_layout);
         selectFrag(0);
+        AllinOneActivity.checkPermissions(this);
     }
 
 

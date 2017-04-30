@@ -53,4 +53,11 @@
     <string name="currentstreak">Racha Actual</string>
     <string name="longeststreak">Mejor racha</string>
     <string name="firsttime_body">Abusive gym reminder está configurado. Ahora recibes mensajes cuando pierdes un día del gimnasio. No puedes esperar? Dale a este botón para simular un día perdido! </string>
+    <string name="youareatthegym">Estas en el gimnasio</string>
+    <string name="yes">Si</string>
+    <string name="recordingvisit">Grabación de una visita al gimnasio</string>
+    <string name="startnewvisit">Empezar nueva visita</string>
+    <string name="endcurrentvisit">Terminar esta visita</string>
+    <string name="enablegpsprompt">Tu GPS no está habilitado \n\n   ¿Quieres habilitar tu GPS? </string>
+    <string name="since">desde</string>
 </resources>

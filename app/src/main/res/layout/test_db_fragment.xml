@@ -57,5 +57,11 @@
             android:text="Toggle Visit"
             android:onClick="onClick" />
 
+        <Button
+            android:id="@+id/reinitgeofences"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick" />
+
     </LinearLayout>
 </LinearLayout>

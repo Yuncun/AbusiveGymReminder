@@ -113,6 +113,8 @@ public class SharedPrefUtil {
      * @param sdf
      * @return
      */
+    //TODO: This gets last visit from sharedpref, which doesn't account for post-visit merging for false positive visits
+    //SHould I use visits.in? This would require another DB access
     public static String getLastVisitString(Context context, SimpleDateFormat sdf){
         if (sdf==null){
             sdf = new SimpleDateFormat("MMM d h:mm a"); //Todo: Put these dateformats in constants

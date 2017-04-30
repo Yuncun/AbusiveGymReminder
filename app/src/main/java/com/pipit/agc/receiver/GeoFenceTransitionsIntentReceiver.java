@@ -67,7 +67,6 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             //Update gym status today
             updateLastDayRecord(context);
             rememberGymHabits(context);
-            ReminderOracle.conditionalLeaveVisitingMessage(context);
 
             //Update last visited time
             long time= System.currentTimeMillis();
@@ -81,6 +80,8 @@ public class GeoFenceTransitionsIntentReceiver extends BroadcastReceiver {
             today.startCurrentVisit();
             datasource.updateLatestDayRecordVisits(today.getSerializedVisitsList());
             datasource.closeDatabase();
+
+            ReminderOracle.conditionalLeaveVisitingMessage(context);
         }
         else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             //Update to database

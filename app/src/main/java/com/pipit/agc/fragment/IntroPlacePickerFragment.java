@@ -27,6 +27,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.pipit.agc.R;
 import com.pipit.agc.activity.IntroductionActivity;
+import com.pipit.agc.controller.GeofenceController;
 import com.pipit.agc.model.Gym;
 import com.pipit.agc.util.Constants;
 import com.pipit.agc.util.SharedPrefUtil;
@@ -182,6 +183,7 @@ public class IntroPlacePickerFragment extends Fragment {
             Log.d(TAG, "addGeoFenceFromListPosition gym retrieved from " + gym.proxid + " is null");
             return;
         }
+        /*
         Geofence g = new Geofence.Builder()
                 .setRequestId(Integer.toString(gym.proxid))
                 .setCircularRegion(
@@ -194,10 +196,22 @@ public class IntroPlacePickerFragment extends Fragment {
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
                         //.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         //        Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build();
-
+                .build(); */
+        GeofenceController.getInstance().addGeofenceByGym(gym, mListener, true);
         SharedPrefUtil.addGeofenceToSharedPrefs(getContext(), gym);
     }
+
+    private GeofenceController.GeofenceControllerListener mListener  = new GeofenceController.GeofenceControllerListener() {
+        @Override
+        public void onGeofencesUpdated() {
+            Log.d(TAG, "Added geofence from IntroPlacePickerFragment");
+        }
+
+        @Override
+        public void onError() {
+            Toast.makeText(getContext(), "Error adding geofence", Toast.LENGTH_SHORT);
+        }
+    };
 
 }
 
